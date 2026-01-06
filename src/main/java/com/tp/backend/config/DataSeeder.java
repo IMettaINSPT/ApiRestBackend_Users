@@ -1,8 +1,6 @@
 package com.tp.backend.config;
 
-import com.tp.backend.model.Role;
-import com.tp.backend.model.Usuario;
-import com.tp.backend.repository.RoleRepository;
+import com.tp.backend.model.UsuarioAdmin;
 import com.tp.backend.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -12,8 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DataSeeder implements CommandLineRunner {
 
-    private final RoleRepository roleRepo;
-    private final UsuarioRepository usuarioRepo;
+    private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Value("${app.bootstrap.admin.username:admin}")
@@ -22,35 +19,28 @@ public class DataSeeder implements CommandLineRunner {
     @Value("${app.bootstrap.admin.password:admin1234}")
     private String adminPassword;
 
-    public DataSeeder(RoleRepository roleRepo,
-                      UsuarioRepository usuarioRepo,
+    public DataSeeder(UsuarioRepository usuarioRepository,
                       PasswordEncoder passwordEncoder) {
-        this.roleRepo = roleRepo;
-        this.usuarioRepo = usuarioRepo;
+        this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public void run(String... args) {
 
-        // 1) Roles base
-        Role adminRole = roleRepo.findByNombre("ADMIN")
-                .orElseGet(() -> roleRepo.save(new Role("ADMIN")));
+        // Crear usuario ADMIN por defecto si no existe
+        if (!usuarioRepository.existsByUsername(adminUsername)) {
 
-        roleRepo.findByNombre("USER")
-                .orElseGet(() -> roleRepo.save(new Role("USER")));
+            UsuarioAdmin admin = new UsuarioAdmin();
+            admin.setUsername(adminUsername);
+            admin.setPassword(passwordEncoder.encode(adminPassword));
+            admin.setEnabled(true);
 
-        // 2) Admin por defecto (solo si no existe)
-        if (!usuarioRepo.existsByUsername(adminUsername)) {
-            Usuario admin = new Usuario(
-                    adminUsername,
-                    passwordEncoder.encode(adminPassword),
-                    adminRole
-            );
-            usuarioRepo.save(admin);
-            System.out.println("[DataSeeder] Admin creado: " + adminUsername);
+            usuarioRepository.save(admin);
+
+            System.out.println("[DataSeeder] Usuario ADMIN creado: " + adminUsername);
         } else {
-            System.out.println("[DataSeeder] Admin ya existe: " + adminUsername);
+            System.out.println("[DataSeeder] Usuario ADMIN ya existe: " + adminUsername);
         }
     }
 }

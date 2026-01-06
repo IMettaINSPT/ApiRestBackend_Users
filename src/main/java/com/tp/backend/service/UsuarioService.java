@@ -1,110 +1,128 @@
 package com.tp.backend.service;
 
-import com.tp.backend.dto.*;
+import com.tp.backend.dto.UsuarioRequest;
+import com.tp.backend.dto.UsuarioResponse;
+import com.tp.backend.dto.UsuarioUpdateRequest;
 import com.tp.backend.exception.BadRequestException;
 import com.tp.backend.exception.NotFoundException;
-import com.tp.backend.model.*;
-import com.tp.backend.repository.*;
-import org.springframework.stereotype.Service;
+import com.tp.backend.model.Usuario;
+import com.tp.backend.model.UsuarioAdmin;
+import com.tp.backend.model.UsuarioInvestigador;
+import com.tp.backend.model.UsuarioVigilante;
+import com.tp.backend.repository.UsuarioRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class UsuarioService {
 
-    private final UsuarioRepository repo;
+    private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
-    private final RoleRepository roleRepo;
 
-    public UsuarioService(UsuarioRepository repo, RoleRepository roleRepo, PasswordEncoder passwordEncoder) {
-        this.repo = repo;
-        this.roleRepo = roleRepo;
+    public UsuarioService(UsuarioRepository usuarioRepository,
+                          PasswordEncoder passwordEncoder) {
+        this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
+    // =========================
+    // READ
+    // =========================
+    @Transactional(readOnly = true)
     public List<UsuarioResponse> listar() {
-        return repo.findAll()
+        return usuarioRepository.findAll()
                 .stream()
                 .map(this::toResponse)
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public UsuarioResponse obtenerPorId(Long id) {
-        Usuario u = repo.findById(id)
-                .orElseThrow(() -> new NotFoundException("Usuario no encontrado (id=" + id + ")"));
+        Usuario u = usuarioRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Usuario no encontrado: " + id));
         return toResponse(u);
     }
 
+    // =========================
+    // CREATE
+    // =========================
     public UsuarioResponse crear(UsuarioRequest req) {
-        validarCreate(req);
-
-        if (repo.existsByUsername(req.username)) {
-            throw new BadRequestException("Ya existe un usuario con username='" + req.username + "'");
+        if (usuarioRepository.existsByUsername(req.getUsername())) {
+            throw new BadRequestException("Ya existe un usuario con username: " + req.getUsername());
         }
 
-        Role role = roleRepo.findByNombre(req.rol)
-                .orElseThrow(() -> new BadRequestException("Rol inválido: " + req.rol));
+        Usuario u = crearSegunTipo(req.getTipo()); // ADMIN / INVESTIGADOR / VIGILANTE
+        u.setUsername(req.getUsername());
+        u.setPassword(passwordEncoder.encode(req.getPassword()));
+        u.setEnabled(true);
 
-        Usuario u = new Usuario(req.username, passwordEncoder.encode(req.password), role);
-        Usuario guardado = repo.save(u);
+        Usuario guardado = usuarioRepository.save(u);
         return toResponse(guardado);
     }
 
+    // =========================
+    // UPDATE
+    // =========================
     public UsuarioResponse actualizar(Long id, UsuarioUpdateRequest req) {
-        validarUpdate(req);
-        Usuario u = repo.findById(id)
-                .orElseThrow(() -> new NotFoundException("Usuario no encontrado (id=" + id + ")"));
-        if (req.rol != null && !req.rol.isBlank()) {
-            Role role = roleRepo.findByNombre(req.rol)
-                    .orElseThrow(() -> new BadRequestException("Rol inválido: " + req.rol));
-            u.setRole(role);
-        }
-        // username
-        if (req.username != null && !req.username.isBlank() && !req.username.equals(u.getUsername())) {
-            if (repo.existsByUsername(req.username)) {
-                throw new BadRequestException("Ya existe un usuario con username='" + req.username + "'");
-            }
-            u.setUsername(req.username);
+        Usuario u = usuarioRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Usuario no encontrado: " + id));
+
+        // Password opcional
+        if (req.getPassword() != null && !req.getPassword().isBlank()) {
+            u.setPassword(passwordEncoder.encode(req.getPassword()));
         }
 
-        // password
-        if (req.password != null && !req.password.isBlank()) {
-            u.setPassword(passwordEncoder.encode(req.password));
+        // Enabled opcional
+        if (req.getEnabled() != null) {
+            u.setEnabled(req.getEnabled());
         }
 
+        // Nota: NO cambiamos el "tipo/rol" en update para evitar inconsistencias.
+        // Si quisieras permitirlo, lo correcto es: eliminar + crear nuevo del otro tipo,
+        // o manejarlo con una estrategia explícita.
 
-
-        Usuario guardado = repo.save(u);
+        Usuario guardado = usuarioRepository.save(u);
         return toResponse(guardado);
     }
 
+    // =========================
+    // DELETE
+    // =========================
     public void eliminar(Long id) {
-        if (!repo.existsById(id)) {
-            throw new NotFoundException("Usuario no encontrado (id=" + id + ")");
+        if (!usuarioRepository.existsById(id)) {
+            throw new NotFoundException("Usuario no encontrado: " + id);
         }
-        repo.deleteById(id);
+        usuarioRepository.deleteById(id);
+    }
+
+    // =========================
+    // Helpers
+    // =========================
+    private Usuario crearSegunTipo(String tipo) {
+        if (tipo == null) {
+            throw new BadRequestException("El campo 'tipo' es obligatorio (ADMIN/INVESTIGADOR/VIGILANTE)");
+        }
+
+        return switch (tipo.toUpperCase()) {
+            case "ADMIN" -> new UsuarioAdmin();
+            case "INVESTIGADOR" -> new UsuarioInvestigador();
+            case "VIGILANTE" -> new UsuarioVigilante();
+            default -> throw new BadRequestException("Tipo de usuario inválido: " + tipo +
+                    ". Valores válidos: ADMIN, INVESTIGADOR, VIGILANTE");
+        };
     }
 
     private UsuarioResponse toResponse(Usuario u) {
-        return new UsuarioResponse(u.getId(), u.getUsername(), u.getRole().getNombre());
-    }
-
-    private void validarCreate(UsuarioRequest req) {
-        if (req == null) throw new BadRequestException("Body requerido");
-        if (req.username == null || req.username.isBlank()) throw new BadRequestException("username es obligatorio");
-        if (req.password == null || req.password.isBlank()) throw new BadRequestException("password es obligatorio");
-        if (req.rol == null || req.rol.isBlank()) throw new BadRequestException("rol es obligatorio");
-    }
-
-    private void validarUpdate(UsuarioUpdateRequest req) {
-        if (req == null) throw new BadRequestException("Body requerido");
-
-        boolean allEmpty =
-                (req.username == null || req.username.isBlank()) &&
-                        (req.password == null || req.password.isBlank()) &&
-                        (req.rol == null || req.rol.isBlank());
-
-        if (allEmpty) throw new BadRequestException("Debe enviarse al menos un campo para actualizar");
+        // UsuarioResponse típico: (id, username, rol, enabled)
+        return new UsuarioResponse(
+                u.getId(),
+                u.getUsername(),
+                u.getRol(),     // viene del tipo/subclase
+                u.isEnabled()
+        );
     }
 }

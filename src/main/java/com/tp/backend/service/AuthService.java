@@ -33,7 +33,7 @@ public class AuthService {
             throw new BadRequestException("Credenciales inválidas");
         }
 
-        String roleName = u.getRole().getNombre(); // ADMIN / USER
+        String roleName = u.getRol();
 
         Instant now = Instant.now();
         Instant exp = now.plusSeconds(60 * 60); // 1 hora

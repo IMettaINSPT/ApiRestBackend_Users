@@ -1,16 +1,29 @@
 package com.tp.backend.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public class UsuarioUpdateRequest {
 
-    @Size(min = 3, max = 50, message = "username debe tener entre 3 y 50 caracteres")
-    public String username;
+    @Size(min = 4, max = 100, message = "La password debe tener al menos 4 caracteres")
+    private String password; // opcional
 
-    @Size(min = 4, max = 120, message = "password debe tener entre 4 y 120 caracteres")
-    public String password;
+    private Boolean enabled; // opcional
 
-    @Size(min = 3, max = 30, message = "rol debe tener entre 3 y 30 caracteres")
-    public String rol;
+    // ===== getters / setters =====
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
 }
