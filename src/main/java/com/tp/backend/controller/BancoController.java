@@ -1,42 +1,41 @@
 package com.tp.backend.controller;
 
-import com.tp.backend.dto.usuario.*;
-import com.tp.backend.service.UsuarioService;
+import com.tp.backend.dto.banco.*;
+import com.tp.backend.service.BancoService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/usuarios")
-public class UsuarioController {
+@RequestMapping("/api/bancos")
+public class BancoController {
 
-    private final UsuarioService service;
+    private final BancoService service;
 
-    public UsuarioController(UsuarioService service) {
+    public BancoController(BancoService service) {
         this.service = service;
     }
 
     @GetMapping
-    public List<UsuarioResponse> listar() {
+    public List<BancoResponse> listar() {
         return service.listar();
     }
 
     @GetMapping("/{id}")
-    public UsuarioResponse obtener(@PathVariable Long id) {
+    public BancoResponse obtener(@PathVariable Long id) {
         return service.obtenerPorId(id);
     }
 
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UsuarioResponse crear(@Valid @RequestBody UsuarioRequest req) {
+    public BancoResponse crear(@Valid @RequestBody BancoRequest req) {
         return service.crear(req);
     }
 
     @PutMapping("/{id}")
-    public UsuarioResponse actualizar(@PathVariable Long id, @Valid @RequestBody UsuarioUpdateRequest req) {
+    public BancoResponse actualizar(@PathVariable Long id, @Valid @RequestBody BancoUpdateRequest req) {
         return service.actualizar(id, req);
     }
 

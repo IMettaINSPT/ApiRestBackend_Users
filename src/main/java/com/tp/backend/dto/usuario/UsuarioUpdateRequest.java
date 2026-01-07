@@ -1,4 +1,4 @@
-package com.tp.backend.dto;
+package com.tp.backend.dto.usuario;
 
 import jakarta.validation.constraints.Size;
 

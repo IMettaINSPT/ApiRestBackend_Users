@@ -1,42 +1,41 @@
 package com.tp.backend.controller;
 
-import com.tp.backend.dto.usuario.*;
-import com.tp.backend.service.UsuarioService;
+import com.tp.backend.dto.sucursal.*;
+import com.tp.backend.service.SucursalService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/usuarios")
-public class UsuarioController {
+@RequestMapping("/api/sucursales")
+public class SucursalController {
 
-    private final UsuarioService service;
+    private final SucursalService service;
 
-    public UsuarioController(UsuarioService service) {
+    public SucursalController(SucursalService service) {
         this.service = service;
     }
 
     @GetMapping
-    public List<UsuarioResponse> listar() {
+    public List<SucursalResponse> listar() {
         return service.listar();
     }
 
     @GetMapping("/{id}")
-    public UsuarioResponse obtener(@PathVariable Long id) {
+    public SucursalResponse obtener(@PathVariable Long id) {
         return service.obtenerPorId(id);
     }
 
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UsuarioResponse crear(@Valid @RequestBody UsuarioRequest req) {
+    public SucursalResponse crear(@Valid @RequestBody SucursalRequest req) {
         return service.crear(req);
     }
 
     @PutMapping("/{id}")
-    public UsuarioResponse actualizar(@PathVariable Long id, @Valid @RequestBody UsuarioUpdateRequest req) {
+    public SucursalResponse actualizar(@PathVariable Long id, @Valid @RequestBody SucursalUpdateRequest req) {
         return service.actualizar(id, req);
     }
 

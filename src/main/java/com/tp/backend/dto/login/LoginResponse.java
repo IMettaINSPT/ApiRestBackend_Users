@@ -1,4 +1,4 @@
-package com.tp.backend.dto;
+package com.tp.backend.dto.login;
 
 import java.time.Instant;
 

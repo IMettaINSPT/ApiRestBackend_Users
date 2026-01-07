@@ -1,7 +1,7 @@
 package com.tp.backend.service;
 
-import com.tp.backend.dto.LoginRequest;
-import com.tp.backend.dto.LoginResponse;
+import com.tp.backend.dto.login.LoginRequest;
+import com.tp.backend.dto.login.LoginResponse;
 import com.tp.backend.exception.BadRequestException;
 import com.tp.backend.model.Usuario;
 import com.tp.backend.repository.UsuarioRepository;

@@ -1,6 +1,8 @@
 package com.tp.backend.controller;
 
 import com.tp.backend.dto.*;
+import com.tp.backend.dto.login.LoginRequest;
+import com.tp.backend.dto.login.LoginResponse;
 import com.tp.backend.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;

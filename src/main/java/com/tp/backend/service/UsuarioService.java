@@ -1,8 +1,8 @@
 package com.tp.backend.service;
 
-import com.tp.backend.dto.UsuarioRequest;
-import com.tp.backend.dto.UsuarioResponse;
-import com.tp.backend.dto.UsuarioUpdateRequest;
+import com.tp.backend.dto.usuario.UsuarioRequest;
+import com.tp.backend.dto.usuario.UsuarioResponse;
+import com.tp.backend.dto.usuario.UsuarioUpdateRequest;
 import com.tp.backend.exception.BadRequestException;
 import com.tp.backend.exception.NotFoundException;
 import com.tp.backend.model.Usuario;

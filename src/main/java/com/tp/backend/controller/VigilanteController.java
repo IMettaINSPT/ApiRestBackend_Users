@@ -1,42 +1,41 @@
 package com.tp.backend.controller;
 
-import com.tp.backend.dto.usuario.*;
-import com.tp.backend.service.UsuarioService;
+import com.tp.backend.dto.vigilante.*;
+import com.tp.backend.service.VigilanteService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/usuarios")
-public class UsuarioController {
+@RequestMapping("/api/vigilantes")
+public class VigilanteController {
 
-    private final UsuarioService service;
+    private final VigilanteService service;
 
-    public UsuarioController(UsuarioService service) {
+    public VigilanteController(VigilanteService service) {
         this.service = service;
     }
 
     @GetMapping
-    public List<UsuarioResponse> listar() {
+    public List<VigilanteResponse> listar() {
         return service.listar();
     }
 
     @GetMapping("/{id}")
-    public UsuarioResponse obtener(@PathVariable Long id) {
-        return service.obtenerPorId(id);
+    public VigilanteResponse obtener(@PathVariable Long id) {
+        return service.obtener(id);
     }
-
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UsuarioResponse crear(@Valid @RequestBody UsuarioRequest req) {
+    public VigilanteResponse crear(@Valid @RequestBody VigilanteRequest req) {
         return service.crear(req);
     }
 
     @PutMapping("/{id}")
-    public UsuarioResponse actualizar(@PathVariable Long id, @Valid @RequestBody UsuarioUpdateRequest req) {
+    public VigilanteResponse actualizar(@PathVariable Long id, @Valid @RequestBody VigilanteUpdateRequest req) {
         return service.actualizar(id, req);
     }
 

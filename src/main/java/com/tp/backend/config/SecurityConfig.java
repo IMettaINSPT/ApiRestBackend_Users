@@ -25,7 +25,22 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/usuarios/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/usuarios/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/usuarios/**").hasRole("ADMIN")
-
+// banco
+                                .requestMatchers(HttpMethod.POST, "/api/bancos/**").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.PUT,  "/api/bancos/**").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.DELETE,"/api/bancos/**").hasRole("ADMIN")
+                                //sucursal
+                                .requestMatchers(HttpMethod.POST, "/api/sucursales/**").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.PUT,  "/api/sucursales/**").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.DELETE,"/api/sucursales/**").hasRole("ADMIN")
+                        //vigilantes
+                                .requestMatchers(HttpMethod.POST, "/api/vigilantes/**").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.PUT,  "/api/vigilantes/**").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.DELETE,"/api/vigilantes/**").hasRole("ADMIN")
+                        //contratos
+                                .requestMatchers(HttpMethod.POST, "/api/contratos/**").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.PUT,  "/api/contratos/**").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.DELETE,"/api/contratos/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
