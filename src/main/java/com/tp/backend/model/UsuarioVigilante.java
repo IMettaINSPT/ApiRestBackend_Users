@@ -6,10 +6,13 @@ import jakarta.persistence.*;
 @DiscriminatorValue("VIGILANTE")
 public class UsuarioVigilante extends Usuario {
 
-    // Más adelante: relación 1 a 1 con Vigilante (perfil)
-    // @OneToOne(optional=false, cascade=CascadeType.ALL)
-    // @JoinColumn(name="vigilante_id")
-    // private Vigilante perfil;
+    // para asociar el perfil del vigilante al usuario
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="vigilante_id", unique = true) // sin nullable=false
+    private Vigilante perfil;
+
+    public Vigilante getPerfil() { return perfil; }
+    public void setPerfil(Vigilante perfil) { this.perfil = perfil; }
 
     @Override public String getRol() { return "VIGILANTE"; }
 }

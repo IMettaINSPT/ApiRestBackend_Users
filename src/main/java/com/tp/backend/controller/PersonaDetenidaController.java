@@ -1,6 +1,8 @@
 package com.tp.backend.controller;
 
 import com.tp.backend.dto.personaDetenida.*;
+import com.tp.backend.dto.asalto.*;
+import com.tp.backend.service.AsaltoService;
 import com.tp.backend.service.PersonaDetenidaService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -13,9 +15,11 @@ import java.util.List;
 public class PersonaDetenidaController {
 
     private final PersonaDetenidaService service;
+    private final AsaltoService asaltoService;
 
-    public PersonaDetenidaController(PersonaDetenidaService service) {
+    public PersonaDetenidaController(PersonaDetenidaService service, AsaltoService asaltoService) {
         this.service = service;
+        this.asaltoService = asaltoService;
     }
 
     @GetMapping
@@ -32,6 +36,11 @@ public class PersonaDetenidaController {
     public PersonaDetenidaResponse actualizar(@PathVariable Long id, @Valid @RequestBody PersonaDetenidaUpdateRequest req) {
         return service.actualizar(id, req);
     }
+    @GetMapping("/{id}/asaltos")
+    public List<AsaltoResponse> asaltos(@PathVariable Long id) {
+        return asaltoService.listarPorPersonaDetenida(id);
+    }
+
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

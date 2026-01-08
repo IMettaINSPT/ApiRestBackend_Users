@@ -6,15 +6,15 @@ import jakarta.validation.constraints.Size;
 public class PersonaDetenidaUpdateRequest {
 
     @NotBlank @Size(max=30)
-    private String dni;
+    private String codigo;
 
     @NotBlank @Size(max=80)
     private String nombre;
 
     private Long bandaId; // opcional (null = sin banda)
 
-    public String getDni() { return dni; }
-    public void setDni(String dni) { this.dni = dni; }
+    public String getcodigo() { return codigo; }
+    public void setcodigo(String codigo) { this.codigo = codigo; }
 
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }

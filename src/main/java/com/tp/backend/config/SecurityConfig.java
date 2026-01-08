@@ -8,7 +8,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
-
 @Configuration
 public class SecurityConfig {
 
@@ -21,26 +20,19 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/ping").permitAll()
                         .requestMatchers("/api/auth/login").permitAll()
-                        // ejemplo de autorización por rol:
-                        .requestMatchers(HttpMethod.DELETE, "/api/usuarios/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/usuarios/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/usuarios/**").hasRole("ADMIN")
-// banco
-                                .requestMatchers(HttpMethod.POST, "/api/bancos/**").hasRole("ADMIN")
-                                .requestMatchers(HttpMethod.PUT,  "/api/bancos/**").hasRole("ADMIN")
-                                .requestMatchers(HttpMethod.DELETE,"/api/bancos/**").hasRole("ADMIN")
-                                //sucursal
-                                .requestMatchers(HttpMethod.POST, "/api/sucursales/**").hasRole("ADMIN")
-                                .requestMatchers(HttpMethod.PUT,  "/api/sucursales/**").hasRole("ADMIN")
-                                .requestMatchers(HttpMethod.DELETE,"/api/sucursales/**").hasRole("ADMIN")
-                        //vigilantes
-                                .requestMatchers(HttpMethod.POST, "/api/vigilantes/**").hasRole("ADMIN")
-                                .requestMatchers(HttpMethod.PUT,  "/api/vigilantes/**").hasRole("ADMIN")
-                                .requestMatchers(HttpMethod.DELETE,"/api/vigilantes/**").hasRole("ADMIN")
-                        //contratos
-                                .requestMatchers(HttpMethod.POST, "/api/contratos/**").hasRole("ADMIN")
-                                .requestMatchers(HttpMethod.PUT,  "/api/contratos/**").hasRole("ADMIN")
-                                .requestMatchers(HttpMethod.DELETE,"/api/contratos/**").hasRole("ADMIN")
+
+                        // VIGILANTE: solo sus datos
+                        .requestMatchers(HttpMethod.GET, "/api/auth/me").hasAnyRole("ADMIN","INVESTIGADOR","VIGILANTE")
+                        .requestMatchers(HttpMethod.GET, "/api/vigilantes/me").hasRole("VIGILANTE")
+
+                        // ADMIN: administra todo (cualquier POST/PUT/DELETE del /api)
+                        .requestMatchers(HttpMethod.POST,   "/api/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT,    "/api/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/**").hasRole("ADMIN")
+
+                        // INVESTIGADOR y ADMIN: pueden consultar todo (GET)
+                        .requestMatchers(HttpMethod.GET, "/api/**").hasAnyRole("ADMIN","INVESTIGADOR")
+
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
@@ -52,7 +44,6 @@ public class SecurityConfig {
 
     private JwtAuthenticationConverter jwtAuthConverter() {
         JwtGrantedAuthoritiesConverter gac = new JwtGrantedAuthoritiesConverter();
-        // Vamos a usar claim "role": "ADMIN" -> ROLE_ADMIN
         gac.setAuthoritiesClaimName("role");
         gac.setAuthorityPrefix("ROLE_");
 

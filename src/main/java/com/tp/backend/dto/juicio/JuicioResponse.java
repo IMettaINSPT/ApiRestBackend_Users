@@ -14,18 +14,16 @@ public class JuicioResponse {
     private String juezCodigo;
 
     private Long personaDetenidaId;
-    private String personaDni;
 
     public JuicioResponse(Long id, LocalDate fecha, ResultadoJuicio resultado,
                           Long juezId, String juezCodigo,
-                          Long personaDetenidaId, String personaDni) {
+                          Long personaDetenidaId) {
         this.id = id;
         this.fecha = fecha;
         this.resultado = resultado;
         this.juezId = juezId;
         this.juezCodigo = juezCodigo;
         this.personaDetenidaId = personaDetenidaId;
-        this.personaDni = personaDni;
     }
 
     public Long getId() { return id; }
@@ -34,5 +32,4 @@ public class JuicioResponse {
     public Long getJuezId() { return juezId; }
     public String getJuezCodigo() { return juezCodigo; }
     public Long getPersonaDetenidaId() { return personaDetenidaId; }
-    public String getPersonaDni() { return personaDni; }
 }

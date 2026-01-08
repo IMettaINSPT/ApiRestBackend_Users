@@ -3,7 +3,10 @@ package com.tp.backend.service;
 import com.tp.backend.dto.vigilante.*;
 import com.tp.backend.exception.BadRequestException;
 import com.tp.backend.exception.NotFoundException;
+import com.tp.backend.model.Usuario;
+import com.tp.backend.model.UsuarioVigilante;
 import com.tp.backend.model.Vigilante;
+import com.tp.backend.repository.UsuarioRepository;
 import com.tp.backend.repository.VigilanteRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,10 +17,14 @@ import java.util.List;
 public class VigilanteService {
 
     private final VigilanteRepository repo;
+    private final UsuarioRepository usuarioRepository;
 
-    public VigilanteService(VigilanteRepository repo) {
-        this.repo = repo;
+    public VigilanteService(VigilanteRepository vigilanteRepository,
+                            UsuarioRepository usuarioRepository) {
+        this.repo = vigilanteRepository;
+        this.usuarioRepository = usuarioRepository;
     }
+
 
     @Transactional(readOnly = true)
     public List<VigilanteResponse> listar() {
@@ -68,4 +75,18 @@ public class VigilanteService {
     private VigilanteResponse toResponse(Vigilante v) {
         return new VigilanteResponse(v.getId(), v.getCodigo(), v.getEdad());
     }
+
+    @Transactional(readOnly = true)
+    public VigilanteResponse obtenerMiPerfil(String username) {
+        Usuario u = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("Usuario no encontrado: " + username));
+
+        if (!(u instanceof UsuarioVigilante uv)) {
+            throw new BadRequestException("El usuario no es de tipo VIGILANTE");
+        }
+
+        Vigilante v = uv.getPerfil();
+        return toResponse(v);
+    }
+
 }

@@ -92,8 +92,7 @@ public class JuicioService {
                 j.getResultado(),
                 j.getJuez().getId(),
                 j.getJuez().getCodigo(),
-                j.getPersonaDetenida().getId(),
-                j.getPersonaDetenida().getDni()
+                j.getPersonaDetenida().getId()
         );
     }
 }

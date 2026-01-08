@@ -13,6 +13,10 @@ public class DataSeeder implements CommandLineRunner {
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
 
+
+    @Value("${app.bootstrap.admin.enabled:false}")
+    private boolean adminEnabled;
+
     @Value("${app.bootstrap.admin.username:admin}")
     private String adminUsername;
 
@@ -24,9 +28,9 @@ public class DataSeeder implements CommandLineRunner {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
     }
-
     @Override
     public void run(String... args) {
+        if (!adminEnabled) return;
 
         // Crear usuario ADMIN por defecto si no existe
         if (!usuarioRepository.existsByUsername(adminUsername)) {

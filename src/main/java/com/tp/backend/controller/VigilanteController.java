@@ -38,6 +38,10 @@ public class VigilanteController {
     public VigilanteResponse actualizar(@PathVariable Long id, @Valid @RequestBody VigilanteUpdateRequest req) {
         return service.actualizar(id, req);
     }
+    @GetMapping("/me")
+    public VigilanteResponse me(org.springframework.security.core.Authentication auth) {
+        return service.obtenerMiPerfil(auth.getName()); // username
+    }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

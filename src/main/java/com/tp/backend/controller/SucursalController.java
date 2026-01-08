@@ -1,11 +1,15 @@
 package com.tp.backend.controller;
 
+import com.tp.backend.dto.asalto.AsaltoResponse;
 import com.tp.backend.dto.sucursal.*;
+import com.tp.backend.service.AsaltoService;
 import com.tp.backend.service.SucursalService;
 import jakarta.validation.Valid;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -13,10 +17,24 @@ import java.util.List;
 public class SucursalController {
 
     private final SucursalService service;
+    private final AsaltoService asaltoService;
 
-    public SucursalController(SucursalService service) {
+    public SucursalController(SucursalService service, AsaltoService asaltoService)
+    {
         this.service = service;
+        this.asaltoService = asaltoService;
     }
+
+    @GetMapping("/{id}/asaltos")
+    public List<AsaltoResponse> asaltosSucursal(
+            @PathVariable Long id,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta
+    ) {
+        return asaltoService.listarConFiltros(id, fecha, desde, hasta);
+    }
+
 
     @GetMapping
     public List<SucursalResponse> listar() {

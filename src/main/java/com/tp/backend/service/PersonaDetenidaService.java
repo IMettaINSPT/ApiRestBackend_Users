@@ -36,11 +36,10 @@ public class PersonaDetenidaService {
 
     @Transactional
     public PersonaDetenidaResponse crear(PersonaDetenidaRequest req) {
-        if (repo.existsByDni(req.getDni())) {
-            throw new BadRequestException("Ya existe una persona detenida con DNI: " + req.getDni());
+        if (repo.existsByCodigo(req.getcodigo())) {
+            throw new BadRequestException("Ya existe una persona detenida con el codigo: " + req.getcodigo());
         }
         PersonaDetenida p = new PersonaDetenida();
-        p.setDni(req.getDni());
         p.setNombre(req.getNombre());
         p.setBanda(resolveBandaOrNull(req.getBandaId()));
         return toResponse(repo.save(p));
@@ -50,10 +49,7 @@ public class PersonaDetenidaService {
     public PersonaDetenidaResponse actualizar(Long id, PersonaDetenidaUpdateRequest req) {
         PersonaDetenida p = repo.findById(id).orElseThrow(() -> new NotFoundException("PersonaDetenida no encontrada: " + id));
 
-        if (!p.getDni().equals(req.getDni()) && repo.existsByDni(req.getDni())) {
-            throw new BadRequestException("Ya existe una persona detenida con DNI: " + req.getDni());
-        }
-        p.setDni(req.getDni());
+
         p.setNombre(req.getNombre());
         p.setBanda(resolveBandaOrNull(req.getBandaId()));
         return toResponse(p);
@@ -73,6 +69,6 @@ public class PersonaDetenidaService {
     private PersonaDetenidaResponse toResponse(PersonaDetenida p) {
         Long bandaId = p.getBanda() != null ? p.getBanda().getId() : null;
         String bandaNombre = p.getBanda() != null ? p.getBanda().getNombre() : null;
-        return new PersonaDetenidaResponse(p.getId(), p.getDni(), p.getNombre(), bandaId, bandaNombre);
+        return new PersonaDetenidaResponse(p.getId(), p.getNombre(), bandaId, bandaNombre, p.getCodigo());
     }
 }

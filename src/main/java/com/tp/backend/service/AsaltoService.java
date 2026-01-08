@@ -1,124 +1,144 @@
 package com.tp.backend.service;
 
 import com.tp.backend.dto.asalto.*;
-import com.tp.backend.exception.NotFoundException;
-import com.tp.backend.model.*;
-import com.tp.backend.repository.*;
+import com.tp.backend.model.Asalto;
+import com.tp.backend.model.PersonaDetenida;
+import com.tp.backend.model.Sucursal;
+import com.tp.backend.repository.AsaltoRepository;
+import com.tp.backend.repository.PersonaDetenidaRepository;
+import com.tp.backend.repository.SucursalRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class AsaltoService {
 
-    private final AsaltoRepository asaltoRepo;
-    private final SucursalRepository sucursalRepo;
-    private final BandaRepository bandaRepo;
-    private final VigilanteRepository vigilanteRepo;
-    private final PersonaDetenidaRepository personaRepo;
+    private final AsaltoRepository asaltoRepository;
+    private final SucursalRepository sucursalRepository;
+    private final PersonaDetenidaRepository personaDetenidaRepository;
 
-    public AsaltoService(AsaltoRepository asaltoRepo,
-                         SucursalRepository sucursalRepo,
-                         BandaRepository bandaRepo,
-                         VigilanteRepository vigilanteRepo,
-                         PersonaDetenidaRepository personaRepo) {
-        this.asaltoRepo = asaltoRepo;
-        this.sucursalRepo = sucursalRepo;
-        this.bandaRepo = bandaRepo;
-        this.vigilanteRepo = vigilanteRepo;
-        this.personaRepo = personaRepo;
+    public AsaltoService(AsaltoRepository asaltoRepository,
+                         SucursalRepository sucursalRepository,
+                         PersonaDetenidaRepository personaDetenidaRepository) {
+        this.asaltoRepository = asaltoRepository;
+        this.sucursalRepository = sucursalRepository;
+        this.personaDetenidaRepository = personaDetenidaRepository;
+    }
+
+    // ---------- CONSULTAS ----------
+    @Transactional(readOnly = true)
+    public List<AsaltoResponse> listarConFiltros(Long sucursalId, LocalDate fecha, LocalDate desde, LocalDate hasta) {
+
+        validarFiltros(fecha, desde, hasta);
+
+        List<Asalto> asaltos;
+
+        if (sucursalId == null && fecha == null && desde == null) {
+            asaltos = asaltoRepository.findAll();
+        } else if (sucursalId != null && fecha != null) {
+            asaltos = asaltoRepository.findBySucursal_IdAndFechaAsalto(sucursalId, fecha);
+        } else if (sucursalId != null && desde != null) {
+            asaltos = asaltoRepository.findBySucursal_IdAndFechaAsaltoBetween(sucursalId, desde, hasta);
+        } else if (sucursalId != null) {
+            asaltos = asaltoRepository.findBySucursal_Id(sucursalId);
+        } else {
+            throw new IllegalArgumentException("Para filtrar por fecha/rango se requiere sucursalId.");
+        }
+
+        return asaltos.stream().map(this::toResponse).toList();
     }
 
     @Transactional(readOnly = true)
-    public List<AsaltoResponse> listar() {
-        return asaltoRepo.findAll().stream().map(this::toResponse).toList();
+    public List<AsaltoResponse> listarPorPersonaDetenida(Long personaDetenidaId) {
+        return asaltoRepository.findByPersonaDetenida_Id(personaDetenidaId)
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 
+    // ---------- CRUD ----------
     @Transactional(readOnly = true)
-    public AsaltoResponse obtener(Long id) {
-        Asalto a = asaltoRepo.findById(id)
-                .orElseThrow(() -> new NotFoundException("Asalto no encontrado: " + id));
+    public AsaltoResponse buscarPorId(Long id) {
+        Asalto a = asaltoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Asalto no encontrado: " + id));
         return toResponse(a);
     }
 
     @Transactional
     public AsaltoResponse crear(AsaltoRequest req) {
+        validarRequest(req);
 
-        Asalto a = construirAsalto(req, new Asalto());
-        return toResponse(asaltoRepo.save(a));
+        Sucursal sucursal = sucursalRepository.findById(req.getSucursalId())
+                .orElseThrow(() -> new RuntimeException("Sucursal no encontrada: " + req.getSucursalId()));
+
+        PersonaDetenida persona = personaDetenidaRepository.findById(req.getPersonaDetenidaId())
+                .orElseThrow(() -> new RuntimeException("PersonaDetenida no encontrada: " + req.getPersonaDetenidaId()));
+
+        Asalto a = new Asalto();
+        a.setFechaAsalto(req.getFechaAsalto());
+        a.setSucursal(sucursal);
+        a.setPersonaDetenida(persona);
+
+        return toResponse(asaltoRepository.save(a));
     }
 
     @Transactional
-    public AsaltoResponse actualizar(Long id, AsaltoUpdateRequest req) {
+    public AsaltoResponse actualizar(Long id, AsaltoRequest req) {
+        validarRequest(req);
 
-        Asalto a = asaltoRepo.findById(id)
-                .orElseThrow(() -> new NotFoundException("Asalto no encontrado: " + id));
+        Asalto a = asaltoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Asalto no encontrado: " + id));
 
-        a.getPersonasDetenidas().clear();
-        construirAsalto(req, a);
-        return toResponse(a);
+        Sucursal sucursal = sucursalRepository.findById(req.getSucursalId())
+                .orElseThrow(() -> new RuntimeException("Sucursal no encontrada: " + req.getSucursalId()));
+
+        PersonaDetenida persona = personaDetenidaRepository.findById(req.getPersonaDetenidaId())
+                .orElseThrow(() -> new RuntimeException("PersonaDetenida no encontrada: " + req.getPersonaDetenidaId()));
+
+        a.setFechaAsalto(req.getFechaAsalto());
+        a.setSucursal(sucursal);
+        a.setPersonaDetenida(persona);
+
+        return toResponse(asaltoRepository.save(a));
     }
 
     @Transactional
     public void eliminar(Long id) {
-        if (!asaltoRepo.existsById(id)) {
-            throw new NotFoundException("Asalto no encontrado: " + id);
+        if (!asaltoRepository.existsById(id)) {
+            throw new RuntimeException("Asalto no encontrado: " + id);
         }
-        asaltoRepo.deleteById(id);
+        asaltoRepository.deleteById(id);
     }
 
-    // 🔧 Método común
-    private Asalto construirAsalto(AsaltoRequestBase req, Asalto a) {
-
-        Sucursal sucursal = sucursalRepo.findById(req.getSucursalId())
-                .orElseThrow(() -> new NotFoundException("Sucursal no encontrada: " + req.getSucursalId()));
-
-        Banda banda = bandaRepo.findById(req.getBandaId())
-                .orElseThrow(() -> new NotFoundException("Banda no encontrada: " + req.getBandaId()));
-
-        Vigilante vigilante = vigilanteRepo.findById(req.getVigilanteId())
-                .orElseThrow(() -> new NotFoundException("Vigilante no encontrado: " + req.getVigilanteId()));
-
-        Set<PersonaDetenida> detenidos = new HashSet<>();
-        for (Long pid : req.getPersonasDetenidasIds()) {
-            PersonaDetenida p = personaRepo.findById(pid)
-                    .orElseThrow(() -> new NotFoundException("Persona detenida no encontrada: " + pid));
-            detenidos.add(p);
+    // ---------- helpers ----------
+    private void validarFiltros(LocalDate fecha, LocalDate desde, LocalDate hasta) {
+        if (fecha != null && (desde != null || hasta != null)) {
+            throw new IllegalArgumentException("No se puede usar 'fecha' junto con 'desde/hasta'.");
         }
+        if ((desde == null) != (hasta == null)) {
+            throw new IllegalArgumentException("Si usás rango, enviá 'desde' y 'hasta'.");
+        }
+        if (desde != null && hasta != null && hasta.isBefore(desde)) {
+            throw new IllegalArgumentException("'hasta' no puede ser anterior a 'desde'.");
+        }
+    }
 
-        a.setFecha(req.getFecha());
-        a.setMontoRobado(req.getMontoRobado());
-        a.setSucursal(sucursal);
-        a.setBanda(banda);
-        a.setVigilante(vigilante);
-        a.getPersonasDetenidas().addAll(detenidos);
-
-
-        return a;
+    private void validarRequest(AsaltoRequest req) {
+        if (req == null) throw new IllegalArgumentException("Body requerido.");
+        if (req.getFechaAsalto() == null) throw new IllegalArgumentException("fechaAsalto es obligatoria.");
+        if (req.getSucursalId() == null) throw new IllegalArgumentException("sucursalId es obligatorio.");
+        if (req.getPersonaDetenidaId() == null) throw new IllegalArgumentException("personaDetenidaId es obligatorio.");
     }
 
     private AsaltoResponse toResponse(Asalto a) {
-        Set<Long> detenidosIds = a.getPersonasDetenidas()
-                .stream()
-                .map(PersonaDetenida::getId)
-                .collect(Collectors.toSet());
-
-        return new AsaltoResponse(
-                a.getId(),
-                a.getFecha(),
-                a.getMontoRobado(),
-                a.getSucursal().getId(),
-                a.getSucursal().getCodigo(),
-                a.getBanda().getId(),
-                a.getBanda().getNombre(),
-                a.getVigilante().getId(),
-                a.getVigilante().getCodigo(),
-                detenidosIds
-        );
-
+        AsaltoResponse r = new AsaltoResponse();
+        r.setId(a.getId());
+        r.setFechaAsalto(a.getFechaAsalto());
+        r.setSucursalId(a.getSucursal().getId());
+        r.setPersonaDetenidaId(a.getPersonaDetenida().getId());
+        return r;
     }
 }

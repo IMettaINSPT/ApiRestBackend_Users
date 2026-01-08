@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Set;
 
-public class AsaltoUpdateRequest implements  AsaltoRequestBase{
+public class AsaltoUpdateRequest {
 
     @NotNull
     private LocalDate fecha;

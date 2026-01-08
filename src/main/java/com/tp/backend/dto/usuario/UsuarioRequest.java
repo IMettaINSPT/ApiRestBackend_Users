@@ -21,8 +21,12 @@ public class UsuarioRequest {
     )
     private String tipo;
 
-    // ===== getters / setters =====
 
+    private Long vigilanteId;
+
+    public Long getVigilanteId() {return vigilanteId;}
+
+    public void setVigilanteId(Long vigilanteId) {this.vigilanteId = vigilanteId;}
     public String getUsername() {
         return username;
     }

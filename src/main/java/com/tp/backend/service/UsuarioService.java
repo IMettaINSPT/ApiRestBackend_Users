@@ -5,11 +5,9 @@ import com.tp.backend.dto.usuario.UsuarioResponse;
 import com.tp.backend.dto.usuario.UsuarioUpdateRequest;
 import com.tp.backend.exception.BadRequestException;
 import com.tp.backend.exception.NotFoundException;
-import com.tp.backend.model.Usuario;
-import com.tp.backend.model.UsuarioAdmin;
-import com.tp.backend.model.UsuarioInvestigador;
-import com.tp.backend.model.UsuarioVigilante;
+import com.tp.backend.model.*;
 import com.tp.backend.repository.UsuarioRepository;
+import com.tp.backend.repository.VigilanteRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,16 +20,15 @@ public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
+    private final VigilanteRepository vigilanteRepository;
 
     public UsuarioService(UsuarioRepository usuarioRepository,
-                          PasswordEncoder passwordEncoder) {
+                          PasswordEncoder passwordEncoder, VigilanteRepository vigilanteRepository) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
+        this.vigilanteRepository = vigilanteRepository;
     }
 
-    // =========================
-    // READ
-    // =========================
     @Transactional(readOnly = true)
     public List<UsuarioResponse> listar() {
         return usuarioRepository.findAll()
@@ -47,15 +44,22 @@ public class UsuarioService {
         return toResponse(u);
     }
 
-    // =========================
-    // CREATE
-    // =========================
+
     public UsuarioResponse crear(UsuarioRequest req) {
         if (usuarioRepository.existsByUsername(req.getUsername())) {
             throw new BadRequestException("Ya existe un usuario con username: " + req.getUsername());
         }
 
         Usuario u = crearSegunTipo(req.getTipo()); // ADMIN / INVESTIGADOR / VIGILANTE
+
+            if (u instanceof UsuarioVigilante uv) {
+                if (req.getVigilanteId() == null) {
+                    throw new BadRequestException("Para VIGILANTE se requiere vigilanteId");
+                }
+                uv.setPerfil(vigilanteRepository.findById(req.getVigilanteId())
+                        .orElseThrow(() -> new NotFoundException("Vigilante no encontrado")));
+            }
+
         u.setUsername(req.getUsername());
         u.setPassword(passwordEncoder.encode(req.getPassword()));
         u.setEnabled(true);
@@ -64,9 +68,7 @@ public class UsuarioService {
         return toResponse(guardado);
     }
 
-    // =========================
-    // UPDATE
-    // =========================
+
     public UsuarioResponse actualizar(Long id, UsuarioUpdateRequest req) {
         Usuario u = usuarioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Usuario no encontrado: " + id));
@@ -89,9 +91,6 @@ public class UsuarioService {
         return toResponse(guardado);
     }
 
-    // =========================
-    // DELETE
-    // =========================
     public void eliminar(Long id) {
         if (!usuarioRepository.existsById(id)) {
             throw new NotFoundException("Usuario no encontrado: " + id);
@@ -99,9 +98,6 @@ public class UsuarioService {
         usuarioRepository.deleteById(id);
     }
 
-    // =========================
-    // Helpers
-    // =========================
     private Usuario crearSegunTipo(String tipo) {
         if (tipo == null) {
             throw new BadRequestException("El campo 'tipo' es obligatorio (ADMIN/INVESTIGADOR/VIGILANTE)");

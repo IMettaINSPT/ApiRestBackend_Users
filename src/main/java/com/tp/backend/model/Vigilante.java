@@ -2,6 +2,9 @@ package com.tp.backend.model;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "vigilante")
 public class Vigilante {
@@ -16,6 +19,9 @@ public class Vigilante {
     @Column(nullable=false)
     private int edad;
 
+    @OneToMany(mappedBy = "vigilante", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Contrato> contratos = new HashSet<>();
+
     public Long getId() { return id; }
 
     public String getCodigo() { return codigo; }
@@ -23,4 +29,6 @@ public class Vigilante {
 
     public int getEdad() { return edad; }
     public void setEdad(int edad) { this.edad = edad; }
+
+    public Set<Contrato> getContratos() {return contratos; }
 }
