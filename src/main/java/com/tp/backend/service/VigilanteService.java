@@ -77,6 +77,16 @@ public class VigilanteService {
     }
 
     @Transactional(readOnly = true)
+    public List<VigilanteResponse> listarDisponibles() {
+        return repo.findDisponibles().stream().map(this::toResponse).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public long countDisponibles() {
+        return repo.findDisponibles().size();
+    }
+
+    @Transactional(readOnly = true)
     public VigilanteResponse obtenerMiPerfil(String username) {
         Usuario u = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new NotFoundException("Usuario no encontrado: " + username));

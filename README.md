@@ -1,155 +1,204 @@
-# Paso a paso completo (Windows) – Cloud SQL Auth Proxy + Spring Boot (MySQL)
+Cloud SQL Proxy – Guía Completa de Instalación (MySQL en Google Cloud)
+====================================================================
 
-Este documento explica **desde cero** cómo preparar **otra máquina** para ejecutar el backend y conectarse a **Google Cloud SQL (MySQL)** usando **Cloud SQL Auth Proxy**, sin depender de IP pública ni *Authorized Networks*.
+Este proyecto utiliza MySQL alojado en Google Cloud mediante Cloud SQL Proxy.
+El uso del proxy evita depender de IPs públicas, firewall o SSL manual.
 
----
+Seguir TODOS los pasos en orden.
 
-## 0) Qué necesitas en esa máquina
+--------------------------------------------------------------------
+REQUISITOS PREVIOS
+--------------------------------------------------------------------
 
-- Windows 10/11
-- Acceso a Internet
-- Acceso a la cuenta Google que tiene permisos en el proyecto
-- Permiso IAM mínimo en el proyecto: **Cloud SQL Client**
+1) Java
+- Java 21 (o la versión definida en el proyecto)
 
----
+Verificar:
+java -version
 
-## 1) Instalar Google Cloud CLI (gcloud)
+--------------------------------------------------------------------
+GOOGLE CLOUD
+--------------------------------------------------------------------
 
-### 1.1 Descargar
-Abrir el navegador y entrar a la guía oficial:
+2) Instalar Google Cloud SDK
 
+Descargar desde:
 https://cloud.google.com/sdk/docs/install
 
-### 1.2 Instalar
-- Descargar el instalador de **Google Cloud CLI** para Windows
-- Ejecutarlo con “Next / Next / Finish”
+Durante la instalación:
+- Instalar gcloud CLI
+- Agregar gcloud al PATH
+- Usar PowerShell como shell por defecto
 
-### 1.3 Verificar (en una terminal nueva)
-Abrir **PowerShell** (Win → buscar “PowerShell”) y ejecutar:
-
-```powershell
+Verificar:
 gcloud --version
 
-2) Autenticarse con Google Cloud (ADC)
+--------------------------------------------------------------------
 
-Esto es obligatorio porque no se usan claves JSON.
+3) Autenticarse en Google Cloud (una sola vez)
 
-2.1 Login normal (abre navegador)
-
-En PowerShell:
-
+Ejecutar:
 gcloud auth login
 
+Se abrirá el navegador.
+Iniciar sesión con una cuenta que tenga acceso al proyecto.
 
-Elegir la cuenta Google correcta.
+Cerrar y volver a abrir PowerShell.
 
-2.2 Application Default Credentials (ADC)
+--------------------------------------------------------------------
 
-En PowerShell:
+4) Seleccionar el proyecto correcto
 
-gcloud auth application-default login
+Ejecutar:
+gcloud config set project project-252263b1-986e-4221-9fd
 
+Verificar:
+gcloud config list
 
-Esto guarda credenciales locales y el proxy las usa.
+--------------------------------------------------------------------
+CLOUD SQL PROXY
+--------------------------------------------------------------------
 
-2.3 Verificar cuenta activa
-gcloud auth list
+5) Descargar Cloud SQL Proxy
 
+Descargar el binario para Windows desde:
+https://cloud.google.com/sql/docs/mysql/sql-proxy#install
 
-Debe aparecer tu cuenta.
-Si la cuenta no tiene permisos del proyecto, el proxy fallará.
+Archivo:
+cloud-sql-proxy.exe
 
-3) Descargar Cloud SQL Auth Proxy (cloud-sql-proxy.exe)
-3.1 Descargar desde GitHub (Release oficial)
-
-Abrir en el navegador la página oficial de releases:
-
-https://github.com/GoogleCloudPlatform/cloud-sql-proxy/releases
-
-3.2 Elegir el archivo correcto para Windows
-
-Descargar el binario para Windows 64 bits:
-
-cloud-sql-proxy.x.x.x.windows.amd64.exe
-
-Renombrarlo a:
-
-cloud-sql-proxy.exe (para simplificar)
-
-3.3 Guardarlo en una ruta estándar
-
-Crear carpeta:
-
+Ubicarlo, por ejemplo, en:
 C:\tools\cloud-sql-proxy\
 
+(La ubicación no es obligatoria, solo debe conocerse la ruta.)
 
-Mover el archivo ahí con este nombre final:
+--------------------------------------------------------------------
+USO DEL SCRIPT DEL PROYECTO (FORMA RECOMENDADA)
+--------------------------------------------------------------------
 
-C:\tools\cloud-sql-proxy\cloud-sql-proxy.exe
+El proyecto incluye un script para levantar el proxy automáticamente.
 
-3.4 Verificar ejecución
+Estructura requerida en el proyecto:
 
-En PowerShell:
+/scripts
+  └── start-cloudsql-proxy.ps1
 
-C:\tools\cloud-sql-proxy\cloud-sql-proxy.exe --version
+El script debe contener la ejecución del proxy apuntando a la instancia
+y puerto correctos.
 
+Ejemplo de contenido del script:
 
-Si devuelve versión, está OK.
+------------------------------------------------
+start-cloudsql-proxy.ps1
+------------------------------------------------
+C:\tools\cloud-sql-proxy\cloud-sql-proxy.exe "project-252263b1-986e-4221-9fd:us-central1:ivo-facu" --port 3307
+------------------------------------------------
 
-4) Preparar el repo (script incluido)
+--------------------------------------------------------------------
 
-En el repo debe existir:
+6) Levantar el Cloud SQL Proxy usando el script
 
-scripts/start-cloudsql-proxy.ps1
+IMPORTANTE:
+Pararse en la RAÍZ del proyecto (donde está la carpeta "scripts").
 
-
-(este script es el que creamos para levantar el proxy con validaciones)
-
-4.1 Ejecutar el script (desde la raíz del repo)
-
-Abrir PowerShell en la carpeta del proyecto y ejecutar:
+Ejecutar en PowerShell:
 
 powershell -ExecutionPolicy Bypass -File .\scripts\start-cloudsql-proxy.ps1
 
-
-Si PowerShell no te deja ejecutar scripts, este comando ya lo “saltea” por -ExecutionPolicy Bypass.
-
-4.2 Resultado esperado
-
-La consola debería mostrar algo como:
-
+Salida esperada:
 Listening on 127.0.0.1:3307
-The proxy has started successfully and is ready for new connections!
+The proxy has started successfully
 
+IMPORTANTE:
+- NO cerrar esta consola
+- El proxy debe quedar corriendo mientras se use el backend
 
-⚠️ No cerrar esa consola. El proxy debe quedar corriendo mientras uses el backend.
+--------------------------------------------------------------------
+VARIABLES DE ENTORNO
+--------------------------------------------------------------------
 
-5) Verificar que el puerto local esté abierto
+7) Configurar variables de entorno (una sola vez)
 
-Abrir otra consola PowerShell y ejecutar:
+En Windows:
+Configuración del sistema → Variables de entorno
 
-Test-NetConnection 127.0.0.1 -Port 3307
+Agregar:
 
+DB_URL=jdbc:mysql://127.0.0.1:3307/NOMBRE_DB
+DB_USER=usuario_mysql
+DB_PASS=password_mysql
 
-Debe devolver:
+Luego cerrar y volver a abrir IntelliJ / PowerShell.
 
-TcpTestSucceeded : True
+--------------------------------------------------------------------
+LEVANTAR BACKEND
+--------------------------------------------------------------------
 
-6) Configurar el Backend (Spring Boot) para usar el proxy
+8) Ejecutar el backend
 
-El backend debe apuntar a localhost en el puerto del proxy.
+Desde la carpeta del backend:
 
-6.1 Variables de entorno (IntelliJ)
+mvn spring-boot:run
 
-En IntelliJ: Run/Debug Configurations → Environment variables:
+Si todo está correcto:
+- Hibernate conecta
+- La aplicación inicia correctamente
+- La API queda disponible
 
-DB_URL=jdbc:mysql://127.0.0.1:3307/DBPoliciaFederal?serverTimezone=UTC
-DB_USER=<usuario_mysql>
-DB_PASS=<password_mysql>
+--------------------------------------------------------------------
+REGLA IMPORTANTE
+--------------------------------------------------------------------
 
+PRIMERO el proxy, DESPUÉS el backend.
 
-El DB_USER/DB_PASS son los del usuario MySQL creado en Cloud SQL.
+Si el proxy no está levantado:
+- La base no conecta
+- Hibernate falla
+- Aparecen errores de Communications link failure
 
-6.2 Levantar la app
+--------------------------------------------------------------------
+ERRORES COMUNES
+--------------------------------------------------------------------
 
-Correr Spring Boot normalmente.
+El comando del script falla:
+- Verificar que exista la carpeta "scripts"
+- Verificar que el archivo se llame exactamente:
+  start-cloudsql-proxy.ps1
+- Verificar la ruta al cloud-sql-proxy.exe dentro del script
+
+--------------------------------------------------------------------
+
+Puerto ocupado:
+Usar otro puerto (ej: 3308) en el script y actualizar DB_URL.
+
+--------------------------------------------------------------------
+
+El proxy levanta pero el backend no conecta:
+- Verificar que el proxy siga corriendo
+- Revisar DB_URL
+- Verificar usuario y password de MySQL
+
+--------------------------------------------------------------------
+QUE NO HAY QUE HACER
+--------------------------------------------------------------------
+
+- No usar IP pública de la instancia
+- No agregar IPs autorizadas
+- No configurar SSL manual
+- No tocar firewall
+
+--------------------------------------------------------------------
+RESUMEN RÁPIDO
+--------------------------------------------------------------------
+
+1) Instalar Google Cloud SDK
+2) gcloud auth login
+3) gcloud config set project project-252263b1-986e-4221-9fd
+4) Descargar cloud-sql-proxy.exe
+5) Ejecutar:
+   powershell -ExecutionPolicy Bypass -File .\scripts\start-cloudsql-proxy.ps1
+6) Configurar variables de entorno
+7) Levantar el backend
+
+Con estos pasos, cualquier integrante del proyecto puede trabajar
+sin tocar infraestructura ni configuración de red.

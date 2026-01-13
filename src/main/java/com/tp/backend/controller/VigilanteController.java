@@ -38,6 +38,16 @@ public class VigilanteController {
     public VigilanteResponse actualizar(@PathVariable Long id, @Valid @RequestBody VigilanteUpdateRequest req) {
         return service.actualizar(id, req);
     }
+    @GetMapping("/disponibles")
+    public List<VigilanteResponse> disponibles() {
+        return service.listarDisponibles();
+    }
+    @GetMapping("/disponibles/count")
+    public long disponiblesCount() {
+        return service.countDisponibles();
+    }
+
+
     @GetMapping("/me")
     public VigilanteResponse me(org.springframework.security.core.Authentication auth) {
         return service.obtenerMiPerfil(auth.getName()); // username

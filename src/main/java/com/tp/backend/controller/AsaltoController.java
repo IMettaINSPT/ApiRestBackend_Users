@@ -4,7 +4,9 @@ import com.tp.backend.dto.asalto.*;
 import com.tp.backend.service.AsaltoService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -13,6 +15,7 @@ import java.util.List;
 public class AsaltoController {
 
     private final AsaltoService service;
+    private static final Logger log = LoggerFactory.getLogger(AsaltoController.class);
 
     public AsaltoController(AsaltoService service) {
         this.service = service;
@@ -25,6 +28,8 @@ public class AsaltoController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta
     ) {
+        log.info("Listando asaltos fecha{}, desde{}, hasta{}", fecha, desde, hasta);
+
         return service.listarConFiltros(sucursalId, fecha, desde, hasta);
     }
 
