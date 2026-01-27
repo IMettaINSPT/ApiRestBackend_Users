@@ -8,11 +8,12 @@ public class LoginResponse {
     public Instant expiresAt;
     public String username;
     public String rol;
+    public Long rolId;
 
-    public LoginResponse(String accessToken, Instant expiresAt, String username, String rol) {
+    public LoginResponse(String accessToken, Instant expiresAt, String username, String rol, Long rolId) {
         this.accessToken = accessToken;
         this.expiresAt = expiresAt;
         this.username = username;
         this.rol = rol;
-    }
+        this.rolId = rolId;    }
 }

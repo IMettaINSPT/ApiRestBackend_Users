@@ -1,5 +1,6 @@
 package com.tp.backend.model;
 
+import com.tp.backend.config.RolEnum;
 import jakarta.persistence.*;
 
 @Entity
@@ -14,5 +15,5 @@ public class UsuarioVigilante extends Usuario {
     public Vigilante getPerfil() { return perfil; }
     public void setPerfil(Vigilante perfil) { this.perfil = perfil; }
 
-    @Override public String getRol() { return "VIGILANTE"; }
+    @Override public RolEnum getRol() { return RolEnum.VIGILANTE; }
 }

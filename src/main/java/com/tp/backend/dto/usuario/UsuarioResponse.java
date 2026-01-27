@@ -1,13 +1,15 @@
 package com.tp.backend.dto.usuario;
 
+import com.tp.backend.config.RolEnum;
+
 public class UsuarioResponse {
 
     private Long id;
     private String username;
-    private String rol;      // ADMIN | INVESTIGADOR | VIGILANTE
+    private RolEnum rol;      // ADMIN | INVESTIGADOR | VIGILANTE
     private boolean enabled;
 
-    public UsuarioResponse(Long id, String username, String rol, boolean enabled) {
+    public UsuarioResponse(Long id, String username, RolEnum rol, boolean enabled) {
         this.id = id;
         this.username = username;
         this.rol = rol;
@@ -24,7 +26,7 @@ public class UsuarioResponse {
         return username;
     }
 
-    public String getRol() {
+    public RolEnum getRol() {
         return rol;
     }
 

@@ -35,7 +35,8 @@ public class AuthController {
                 .getAuthority()
                 .replace("ROLE_", "");
 
-        return new MeResponse(username, rol);
-    }
+        var jwt = (org.springframework.security.oauth2.jwt.Jwt) auth.getPrincipal();
+        Long rolId = jwt.getClaim("roleId");
+        return new MeResponse(username, rol, rolId);    }
 
 }

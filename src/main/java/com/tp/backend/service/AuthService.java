@@ -1,5 +1,6 @@
 package com.tp.backend.service;
 
+import com.tp.backend.config.RolEnum;
 import com.tp.backend.dto.login.LoginRequest;
 import com.tp.backend.dto.login.LoginResponse;
 import com.tp.backend.exception.BadRequestException;
@@ -33,7 +34,7 @@ public class AuthService {
             throw new BadRequestException("Credenciales inválidas");
         }
 
-        String roleName = u.getRol();
+        RolEnum role = u.getRol();
 
         Instant now = Instant.now();
         Instant exp = now.plusSeconds(60 * 60); // 1 hora
@@ -43,11 +44,12 @@ public class AuthService {
                 .issuedAt(now)
                 .expiresAt(exp)
                 .subject(u.getUsername())
-                .claim("role", roleName)
+                .claim("role", role.name())     // sigue siendo ADMIN/INVESTIGADOR/VIGILANTE
+                .claim("roleId", role.getId())  // <- nuevo (opcional, pero es lo que pedís)
                 .build();
 
         String token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 
-        return new LoginResponse(token, exp, u.getUsername(), roleName);
+        return new LoginResponse(token, exp, u.getUsername(), role.name(), role.getId());
     }
 }

@@ -1,5 +1,6 @@
 package com.tp.backend.model;
 
+import com.tp.backend.config.RolEnum;
 import jakarta.persistence.*;
 
 @Entity
@@ -22,7 +23,7 @@ public abstract class Usuario {
     private boolean enabled = true;
 
     // Cada subclase define su rol lógico
-    public abstract String getRol(); // "ADMIN" | "INVESTIGADOR" | "VIGILANTE"
+    public abstract RolEnum getRol(); // "ADMIN" | "INVESTIGADOR" | "VIGILANTE"
 
     public Long getId() { return id; }
     public String getUsername() { return username; }
