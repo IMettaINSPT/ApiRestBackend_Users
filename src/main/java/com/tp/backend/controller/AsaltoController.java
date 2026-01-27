@@ -6,7 +6,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -28,28 +27,34 @@ public class AsaltoController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta
     ) {
-        log.info("Listando asaltos fecha{}, desde{}, hasta{}", fecha, desde, hasta);
+        log.info("Get /api/asaltos/listar fecha{}, desde{}, hasta{}", fecha, desde, hasta);
 
         return service.listarConFiltros(sucursalId, fecha, desde, hasta);
     }
 
     @GetMapping("/{id}")
     public AsaltoResponse porId(@PathVariable Long id) {
+        log.info("Get /api/asaltos/porId id{}",id);
         return service.buscarPorId(id);
     }
 
     @PostMapping
     public AsaltoResponse crear(@RequestBody AsaltoRequest req) {
+        log.info("Post /api/asaltos/crear");
+
         return service.crear(req);
     }
 
     @PutMapping("/{id}")
     public AsaltoResponse actualizar(@PathVariable Long id, @RequestBody AsaltoRequest req) {
+        log.info("Put /api/asaltos/actualizar id{}",id);
+
         return service.actualizar(id, req);
     }
 
     @DeleteMapping("/{id}")
     public void eliminar(@PathVariable Long id) {
+        log.info("Delete /api/asaltos/eliminar id{}",id);
         service.eliminar(id);
     }
 }

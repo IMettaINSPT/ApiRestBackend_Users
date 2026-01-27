@@ -43,7 +43,7 @@ public class SucursalService {
         }
 
         Banco banco = bancoRepo.findById(req.getBancoId())
-                .orElseThrow(() -> new BadRequestException("Banco no encontrado: " + req.getBancoId()));
+                .orElseThrow(() -> new NotFoundException("Banco no encontrado: " + req.getBancoId()));
 
         Sucursal s = new Sucursal();
         s.setCodigo(req.getCodigo());
@@ -58,14 +58,14 @@ public class SucursalService {
     @Transactional
     public SucursalResponse actualizar(Long id, SucursalUpdateRequest req) {
         Sucursal s = sucursalRepo.findById(id)
-                .orElseThrow(() -> new BadRequestException("Sucursal no encontrada: " + id));
+                .orElseThrow(() -> new NotFoundException("Sucursal no encontrada: " + id));
 
         if (!s.getCodigo().equals(req.getCodigo()) && sucursalRepo.existsByCodigo(req.getCodigo())) {
             throw new BadRequestException("Ya existe una sucursal con código: " + req.getCodigo());
         }
 
         Banco banco = bancoRepo.findById(req.getBancoId())
-                .orElseThrow(() -> new BadRequestException("Banco no encontrado: " + req.getBancoId()));
+                .orElseThrow(() -> new NotFoundException("Banco no encontrado: " + req.getBancoId()));
 
         s.setCodigo(req.getCodigo());
         s.setDomicilio(req.getDomicilio());
@@ -78,7 +78,7 @@ public class SucursalService {
     @Transactional
     public void eliminar(Long id) {
         if (!sucursalRepo.existsById(id)) {
-            throw new BadRequestException("Sucursal no encontrada: " + id);
+            throw new NotFoundException("Sucursal no encontrada: " + id);
         }
         sucursalRepo.deleteById(id);
     }

@@ -1,6 +1,8 @@
 package com.tp.backend.service;
 
 import com.tp.backend.dto.asalto.*;
+import com.tp.backend.exception.BadRequestException;
+import com.tp.backend.exception.NotFoundException;
 import com.tp.backend.model.Asalto;
 import com.tp.backend.model.PersonaDetenida;
 import com.tp.backend.model.Sucursal;
@@ -45,7 +47,7 @@ public class AsaltoService {
         } else if (sucursalId != null) {
             asaltos = asaltoRepository.findBySucursal_Id(sucursalId);
         } else {
-            throw new IllegalArgumentException("Para filtrar por fecha/rango se requiere sucursalId.");
+            throw new BadRequestException("Para filtrar por fecha/rango se requiere sucursalId.");
         }
 
         return asaltos.stream().map(this::toResponse).toList();
@@ -63,7 +65,7 @@ public class AsaltoService {
     @Transactional(readOnly = true)
     public AsaltoResponse buscarPorId(Long id) {
         Asalto a = asaltoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Asalto no encontrado: " + id));
+                .orElseThrow(() -> new NotFoundException("Asalto no encontrado: " + id));
         return toResponse(a);
     }
 
@@ -72,10 +74,10 @@ public class AsaltoService {
         validarRequest(req);
 
         Sucursal sucursal = sucursalRepository.findById(req.getSucursalId())
-                .orElseThrow(() -> new RuntimeException("Sucursal no encontrada: " + req.getSucursalId()));
+                .orElseThrow(() -> new NotFoundException("Sucursal no encontrada: " + req.getSucursalId()));
 
         PersonaDetenida persona = personaDetenidaRepository.findById(req.getPersonaDetenidaId())
-                .orElseThrow(() -> new RuntimeException("PersonaDetenida no encontrada: " + req.getPersonaDetenidaId()));
+                .orElseThrow(() -> new NotFoundException("PersonaDetenida no encontrada: " + req.getPersonaDetenidaId()));
 
         Asalto a = new Asalto();
         a.setFechaAsalto(req.getFechaAsalto());
@@ -90,13 +92,13 @@ public class AsaltoService {
         validarRequest(req);
 
         Asalto a = asaltoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Asalto no encontrado: " + id));
+                .orElseThrow(() -> new NotFoundException("Asalto no encontrado: " + id));
 
         Sucursal sucursal = sucursalRepository.findById(req.getSucursalId())
-                .orElseThrow(() -> new RuntimeException("Sucursal no encontrada: " + req.getSucursalId()));
+                .orElseThrow(() -> new NotFoundException("Sucursal no encontrada: " + req.getSucursalId()));
 
         PersonaDetenida persona = personaDetenidaRepository.findById(req.getPersonaDetenidaId())
-                .orElseThrow(() -> new RuntimeException("PersonaDetenida no encontrada: " + req.getPersonaDetenidaId()));
+                .orElseThrow(() -> new NotFoundException("PersonaDetenida no encontrada: " + req.getPersonaDetenidaId()));
 
         a.setFechaAsalto(req.getFechaAsalto());
         a.setSucursal(sucursal);
@@ -108,7 +110,7 @@ public class AsaltoService {
     @Transactional
     public void eliminar(Long id) {
         if (!asaltoRepository.existsById(id)) {
-            throw new RuntimeException("Asalto no encontrado: " + id);
+            throw new NotFoundException("Asalto no encontrado: " + id);
         }
         asaltoRepository.deleteById(id);
     }
@@ -116,21 +118,21 @@ public class AsaltoService {
     // ---------- helpers ----------
     private void validarFiltros(LocalDate fecha, LocalDate desde, LocalDate hasta) {
         if (fecha != null && (desde != null || hasta != null)) {
-            throw new IllegalArgumentException("No se puede usar 'fecha' junto con 'desde/hasta'.");
+            throw new BadRequestException("No se puede usar 'fecha' junto con 'desde/hasta'.");
         }
         if ((desde == null) != (hasta == null)) {
-            throw new IllegalArgumentException("Si usás rango, enviá 'desde' y 'hasta'.");
+            throw new BadRequestException("Si usás rango, enviá 'desde' y 'hasta'.");
         }
-        if (desde != null && hasta != null && hasta.isBefore(desde)) {
-            throw new IllegalArgumentException("'hasta' no puede ser anterior a 'desde'.");
+        if (desde != null && hasta.isBefore(desde)) {
+            throw new BadRequestException("'hasta' no puede ser anterior a 'desde'.");
         }
     }
 
     private void validarRequest(AsaltoRequest req) {
-        if (req == null) throw new IllegalArgumentException("Body requerido.");
-        if (req.getFechaAsalto() == null) throw new IllegalArgumentException("fechaAsalto es obligatoria.");
-        if (req.getSucursalId() == null) throw new IllegalArgumentException("sucursalId es obligatorio.");
-        if (req.getPersonaDetenidaId() == null) throw new IllegalArgumentException("personaDetenidaId es obligatorio.");
+        if (req == null) throw new BadRequestException("Body requerido.");
+        if (req.getFechaAsalto() == null) throw new BadRequestException("fechaAsalto es obligatoria.");
+        if (req.getSucursalId() == null) throw new BadRequestException("sucursalId es obligatorio.");
+        if (req.getPersonaDetenidaId() == null) throw new BadRequestException("personaDetenidaId es obligatorio.");
     }
 
     private AsaltoResponse toResponse(Asalto a) {

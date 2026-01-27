@@ -6,12 +6,15 @@ import com.tp.backend.dto.login.LoginResponse;
 import com.tp.backend.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
     private final AuthService service;
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     public AuthController(AuthService service) {
         this.service = service;
@@ -19,6 +22,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public LoginResponse login(@Valid @RequestBody LoginRequest req) {
+        log.info("Post /api/auth/login userName{}",req.username);
         return service.login(req);
     }
 

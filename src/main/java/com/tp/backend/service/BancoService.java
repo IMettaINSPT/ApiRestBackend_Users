@@ -28,7 +28,7 @@ public class BancoService {
     @Transactional(readOnly = true)
     public BancoResponse obtenerPorId(Long id) {
         Banco b = repo.findById(id)
-                .orElseThrow(() -> new BadRequestException("Banco no encontrado: " + id));
+                .orElseThrow(() -> new NotFoundException("Banco no encontrado: " + id));
         return new BancoResponse(b.getId(), b.getCodigo(), b.getDomicilioCentral());
     }
 
@@ -49,7 +49,7 @@ public class BancoService {
     @Transactional
     public BancoResponse actualizar(Long id, BancoUpdateRequest req) {
         Banco b = repo.findById(id)
-                .orElseThrow(() -> new BadRequestException("Banco no encontrado: " + id));
+                .orElseThrow(() -> new NotFoundException("Banco no encontrado: " + id));
 
         // si cambia código, validar duplicado
         if (!b.getCodigo().equals(req.getCodigo()) && repo.existsByCodigo(req.getCodigo())) {
@@ -65,7 +65,7 @@ public class BancoService {
     @Transactional
     public void eliminar(Long id) {
         if (!repo.existsById(id)) {
-            throw new BadRequestException("Banco no encontrado: " + id);
+            throw new NotFoundException("Banco no encontrado: " + id);
         }
         repo.deleteById(id);
     }

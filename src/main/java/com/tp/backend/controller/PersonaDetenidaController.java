@@ -5,6 +5,8 @@ import com.tp.backend.dto.asalto.*;
 import com.tp.backend.service.AsaltoService;
 import com.tp.backend.service.PersonaDetenidaService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +18,7 @@ public class PersonaDetenidaController {
 
     private final PersonaDetenidaService service;
     private final AsaltoService asaltoService;
+    private static final Logger log = LoggerFactory.getLogger(PersonaDetenidaController.class);
 
     public PersonaDetenidaController(PersonaDetenidaService service, AsaltoService asaltoService) {
         this.service = service;
@@ -23,26 +26,36 @@ public class PersonaDetenidaController {
     }
 
     @GetMapping
-    public List<PersonaDetenidaResponse> listar() { return service.listar(); }
+    public List<PersonaDetenidaResponse> listar() {
+        log.info("Get /api/personasDetenidas/listar");
+        return service.listar(); }
 
     @GetMapping("/{id}")
-    public PersonaDetenidaResponse obtener(@PathVariable Long id) { return service.obtener(id); }
+    public PersonaDetenidaResponse obtener(@PathVariable Long id) {
+        log.info("Get /api/personasDetenidas/obtener id{}",id);
+        return service.obtener(id); }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PersonaDetenidaResponse crear(@Valid @RequestBody PersonaDetenidaRequest req) { return service.crear(req); }
+    public PersonaDetenidaResponse crear(@Valid @RequestBody PersonaDetenidaRequest req) {
+        log.info("Post /api/personasDetenidas/crear");
+        return service.crear(req); }
 
     @PutMapping("/{id}")
     public PersonaDetenidaResponse actualizar(@PathVariable Long id, @Valid @RequestBody PersonaDetenidaUpdateRequest req) {
+        log.info("Put /api/personasDetenidas/actualizar id{}",id);
         return service.actualizar(id, req);
     }
     @GetMapping("/{id}/asaltos")
     public List<AsaltoResponse> asaltos(@PathVariable Long id) {
+        log.info("Get /api/personasDetenidas/listar id{}",id);
         return asaltoService.listarPorPersonaDetenida(id);
     }
 
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void eliminar(@PathVariable Long id) { service.eliminar(id); }
+    public void eliminar(@PathVariable Long id) {
+        log.info("Delete /api/personasDetenidas/eliminar id{}",id);
+        service.eliminar(id); }
 }
