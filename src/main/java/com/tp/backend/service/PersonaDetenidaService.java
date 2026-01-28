@@ -41,6 +41,7 @@ public class PersonaDetenidaService {
         }
         PersonaDetenida p = new PersonaDetenida();
         p.setNombre(req.getNombre());
+        p.setCodigo(req.getcodigo());
         p.setBanda(resolveBandaOrNull(req.getBandaId()));
         return toResponse(repo.save(p));
     }
@@ -68,7 +69,6 @@ public class PersonaDetenidaService {
 
     private PersonaDetenidaResponse toResponse(PersonaDetenida p) {
         Long bandaId = p.getBanda() != null ? p.getBanda().getId() : null;
-        String bandaNombre = p.getBanda() != null ? p.getBanda().getNombre() : null;
-        return new PersonaDetenidaResponse(p.getId(), p.getNombre(), bandaId, bandaNombre, p.getCodigo());
+        return new PersonaDetenidaResponse(p.getId(), p.getNombre(), bandaId, p.getCodigo());
     }
 }

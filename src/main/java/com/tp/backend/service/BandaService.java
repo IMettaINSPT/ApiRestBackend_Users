@@ -21,32 +21,37 @@ public class BandaService {
 
     @Transactional(readOnly = true)
     public List<BandaResponse> listar() {
-        return repo.findAll().stream().map(b -> new BandaResponse(b.getId(), b.getNombre())).toList();
+        return repo.findAll().stream().map(b -> new BandaResponse(b.getId(), b.getNumeroBanda(), b.getNumeroMiembros())).toList();
     }
 
     @Transactional(readOnly = true)
     public BandaResponse obtener(Long id) {
         Banda b = repo.findById(id).orElseThrow(() -> new NotFoundException("Banda no encontrada: " + id));
-        return new BandaResponse(b.getId(), b.getNombre());
+        return new BandaResponse(b.getId(),b.getNumeroBanda(), b.getNumeroMiembros());
     }
 
     @Transactional
     public BandaResponse crear(BandaRequest req) {
-        if (repo.existsByNombre(req.getNombre())) throw new BadRequestException("Ya existe una banda con nombre: " + req.getNombre());
+        if (repo.existsByNumeroBanda(req.getNumeroBanda())) throw new BadRequestException("Ya existe una banda con este numero: " + req.getNumeroBanda());
         Banda b = new Banda();
-        b.setNombre(req.getNombre());
+        b.setNumeroBanda(req.getNumeroBanda());
+        b.setNumeroMiembros(req.getNumeroMiembros());
         b = repo.save(b);
-        return new BandaResponse(b.getId(), b.getNombre());
+        return new BandaResponse(b.getId(), b.getNumeroBanda(), b.getNumeroMiembros());
     }
 
     @Transactional
     public BandaResponse actualizar(Long id, BandaUpdateRequest req) {
         Banda b = repo.findById(id).orElseThrow(() -> new NotFoundException("Banda no encontrada: " + id));
-        if (!b.getNombre().equals(req.getNombre()) && repo.existsByNombre(req.getNombre())) {
-            throw new BadRequestException("Ya existe una banda con nombre: " + req.getNombre());
+        if (
+                repo.existsByNumeroBanda(req.getNumeroBanda()) &&
+                        !b.getNumeroBanda().equals(req.getNumeroBanda())
+        ) {
+            throw new BadRequestException("Ya existe una banda con el nro: " + req.getNumeroBanda());
         }
-        b.setNombre(req.getNombre());
-        return new BandaResponse(b.getId(), b.getNombre());
+        repo.save(b);
+        return new BandaResponse(b.getId(), b.getNumeroBanda(), b.getNumeroMiembros());
+
     }
 
     @Transactional

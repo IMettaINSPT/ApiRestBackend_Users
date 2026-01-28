@@ -10,10 +10,27 @@ public class Banda {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable=false, unique=true, length=60)
-    private String nombre;
+    @Column(nullable=false, unique=true)
+    private Integer numeroBanda;
+
+    @Column(nullable=false, unique=false)
+    private Integer numeroMiembros;
 
     public Long getId() { return id; }
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
+
+    public Integer getNumeroBanda() {
+        return numeroBanda;
+    }
+
+    public void setNumeroBanda(Integer numeroBanda) {
+        this.numeroBanda = numeroBanda;
+    }
+
+    public Integer getNumeroMiembros() {
+        return numeroMiembros;
+    }
+
+    public void setNumeroMiembros(Integer numeroMiembros) {
+        this.numeroMiembros = numeroMiembros;
+    }
 }

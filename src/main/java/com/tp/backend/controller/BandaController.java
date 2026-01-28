@@ -33,7 +33,7 @@ public class BandaController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public BandaResponse crear(@Valid @RequestBody BandaRequest req) {
-        log.info("Post /api/bandas/Crear nombre{}", req.getNombre());
+        log.info("Post /api/bandas/Crear ");
 
         return service.crear(req); }
 
