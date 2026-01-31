@@ -1,5 +1,6 @@
 package com.tp.backend.service;
 
+import com.tp.backend.dto.banda.BandaResponse;
 import com.tp.backend.dto.personaDetenida.*;
 import com.tp.backend.exception.BadRequestException;
 import com.tp.backend.exception.NotFoundException;
@@ -68,7 +69,19 @@ public class PersonaDetenidaService {
     }
 
     private PersonaDetenidaResponse toResponse(PersonaDetenida p) {
-        Long bandaId = p.getBanda() != null ? p.getBanda().getId() : null;
-        return new PersonaDetenidaResponse(p.getId(), p.getNombre(), bandaId, p.getCodigo());
+        BandaResponse bandaDto = null;
+
+        if (p.getBanda() != null) {
+            var b = p.getBanda();
+            bandaDto = new BandaResponse(b.getId(),b.getNumeroBanda(),b.getNumeroMiembros());
+        }
+
+        return new PersonaDetenidaResponse(
+                p.getId(),
+                p.getCodigo(),
+                p.getNombre(),
+                bandaDto
+        );
     }
+
 }
