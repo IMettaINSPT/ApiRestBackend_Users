@@ -143,12 +143,18 @@ public class UsuarioService {
     }
 
     private UsuarioResponse toResponse(Usuario u) {
-        // Tu UsuarioResponse actual: (id, username, rol, enabled)
+    Long vigilanteId = null;
+
+    if(u instanceof  UsuarioVigilante uv && uv.getPerfil() != null ){
+        vigilanteId = uv.getPerfil().getId();
+
+    }
         return new UsuarioResponse(
                 u.getId(),
                 u.getUsername(),
                 u.getRol(),
-                u.isEnabled()
+                u.isEnabled(),
+                vigilanteId
         );
     }
 }

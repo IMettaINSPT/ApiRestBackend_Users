@@ -83,7 +83,7 @@ public class SecurityConfig {
         config.setAllowedOriginPatterns(patterns);
 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        config.setAllowedHeaders(List.of("Authorization","Content-Type","Accept"));
 
         // JWT Bearer → no cookies
         config.setAllowCredentials(false);

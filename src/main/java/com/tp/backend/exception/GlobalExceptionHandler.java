@@ -9,13 +9,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.ZonedDateTime;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
@@ -30,102 +34,176 @@ public class GlobalExceptionHandler {
     @Value("${app.errors.include-trace:false}")
     private boolean includeTrace;
 
-    // 1) Tus excepciones custom (BadRequestException, NotFoundException, etc.)
-    @ExceptionHandler(ApiException.class)
-    public ResponseEntity<ApiError> handleApiException(ApiException ex, HttpServletRequest request) {
-        HttpStatus status = ex.getStatus();
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiError> handleNotReadable(HttpMessageNotReadableException ex, HttpServletRequest request) {
+        log.warn("Invalid JSON {} {} -> 400: {}", request.getMethod(), request.getRequestURI(), ex.getMessage());
 
-        // 404/400 suelen ser WARN (no es “error del server”)
-        if (status.is4xxClientError()) {
-            log.warn("API error {} {} -> {}: {}", request.getMethod(), request.getRequestURI(), status, ex.getMessage());
-        } else {
-            log.error("API error {} {} -> {}: {}", request.getMethod(), request.getRequestURI(), status, ex.getMessage(), ex);
-        }
-
-        return ResponseEntity.status(status).body(
-                new ApiError(
-                        ex.getMessage(),
-                        status,
-                        ZonedDateTime.now(),
-                        includeTrace ? stackTrace(ex) : null
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                buildError(
+                        "JSON inválido o mal formado (revisá formatos de fecha/enum/números).",
+                        HttpStatus.BAD_REQUEST,
+                        ex,
+                        "INVALID_JSON",
+                        Map.of()
                 )
         );
     }
 
-    // 2) Validaciones @Valid (DTOs)
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiError> handleTypeMismatch(MethodArgumentTypeMismatchException ex, HttpServletRequest request) {
+        log.warn("Type mismatch {} {} -> 400: {}", request.getMethod(), request.getRequestURI(), ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                buildError(
+                        "Parámetro inválido: " + ex.getName(),
+                        HttpStatus.BAD_REQUEST,
+                        ex,
+                        "ARGUMENT_TYPE_MISMATCH",
+                        Map.of()
+                )
+        );
+    }
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ApiError> handleMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpServletRequest request) {
+        log.warn("Method not supported {} {} -> 405", request.getMethod(), request.getRequestURI());
+
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(
+                buildError(
+                        "Método no permitido para este endpoint.",
+                        HttpStatus.METHOD_NOT_ALLOWED,
+                        ex,
+                        "METHOD_NOT_ALLOWED",
+                        Map.of()
+                )
+        );
+    }
+
+    // 3) Validaciones @Valid (DTOs) - devuelve fieldErrors (clave para UX en el front)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiError> handleValidation(MethodArgumentNotValidException ex, HttpServletRequest request) {
-        String msg = ex.getBindingResult().getFieldErrors()
+
+        Map<String, String> fieldErrors = ex.getBindingResult()
+                .getFieldErrors()
                 .stream()
-                .map(this::formatFieldError)
+                .collect(Collectors.toMap(
+                        FieldError::getField,
+                        fe -> fe.getDefaultMessage() != null ? fe.getDefaultMessage() : "inválido",
+                        (a, b) -> a // si hay duplicados, nos quedamos con el primero
+                ));
+
+        String msg = fieldErrors.entrySet().stream()
+                .map(e -> e.getKey() + ": " + e.getValue())
                 .collect(Collectors.joining("; "));
 
         log.warn("Validation error {} {} -> 400: {}", request.getMethod(), request.getRequestURI(), msg);
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                new ApiError(
-                        "Validación inválida: " + msg,
+                buildError(
+                        "Validación inválida",
                         HttpStatus.BAD_REQUEST,
-                        ZonedDateTime.now(),
-                        includeTrace ? stackTrace(ex) : null
+                        ex,
+                        "VALIDATION_ERROR",
+                        fieldErrors
                 )
         );
     }
 
-    // 3) Errores de request/params que vos tirás hoy (IllegalArgumentException)
+    // 4) Errores de request/params que vos tirás hoy (IllegalArgumentException)
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiError> handleIllegalArgument(IllegalArgumentException ex, HttpServletRequest request) {
         log.warn("Bad request {} {} -> 400: {}", request.getMethod(), request.getRequestURI(), ex.getMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                new ApiError(
+                buildError(
                         ex.getMessage(),
                         HttpStatus.BAD_REQUEST,
-                        ZonedDateTime.now(),
-                        includeTrace ? stackTrace(ex) : null
+                        ex,
+                        "BAD_REQUEST",
+                        Map.of()
                 )
         );
     }
 
-    // 4) Forbidden (Spring Security)
+    // 5) Forbidden (Spring Security)
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiError> handleAccessDenied(AccessDeniedException ex, HttpServletRequest request) {
         log.warn("Access denied {} {} -> 403", request.getMethod(), request.getRequestURI());
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
-                new ApiError(
+                buildError(
                         "No tenés permisos para realizar esta acción.",
                         HttpStatus.FORBIDDEN,
-                        ZonedDateTime.now(),
-                        includeTrace ? stackTrace(ex) : null
+                        ex,
+                        "FORBIDDEN",
+                        Map.of()
                 )
         );
     }
 
-    // 5) Fallback: errores inesperados (500)
+    // 6) Fallback: errores inesperados (500)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGeneric(Exception ex, HttpServletRequest request) {
-        log.error("Unexpected error {} {} -> 500", request.getMethod(), request.getRequestURI(), ex);
+
+        // ✅ Si por cualquier motivo Spring te manda acá una ApiException,
+        // la resolvemos como corresponde (404/400/etc) y NO como 500.
+        if (ex instanceof ApiException apiEx) {
+            HttpStatus status = apiEx.getStatus();
+
+            log.warn("GENERIC received ApiException {} {} -> {}: {}",
+                    request.getMethod(),
+                    request.getRequestURI(),
+                    status.value(),
+                    apiEx.getMessage()
+            );
+
+            return ResponseEntity.status(status).body(
+                    buildError(
+                            apiEx.getMessage(),
+                            status,
+                            apiEx,
+                            apiEx.getCode() != null ? apiEx.getCode() : status.name(),
+                            Map.of()
+                    )
+            );
+        }
+
+        log.error("Unexpected error {} {} -> 500 | exClass={}",
+                request.getMethod(),
+                request.getRequestURI(),
+                ex.getClass().getName(),
+                ex
+        );
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                new ApiError(
+                buildError(
                         "Error interno del servidor",
                         HttpStatus.INTERNAL_SERVER_ERROR,
-                        ZonedDateTime.now(),
-                        includeTrace ? stackTrace(ex) : null
+                        ex,
+                        "INTERNAL_ERROR",
+                        Map.of()
                 )
         );
     }
 
-    private String formatFieldError(FieldError fe) {
-        String field = fe.getField();
-        String msg = fe.getDefaultMessage();
-        return field + ": " + (msg != null ? msg : "inválido");
-    }
 
     private String stackTrace(Throwable ex) {
         StringWriter sw = new StringWriter();
         ex.printStackTrace(new PrintWriter(sw));
         return sw.toString();
+    }
+
+    private ApiError buildError(String message,
+                                HttpStatus status,
+                                Exception ex,
+                                String code,
+                                Map<String, String> fieldErrors) {
+        return new ApiError(
+                message,
+                status,
+                ZonedDateTime.now(),
+                includeTrace ? stackTrace(ex) : null,
+                code,
+                fieldErrors
+        );
     }
 }

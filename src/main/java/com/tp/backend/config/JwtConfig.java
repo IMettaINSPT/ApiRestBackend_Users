@@ -42,6 +42,10 @@ public class JwtConfig {
     @Bean
     public JwtDecoder jwtDecoder(KeyPair keyPair) {
         RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
-        return NimbusJwtDecoder.withPublicKey(publicKey).build();
+        NimbusJwtDecoder decoder = NimbusJwtDecoder.withPublicKey(publicKey).build();
+
+        decoder.setJwtValidator(JwtValidators.createDefaultWithIssuer("tp-backend"));
+        return decoder;
     }
+
 }
