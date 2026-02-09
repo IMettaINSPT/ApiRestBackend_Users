@@ -56,10 +56,10 @@ public class VigilanteController {
         return service.countDisponibles();
     }
 
-
+// mi perfil
     @GetMapping("/me")
     public VigilanteResponse me(org.springframework.security.core.Authentication auth) {
-        log.info("Delete /api/vigilantes/me");
+        log.info("me /api/vigilantes/me");
         return service.obtenerMiPerfil(auth.getName()); // username
     }
 

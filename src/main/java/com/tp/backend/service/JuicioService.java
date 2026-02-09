@@ -44,6 +44,7 @@ public class JuicioService {
         Juez juez = juezRepo.findById(req.getJuezId())
                 .orElseThrow(() -> new NotFoundException("Juez no encontrado: " + req.getJuezId()));
 
+
         PersonaDetenida persona = personaRepo.findById(req.getPersonaDetenidaId())
                 .orElseThrow(() -> new NotFoundException(
                         "Persona detenida no encontrada: " + req.getPersonaDetenidaId()));
