@@ -6,7 +6,10 @@ public class AsaltoResponse {
     private Long id;
     private LocalDate fechaAsalto;
     private Long sucursalId;
+    private String sucursalCodigo;
     private Long personaDetenidaId;
+    private String personacodigo;
+
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -19,4 +22,20 @@ public class AsaltoResponse {
 
     public Long getPersonaDetenidaId() { return personaDetenidaId; }
     public void setPersonaDetenidaId(Long personaDetenidaId) { this.personaDetenidaId = personaDetenidaId; }
+
+    public String getSucursalCodigo() {
+        return sucursalCodigo;
+    }
+
+    public void setSucursalCodigo(String sucursalCodigo) {
+        this.sucursalCodigo = sucursalCodigo;
+    }
+
+    public String getPersonacodigo() {
+        return personacodigo;
+    }
+
+    public void setPersonacodigo(String personacodigo) {
+        this.personacodigo = personacodigo;
+    }
 }

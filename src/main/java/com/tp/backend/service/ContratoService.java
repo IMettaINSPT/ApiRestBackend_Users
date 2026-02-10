@@ -8,6 +8,7 @@ import com.tp.backend.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -59,6 +60,7 @@ public class ContratoService {
         Vigilante v = vigilanteRepo.findById(req.getVigilanteId())
                 .orElseThrow(() -> new NotFoundException(
                         "Vigilante no encontrado: " + req.getVigilanteId()));
+        validarRango(req.getFechaContrato(), req.getFechaFin());
 
         Contrato c = new Contrato();
         c.setFechaContrato(req.getFechaContrato());
@@ -81,6 +83,7 @@ public class ContratoService {
         Vigilante v = vigilanteRepo.findById(req.getVigilanteId())
                 .orElseThrow(() -> new NotFoundException("Vigilante no encontrado: " + req.getVigilanteId()));
 
+        validarRango(req.getFechaContrato(), req.getFechaFin());
         c.setFechaContrato(req.getFechaContrato());
         c.setConArma(req.isConArma());
         c.setSucursal(s);
@@ -94,6 +97,7 @@ public class ContratoService {
         if (!contratoRepo.existsById(id)) {
             throw new NotFoundException("Contrato no encontrado: " + id);
         }
+
         contratoRepo.deleteById(id);
     }
 
@@ -105,7 +109,8 @@ public class ContratoService {
                 c.getSucursal().getId(),
                 c.getSucursal().getCodigo(),
                 c.getVigilante().getId(),
-                c.getVigilante().getCodigo()
+                c.getVigilante().getCodigo(),
+                c.getFechaFin()
         );
     }
     @Transactional(readOnly = true)
@@ -132,4 +137,15 @@ public class ContratoService {
                 .toList();
     }
 
+    private void validarRango(LocalDate inicio, LocalDate fin) {
+        if (fin != null && fin.isBefore(inicio)) {
+            throw new BadRequestException("La fecha fin no puede ser anterior a la fecha inicio.");
+        }
+    }
+
+    /*private void validarSolapamiento(Long vigilanteId, LocalDate inicio, LocalDate fin, Long excludeId) {
+        if (contratoRepo.existsSolapadoVigilante(vigilanteId, inicio, fin, excludeId)) {
+            throw new BadRequestException("El vigilante ya tiene un contrato activo/solapado en ese período.");
+        }
+    }*/
 }

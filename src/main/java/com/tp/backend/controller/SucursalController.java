@@ -2,8 +2,7 @@ package com.tp.backend.controller;
 
 import com.tp.backend.dto.asalto.AsaltoResponse;
 import com.tp.backend.dto.sucursal.*;
-import com.tp.backend.service.AsaltoService;
-import com.tp.backend.service.SucursalService;
+import com.tp.backend.service.*;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,9 +19,10 @@ public class SucursalController {
 
     private final SucursalService service;
     private final AsaltoService asaltoService;
+
     private static final Logger log = LoggerFactory.getLogger(SucursalController.class);
 
-    public SucursalController(SucursalService service, AsaltoService asaltoService)
+    public SucursalController(SucursalService service, AsaltoService asaltoService, BancoService bancoService)
     {
         this.service = service;
         this.asaltoService = asaltoService;
