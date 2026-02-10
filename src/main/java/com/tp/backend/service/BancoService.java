@@ -4,6 +4,7 @@ import com.tp.backend.dto.banco.*;
 import com.tp.backend.model.Banco;
 import com.tp.backend.exception.*;
 import com.tp.backend.repository.BancoRepository;
+import com.tp.backend.repository.SucursalRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,9 +14,11 @@ import java.util.List;
 public class BancoService {
 
     private final BancoRepository repo;
+    private final SucursalRepository sucursalRepository;
 
-    public BancoService(BancoRepository repo) {
+    public BancoService(BancoRepository repo, SucursalRepository sucursalRepository) {
         this.repo = repo;
+        this.sucursalRepository = sucursalRepository;
     }
 
     @Transactional(readOnly = true)
@@ -67,6 +70,12 @@ public class BancoService {
         if (!repo.existsById(id)) {
             throw new NotFoundException("Banco no encontrado: " + id);
         }
+
+        if (repo.existsById(id)) {
+            long cant = sucursalRepository.countByBanco_id(id);
+            throw new BadRequestException("No es posible borrar el banco. Tiene " + cant + " sucursal(es) asociada(s).");
+        }
+
         repo.deleteById(id);
     }
 }

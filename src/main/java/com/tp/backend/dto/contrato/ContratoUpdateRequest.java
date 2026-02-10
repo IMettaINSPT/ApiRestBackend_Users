@@ -10,6 +10,7 @@ public class ContratoUpdateRequest {
     private LocalDate fechaContrato;
 
     private boolean conArma;
+    private LocalDate fechaFin; // opcional
 
     @NotNull
     private Long sucursalId;
@@ -28,4 +29,12 @@ public class ContratoUpdateRequest {
 
     public Long getVigilanteId() { return vigilanteId; }
     public void setVigilanteId(Long vigilanteId) { this.vigilanteId = vigilanteId; }
+
+    public LocalDate getFechaFin() {
+        return fechaFin;
+    }
+
+    public void setFechaFin(LocalDate fechaFin) {
+        this.fechaFin = fechaFin;
+    }
 }

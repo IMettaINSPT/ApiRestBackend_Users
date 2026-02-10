@@ -141,6 +141,8 @@ public class AsaltoService {
         r.setFechaAsalto(a.getFechaAsalto());
         r.setSucursalId(a.getSucursal().getId());
         r.setPersonaDetenidaId(a.getPersonaDetenida().getId());
+        r.setPersonacodigo(a.getPersonaDetenida().getCodigo());
+        r.setPersonacodigo(a.getSucursal().getCodigo());
         return r;
     }
 }

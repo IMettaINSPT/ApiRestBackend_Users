@@ -5,10 +5,12 @@ import com.tp.backend.model.Banco;
 import com.tp.backend.exception.*;
 import com.tp.backend.model.Sucursal;
 import com.tp.backend.repository.BancoRepository;
+import com.tp.backend.repository.ContratoRepository;
 import com.tp.backend.repository.SucursalRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -16,10 +18,12 @@ public class SucursalService {
 
     private final SucursalRepository sucursalRepo;
     private final BancoRepository bancoRepo;
+    private final ContratoRepository contratoRepo;
 
-    public SucursalService(SucursalRepository sucursalRepo, BancoRepository bancoRepo) {
+    public SucursalService(SucursalRepository sucursalRepo, BancoRepository bancoRepo, ContratoRepository contratoRepo) {
         this.sucursalRepo = sucursalRepo;
         this.bancoRepo = bancoRepo;
+        this.contratoRepo = contratoRepo;
     }
 
     @Transactional(readOnly = true)
@@ -77,10 +81,18 @@ public class SucursalService {
 
     @Transactional
     public void eliminar(Long id) {
-        if (!sucursalRepo.existsById(id)) {
-            throw new NotFoundException("Sucursal no encontrada: " + id);
+        Sucursal s = sucursalRepo.findById(id)
+                .orElseThrow(() -> new NotFoundException("Sucursal no encontrada: " + id));
+
+        boolean tieneActivos = contratoRepo.existsActivoBySucursal(id, LocalDate.now());
+        if (tieneActivos) {
+            long cant = contratoRepo.countActivosBySucursal(id, LocalDate.now());
+            throw new BadRequestException(
+                    "No se puede eliminar la sucursal. Tiene " + cant + " contrato(s) activo(s)."
+            );
         }
-        sucursalRepo.deleteById(id);
+
+        sucursalRepo.delete(s);
     }
 
     private SucursalResponse toResponse(Sucursal s) {

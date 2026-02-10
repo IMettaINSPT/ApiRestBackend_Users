@@ -13,10 +13,11 @@ public class ContratoResponse {
 
     private Long vigilanteId;
     private String vigilanteCodigo;
+    private LocalDate fechaFin; // opcional
 
     public ContratoResponse(Long id, LocalDate fechaContrato, boolean conArma,
                             Long sucursalId, String sucursalCodigo,
-                            Long vigilanteId, String vigilanteCodigo) {
+                            Long vigilanteId, String vigilanteCodigo, LocalDate fechafin) {
         this.id = id;
         this.fechaContrato = fechaContrato;
         this.conArma = conArma;
@@ -24,6 +25,7 @@ public class ContratoResponse {
         this.sucursalCodigo = sucursalCodigo;
         this.vigilanteId = vigilanteId;
         this.vigilanteCodigo = vigilanteCodigo;
+        this.fechaFin= fechafin;
     }
 
     public Long getId() { return id; }
@@ -33,4 +35,12 @@ public class ContratoResponse {
     public String getSucursalCodigo() { return sucursalCodigo; }
     public Long getVigilanteId() { return vigilanteId; }
     public String getVigilanteCodigo() { return vigilanteCodigo; }
+
+    public LocalDate getFechaFin() {
+        return fechaFin;
+    }
+
+    public void setFechaFin(LocalDate fechaFin) {
+        this.fechaFin = fechaFin;
+    }
 }

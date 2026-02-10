@@ -15,6 +15,9 @@ public class Contrato {
     @Column(nullable=false)
     private LocalDate fechaContrato;
 
+    @Column(name = "fecha_fin")
+    private LocalDate fechaFin;
+
     @Column(nullable=false)
     private boolean conArma;
 
@@ -39,4 +42,12 @@ public class Contrato {
 
     public Vigilante getVigilante() { return vigilante; }
     public void setVigilante(Vigilante vigilante) { this.vigilante = vigilante; }
+
+    public LocalDate getFechaFin() {
+        return fechaFin;
+    }
+
+    public void setFechaFin(LocalDate fechaFin) {
+        this.fechaFin = fechaFin;
+    }
 }
