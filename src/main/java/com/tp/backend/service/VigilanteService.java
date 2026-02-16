@@ -6,8 +6,11 @@ import com.tp.backend.dto.contrato.ContratoResponse;
 import com.tp.backend.dto.vigilante.*;
 import com.tp.backend.exception.BadRequestException;
 import com.tp.backend.exception.NotFoundException;
+import com.tp.backend.model.UsuarioVigilante; // Agregado
 import com.tp.backend.model.Vigilante;
+import com.tp.backend.repository.UsuarioRepository; // Agregado
 import com.tp.backend.repository.VigilanteRepository;
+import org.springframework.security.core.context.SecurityContextHolder; // Agregado
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,9 +21,11 @@ import java.util.stream.Collectors;
 public class VigilanteService {
 
     private final VigilanteRepository repo;
+    private final UsuarioRepository usuarioRepository; // Agregado
 
-    public VigilanteService(VigilanteRepository repo) {
+    public VigilanteService(VigilanteRepository repo, UsuarioRepository usuarioRepository) {
         this.repo = repo;
+        this.usuarioRepository = usuarioRepository; // Agregado
     }
 
     @Transactional(readOnly = true)
@@ -84,10 +89,17 @@ public class VigilanteService {
     }
 
     @Transactional(readOnly = true)
-    public VigilanteResponse obtenerMiPerfil(String codigo) {
-        Vigilante v = repo.findByCodigo(codigo)
-                .orElseThrow(() -> new NotFoundException("Perfil no encontrado: " + codigo));
-        return toResponse(v);
+    public VigilanteResponse obtenerMiPerfil(String username) {
+        // 1. Buscamos el usuario por el nombre de usuario que viene del token
+        var usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("Usuario no encontrado: " + username));
+
+        // 2. Verificamos que sea un UsuarioVigilante y que tenga el perfil asociado
+        if (usuario instanceof UsuarioVigilante uv && uv.getPerfil() != null) {
+            return toResponse(uv.getPerfil());
+        }
+
+        throw new NotFoundException("Perfil de vigilante no encontrado para el usuario: " + username);
     }
 
     // --------------------------------------------

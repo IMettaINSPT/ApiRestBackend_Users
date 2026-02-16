@@ -54,4 +54,11 @@ public class UsuarioController {
         service.eliminar(id);
     }
 
+    @GetMapping("/me")
+    public UsuarioResponse obtenerPerfilPropio() {
+        log.info("Get /api/usuarios/me - Recuperando perfil del token");
+        // El service debe obtener el usuario desde el SecurityContext (el token logueado)
+        return service.obtenerPerfilAutenticado();
+    }
+
 }

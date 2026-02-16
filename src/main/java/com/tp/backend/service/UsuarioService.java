@@ -9,6 +9,7 @@ import com.tp.backend.model.*;
 import com.tp.backend.repository.UsuarioRepository;
 import com.tp.backend.repository.UsuarioVigilanteRepository;
 import com.tp.backend.repository.VigilanteRepository;
+import org.springframework.security.core.context.SecurityContextHolder; // NUEVO IMPORT
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -143,12 +144,12 @@ public class UsuarioService {
     }
 
     private UsuarioResponse toResponse(Usuario u) {
-    Long vigilanteId = null;
+        Long vigilanteId = null;
 
-    if(u instanceof  UsuarioVigilante uv && uv.getPerfil() != null ){
-        vigilanteId = uv.getPerfil().getId();
+        if(u instanceof UsuarioVigilante uv && uv.getPerfil() != null ){
+            vigilanteId = uv.getPerfil().getId();
+        }
 
-    }
         return new UsuarioResponse(
                 u.getId(),
                 u.getUsername(),
@@ -156,5 +157,19 @@ public class UsuarioService {
                 u.isEnabled(),
                 vigilanteId
         );
+    }
+
+    // ==========================================
+    // NUEVO MÉTODO PARA EL PERFIL (BACK-END)
+    // ==========================================
+    @Transactional(readOnly = true)
+    public UsuarioResponse obtenerPerfilAutenticado() {
+        // Obtenemos el username del usuario logueado desde el SecurityContext
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Usuario u = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("Usuario no encontrado: " + username));
+
+        return toResponse(u);
     }
 }
