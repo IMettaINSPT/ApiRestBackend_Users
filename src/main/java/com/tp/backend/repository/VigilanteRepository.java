@@ -5,9 +5,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional; // Agregado para soportar findByCodigo
 
 public interface VigilanteRepository extends JpaRepository<Vigilante, Long> {
     boolean existsByCodigo(String codigo);
+
+    // --- AGREGADO PARA EL SERVICE ---
+    Optional<Vigilante> findByCodigo(String codigo);
+    // --------------------------------
 
     // Vigilantes que NO están asociados a ningún UsuarioVigilante
     //pasarlo a una funcion luego, no deberia haber qrys hardoceadas
