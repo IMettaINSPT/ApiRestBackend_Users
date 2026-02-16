@@ -116,7 +116,8 @@ public class ContratoService {
                 c.getSucursal().getCodigo(),
                 c.getVigilante().getId(),
                 c.getVigilante().getCodigo(),
-                c.getFechaFin()
+                c.getFechaFin(),
+                c.getSucursal().getDomicilio()
         );
     }
 
