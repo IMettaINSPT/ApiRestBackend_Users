@@ -38,7 +38,7 @@ public class BancoController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public BancoResponse crear(@Valid @RequestBody BancoRequest req) {
-        log.info("Post /api/bancos/crear codigo{} , domicilio{}",req.getCodigo(), req.getDomicilioCentral());
+        log.info("Post /api/bancos/crear codigo{} , domicilioCentral{}",req.getCodigo(), req.getDomicilioCentral());
 
         return service.crear(req);
     }

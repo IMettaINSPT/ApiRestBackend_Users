@@ -30,6 +30,7 @@ public class BancoResponse {
     public String getDomicilioCentral() { return domicilioCentral; }
     public void setDomicilioCentral(String domicilioCentral) { this.domicilioCentral = domicilioCentral; }
 
+
     // Métodos fundamentales para que el Service no falle
     public List<SucursalResponse> getSucursales() { return sucursales; }
     public void setSucursales(List<SucursalResponse> sucursales) { this.sucursales = sucursales; }
