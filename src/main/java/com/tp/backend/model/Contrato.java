@@ -18,6 +18,8 @@ public class Contrato {
     @Column(nullable=false)
     private LocalDate fechaContrato;
 
+    private LocalDate fechaFin;
+
     @Column(nullable=false)
     private boolean conArma;
 
@@ -43,6 +45,13 @@ public class Contrato {
 
     public LocalDate getFechaContrato() { return fechaContrato; }
     public void setFechaContrato(LocalDate fechaContrato) { this.fechaContrato = fechaContrato; }
+
+    public LocalDate getFechaFin() {
+        return fechaFin;
+    }
+    public void setFechaFin(LocalDate fechaFin) {
+        this.fechaFin = fechaFin;
+    }
 
     public boolean isConArma() { return conArma; }
     public void setConArma(boolean conArma) { this.conArma = conArma; }

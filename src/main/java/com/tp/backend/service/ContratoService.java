@@ -45,7 +45,8 @@ public class ContratoService {
         if (contratoRepo.existsByVigilanteIdAndSucursalIdAndFechaContrato(
                 req.getVigilanteId(),
                 req.getSucursalId(),
-                req.getFechaContrato())) {
+                req.getFechaContrato()
+               )) {
 
             throw new BadRequestException(
                     "Ya existe un contrato para ese vigilante, sucursal y fecha"
@@ -65,6 +66,7 @@ public class ContratoService {
         c.setConArma(req.isConArma());
         c.setSucursal(s);
         c.setVigilante(v);
+        c.setFechaFin(req.getFechaFin());
 
         // --- AGREGADO: Lógica de generación automática del número ---
         // Genera un código tipo CON-827364
@@ -91,6 +93,7 @@ public class ContratoService {
         c.setConArma(req.isConArma());
         c.setSucursal(s);
         c.setVigilante(v);
+        c.setFechaFin(req.getFechaFin());
 
         return toResponse(c);
     }
@@ -112,7 +115,8 @@ public class ContratoService {
                 c.getSucursal().getId(),
                 c.getSucursal().getCodigo(),
                 c.getVigilante().getId(),
-                c.getVigilante().getCodigo()
+                c.getVigilante().getCodigo(),
+                c.getFechaFin()
         );
     }
 

@@ -105,7 +105,8 @@ public class VigilanteService {
                             c.getSucursal().getId(),
                             c.getSucursal().getCodigo(),
                             v.getId(),
-                            v.getCodigo()
+                            v.getCodigo(),
+                            c.getFechaFin()
                     ))
                     .collect(Collectors.toList()));
         }
