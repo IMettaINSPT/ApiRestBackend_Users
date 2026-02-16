@@ -66,6 +66,12 @@ public class ContratoService {
         c.setSucursal(s);
         c.setVigilante(v);
 
+        // --- AGREGADO: Lógica de generación automática del número ---
+        // Genera un código tipo CON-827364
+        String numAutomatico = "CON-" + (int)(Math.random() * 1000000);
+        c.setNumContrato(numAutomatico);
+        // ------------------------------------------------------------
+
         return toResponse(contratoRepo.save(c));
     }
 
@@ -100,6 +106,7 @@ public class ContratoService {
     private ContratoResponse toResponse(Contrato c) {
         return new ContratoResponse(
                 c.getId(),
+                c.getNumContrato(), // AGREGADO: Pasamos el nuevo número al Response
                 c.getFechaContrato(),
                 c.isConArma(),
                 c.getSucursal().getId(),
@@ -108,6 +115,7 @@ public class ContratoService {
                 c.getVigilante().getCodigo()
         );
     }
+
     @Transactional(readOnly = true)
     public List<ContratoResponse> listarPorSucursal(Long sucursalId) {
         if (!sucursalRepo.existsById(sucursalId)) {
@@ -131,5 +139,4 @@ public class ContratoService {
                 .map(this::toResponse)
                 .toList();
     }
-
 }

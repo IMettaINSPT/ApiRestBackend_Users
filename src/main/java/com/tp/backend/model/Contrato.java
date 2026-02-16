@@ -12,6 +12,9 @@ public class Contrato {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "num_contrato", unique = true)
+    private String numContrato; // El número de negocio (autogenerado por lógica)
+
     @Column(nullable=false)
     private LocalDate fechaContrato;
 
@@ -27,6 +30,16 @@ public class Contrato {
     private Vigilante vigilante;
 
     public Long getId() { return id; }
+
+    // EL GETTER: Para que el sistema pueda leer el número y mostrarlo
+    public String getNumContrato() {
+        return numContrato;
+    }
+
+    // EL SETTER: Para que el sistema pueda asignar el número automático
+    public void setNumContrato(String numContrato) {
+        this.numContrato = numContrato;
+    }
 
     public LocalDate getFechaContrato() { return fechaContrato; }
     public void setFechaContrato(LocalDate fechaContrato) { this.fechaContrato = fechaContrato; }
