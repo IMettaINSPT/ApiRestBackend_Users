@@ -41,8 +41,9 @@ public class PersonaDetenidaService {
             throw new BadRequestException("Ya existe una persona detenida con el codigo: " + req.getcodigo());
         }
         PersonaDetenida p = new PersonaDetenida();
-        p.setNombre(req.getNombre());
         p.setCodigo(req.getcodigo());
+        p.setNombre(req.getNombre());
+        p.setApellido(req.getApellido());
         p.setBanda(resolveBandaOrNull(req.getBandaId()));
         return toResponse(repo.save(p));
     }
@@ -51,8 +52,9 @@ public class PersonaDetenidaService {
     public PersonaDetenidaResponse actualizar(Long id, PersonaDetenidaUpdateRequest req) {
         PersonaDetenida p = repo.findById(id).orElseThrow(() -> new NotFoundException("PersonaDetenida no encontrada: " + id));
 
-
+        p.setCodigo(req.getcodigo());
         p.setNombre(req.getNombre());
+        p.setApellido(req.getApellido());
         p.setBanda(resolveBandaOrNull(req.getBandaId()));
         return toResponse(p);
     }
@@ -80,6 +82,7 @@ public class PersonaDetenidaService {
                 p.getId(),
                 p.getCodigo(),
                 p.getNombre(),
+                p.getApellido(),
                 bandaDto
         );
     }
