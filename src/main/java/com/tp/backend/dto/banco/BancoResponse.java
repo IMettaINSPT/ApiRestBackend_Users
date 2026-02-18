@@ -20,8 +20,7 @@ public class BancoResponse {
         this.domicilioCentral = domicilioCentral;
     }
 
-    public Long getId() { return id; }
-    // Se agrega Setter para ID
+    public Long getId() { return id;}
     public void setId(Long id) { this.id = id; }
 
     public String getCodigo() { return codigo; }
