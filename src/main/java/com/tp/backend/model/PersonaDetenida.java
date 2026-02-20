@@ -1,6 +1,7 @@
 package com.tp.backend.model;
 
 import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "personaDetenida")
@@ -24,6 +25,11 @@ public class PersonaDetenida {
     @JoinColumn(name="banda_id")
     private Banda banda; // opcional
 
+    // --- PARA EL HISTORIAL ---
+    @OneToMany(mappedBy = "personaDetenida", fetch = FetchType.LAZY)
+    private List<Asalto> asaltos;
+    // --------------------------------------
+
     public Long getId() { return id; }
 
     public String getCodigo() {
@@ -41,6 +47,10 @@ public class PersonaDetenida {
 
     public Banda getBanda() { return banda; }
     public void setBanda(Banda banda) { this.banda = banda; }
+
+    // --- GETTER Y SETTER DE ASALTOS ---
+    public List<Asalto> getAsaltos() { return asaltos; }
+    public void setAsaltos(List<Asalto> asaltos) { this.asaltos = asaltos; }
 
 
 }
