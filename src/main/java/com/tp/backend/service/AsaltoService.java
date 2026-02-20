@@ -1,6 +1,7 @@
 package com.tp.backend.service;
 
 import com.tp.backend.dto.asalto.*;
+import com.tp.backend.dto.sucursal.SucursalResponse;
 import com.tp.backend.exception.BadRequestException;
 import com.tp.backend.exception.NotFoundException;
 import com.tp.backend.model.Asalto;
@@ -80,6 +81,8 @@ public class AsaltoService {
                 .orElseThrow(() -> new NotFoundException("PersonaDetenida no encontrada: " + req.getPersonaDetenidaId()));
 
         Asalto a = new Asalto();
+        a.setId(req.getId());
+        a.setCodigo(req.getCodigo());
         a.setFechaAsalto(req.getFechaAsalto());
         a.setSucursal(sucursal);
         a.setPersonaDetenida(persona);
@@ -138,9 +141,27 @@ public class AsaltoService {
     private AsaltoResponse toResponse(Asalto a) {
         AsaltoResponse r = new AsaltoResponse();
         r.setId(a.getId());
+        r.setCodigo(a.getCodigo());
         r.setFechaAsalto(a.getFechaAsalto());
-        r.setSucursalId(a.getSucursal().getId());
-        r.setPersonaDetenidaId(a.getPersonaDetenida().getId());
+
+
+        // aquí mapeamos el objeto SucursalResponse completo
+        if (a.getSucursal() != null) {
+            Sucursal s = a.getSucursal();
+            r.setSucursal(new SucursalResponse(
+                    s.getId(),
+                    s.getCodigo(),
+                    s.getDomicilio(),
+                    s.getNroEmpleados(),
+                    s.getBanco() != null ? s.getBanco().getId() : null,
+                    s.getBanco() != null ? s.getBanco().getCodigo() : null
+            ));
+        }
+
+        // No enviamos la lista de personas aquí para evitar recursividad infinita
+        // ya que el Front la obtendrá desde el detalle de la persona o el asalto específico.
+
         return r;
     }
+
 }

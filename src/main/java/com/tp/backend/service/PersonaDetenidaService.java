@@ -2,6 +2,8 @@ package com.tp.backend.service;
 
 import com.tp.backend.dto.banda.BandaResponse;
 import com.tp.backend.dto.personaDetenida.*;
+import com.tp.backend.dto.asalto.AsaltoResponse;
+import com.tp.backend.dto.sucursal.SucursalResponse;
 import com.tp.backend.exception.BadRequestException;
 import com.tp.backend.exception.NotFoundException;
 import com.tp.backend.model.Banda;
@@ -70,21 +72,50 @@ public class PersonaDetenidaService {
         return bandaRepo.findById(bandaId).orElseThrow(() -> new NotFoundException("Banda no encontrada: " + bandaId));
     }
 
+
     private PersonaDetenidaResponse toResponse(PersonaDetenida p) {
         BandaResponse bandaDto = null;
 
         if (p.getBanda() != null) {
             var b = p.getBanda();
-            bandaDto = new BandaResponse(b.getId(),b.getNumeroBanda(),b.getNumeroMiembros());
+            bandaDto = new BandaResponse(b.getId(), b.getNumeroBanda(), b.getNumeroMiembros());
         }
 
+        // Mapeamos la lista de asaltos asociada a la persona (Historial)
+        List<AsaltoResponse> asaltosDto = null;
+        if (p.getAsaltos() != null) {
+            asaltosDto = p.getAsaltos().stream().map(a -> {
+                AsaltoResponse res = new AsaltoResponse();
+                res.setId(a.getId());
+                res.setCodigo(a.getCodigo());
+                res.setFechaAsalto(a.getFechaAsalto());
+
+                // Mapeamos la sucursal de cada asalto
+                if (a.getSucursal() != null) {
+                    var s = a.getSucursal();
+                    res.setSucursal(new SucursalResponse(
+                            s.getId(),
+                            s.getCodigo(),
+                            s.getDomicilio(),
+                            s.getNroEmpleados(),
+                            s.getBanco() != null ? s.getBanco().getId() : null,
+                            s.getBanco() != null ? s.getBanco().getCodigo() : null
+                    ));
+                }
+                return res;
+            }).toList();
+        }
+
+        // El record recibe los 6 parámetros (incluida la lista de asaltos)
         return new PersonaDetenidaResponse(
                 p.getId(),
                 p.getCodigo(),
                 p.getNombre(),
                 p.getApellido(),
-                bandaDto
+                bandaDto,
+                asaltosDto
         );
     }
-
 }
+
+
