@@ -2,6 +2,7 @@ package com.tp.backend.service;
 
 import com.tp.backend.dto.asalto.*;
 import com.tp.backend.dto.sucursal.SucursalResponse;
+import com.tp.backend.dto.PersonaDetenida.PersonaDetenidaResponse;
 import com.tp.backend.exception.BadRequestException;
 import com.tp.backend.exception.NotFoundException;
 import com.tp.backend.model.Asalto;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AsaltoService {
@@ -77,15 +79,18 @@ public class AsaltoService {
         Sucursal sucursal = sucursalRepository.findById(req.getSucursalId())
                 .orElseThrow(() -> new NotFoundException("Sucursal no encontrada: " + req.getSucursalId()));
 
-        PersonaDetenida persona = personaDetenidaRepository.findById(req.getPersonaDetenidaId())
-                .orElseThrow(() -> new NotFoundException("PersonaDetenida no encontrada: " + req.getPersonaDetenidaId()));
+        // Buscamos una LISTA de personas
+        List<PersonaDetenida> personas = personaDetenidaRepository.findAllById(req.getPersonaDetenidaIds());
+        if (personas.isEmpty()) {
+            throw new BadRequestException("Debe seleccionar al menos una persona válida.");
+        }
 
         Asalto a = new Asalto();
         a.setId(req.getId());
         a.setCodigo(req.getCodigo());
         a.setFechaAsalto(req.getFechaAsalto());
         a.setSucursal(sucursal);
-        a.setPersonaDetenida(persona);
+        a.setPersonas(personas);
 
         return toResponse(asaltoRepository.save(a));
     }
@@ -100,12 +105,15 @@ public class AsaltoService {
         Sucursal sucursal = sucursalRepository.findById(req.getSucursalId())
                 .orElseThrow(() -> new NotFoundException("Sucursal no encontrada: " + req.getSucursalId()));
 
-        PersonaDetenida persona = personaDetenidaRepository.findById(req.getPersonaDetenidaId())
-                .orElseThrow(() -> new NotFoundException("PersonaDetenida no encontrada: " + req.getPersonaDetenidaId()));
+        // Buscamos la nueva LISTA de personas
+        List<PersonaDetenida> personas = personaDetenidaRepository.findAllById(req.getPersonaDetenidaIds());
+        if (personas.isEmpty()) {
+            throw new BadRequestException("Debe seleccionar al menos una persona válida.");
+        }
 
         a.setFechaAsalto(req.getFechaAsalto());
         a.setSucursal(sucursal);
-        a.setPersonaDetenida(persona);
+        a.setPersonas(personas);
 
         return toResponse(asaltoRepository.save(a));
     }
@@ -145,23 +153,20 @@ public class AsaltoService {
         r.setFechaAsalto(a.getFechaAsalto());
 
 
-        // aquí mapeamos el objeto SucursalResponse completo
-        if (a.getSucursal() != null) {
-            Sucursal s = a.getSucursal();
-            r.setSucursal(new SucursalResponse(
-                    s.getId(),
-                    s.getCodigo(),
-                    s.getDomicilio(),
-                    s.getNroEmpleados(),
-                    s.getBanco() != null ? s.getBanco().getId() : null,
-                    s.getBanco() != null ? s.getBanco().getCodigo() : null
-            ));
+        //Mapeamos la lista de personas al response
+        if (a.getPersonas() != null) {
+            r.setPersonas(a.getPersonas().stream().map(p -> {
+                PersonaDetenidaResponse pr = new PersonaDetenidaResponse();
+                pr.setId(p.getId());
+                pr.setCodigo(p.getCodigo());
+                pr.setNombre(p.getNombre());
+                pr.setApellido(p.getApellido());
+                return pr;
+            }).collect(Collectors.toList()));
         }
 
-        // No enviamos la lista de personas aquí para evitar recursividad infinita
-        // ya que el Front la obtendrá desde el detalle de la persona o el asalto específico.
-
         return r;
+
     }
 
 }

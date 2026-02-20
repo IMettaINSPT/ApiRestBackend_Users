@@ -2,6 +2,7 @@ package com.tp.backend.model;
 
 import jakarta.persistence.*;
 import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 @Table(name = "personaDetenida")
@@ -25,9 +26,9 @@ public class PersonaDetenida {
     @JoinColumn(name="banda_id")
     private Banda banda; // opcional
 
-    // --- PARA EL HISTORIAL ---
-    @OneToMany(mappedBy = "personaDetenida", fetch = FetchType.LAZY)
-    private List<Asalto> asaltos;
+    // --- PARA EL HISTORIAL ---Relación Muchos a Muchos Bidireccional
+    @ManyToMany(mappedBy = "personas", fetch = FetchType.LAZY)
+    private List<Asalto> asaltos = new ArrayList<>();
     // --------------------------------------
 
     public Long getId() { return id; }
