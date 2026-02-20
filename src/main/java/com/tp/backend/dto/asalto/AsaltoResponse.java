@@ -1,10 +1,11 @@
-package com.tp.backend.dto.Asalto;
+package com.tp.backend.dto.asalto;
 
-import com.tp.backend.dto.Sucursal.SucursalResponse;
+import com.tp.backend.dto.sucursal.SucursalResponse;
 
 import java.time.LocalDate;
 import java.util.List;
-import com.tp.backend.dto.PersonaDetenida.PersonaDetenidaResponse; //  importar DTO de persona detenida
+import com.tp.backend.dto.personaDetenida.PersonaDetenidaResponse;//  importar DTO de persona detenida
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 public class AsaltoResponse {
     private Long id;

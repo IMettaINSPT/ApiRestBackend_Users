@@ -9,6 +9,9 @@ public class AsaltoRequest {
     private Long sucursalId;
     private List<Long> personaDetenidaIds;
 
+    public String getCodigo() { return codigo; }
+    public void setCodigo(String codigo) { this.codigo = codigo; }
+
     public LocalDate getFechaAsalto() { return fechaAsalto; }
     public void setFechaAsalto(LocalDate fechaAsalto) { this.fechaAsalto = fechaAsalto; }
 

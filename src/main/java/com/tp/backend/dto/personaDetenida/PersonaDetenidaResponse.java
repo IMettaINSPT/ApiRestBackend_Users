@@ -1,8 +1,9 @@
-package com.tp.backend.dto.PersonaDetenida;
+package com.tp.backend.dto.personaDetenida;
 
-import com.tp.backend.dto.Banda.BandaResponse;
+import com.tp.backend.dto.banda.BandaResponse;
 import java.util.List;
-import com.tp.backend.dto.Asalto.AsaltoResponse;
+import com.tp.backend.dto.asalto.AsaltoResponse;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 public record PersonaDetenidaResponse(
         Long id,
