@@ -115,17 +115,18 @@ public class AsaltoService {
 
     // ---------- HELPERS ----------
     private void validarFiltros(LocalDate fecha, LocalDate desde, LocalDate hasta) {
+        // Permitimos que se use fecha exacta O rango, pero no ambos mezclados
         if (fecha != null && (desde != null || hasta != null)) {
-            throw new BadRequestException("No se puede usar 'fecha' junto con 'desde/hasta'.");
+            throw new BadRequestException("No se puede usar 'fecha exacta' junto con un período 'desde/hasta'.");
         }
-        // Validamos que el rango esté completo si se usa
-        if ((desde != null && hasta == null) || (desde == null && hasta != null)) {
-            throw new BadRequestException("Si usás rango, enviá 'desde' y 'hasta'.");
-        }
+
+        // Si se ingresan ambos límites del rango, validamos que sean lógicos
         if (desde != null && hasta != null && hasta.isBefore(desde)) {
-            throw new BadRequestException("'hasta' no puede ser anterior a 'desde'.");
+            throw new BadRequestException("Rango de fechas inválido: la fecha 'desde' no puede ser posterior a la fecha 'hasta'.");
         }
-        // Se eliminó la validación que obligaba a tener sucursalId
+
+        // Nota: Ahora se permite enviar solo 'desde' (ej: desde hoy en adelante)
+        // o solo 'hasta' (ej: todo lo ocurrido hasta ayer) sin errores.
     }
 
     private void validarRequest(AsaltoRequest req) {

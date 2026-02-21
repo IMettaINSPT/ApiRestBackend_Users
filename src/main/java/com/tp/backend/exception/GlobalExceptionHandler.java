@@ -27,12 +27,25 @@ public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    /**
-     * En prod debería ser false.
-     * En dev te puede servir true para depurar.
-     */
     @Value("${app.errors.include-trace:false}")
     private boolean includeTrace;
+
+    // --- NUEVO MANEJADOR ESPECÍFICO ---
+    // Este atrapará el error de fechas que lanzamos en el Service
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ApiError> handleBadRequestException(BadRequestException ex, HttpServletRequest request) {
+        log.warn("Bad Request Exception {} {} -> 400: {}", request.getMethod(), request.getRequestURI(), ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                buildError(
+                        ex.getMessage(), // El mensaje "'hasta' no puede ser anterior a 'desde'"
+                        HttpStatus.BAD_REQUEST,
+                        ex,
+                        "BAD_REQUEST",
+                        Map.of()
+                )
+        );
+    }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiError> handleNotReadable(HttpMessageNotReadableException ex, HttpServletRequest request) {
@@ -63,6 +76,7 @@ public class GlobalExceptionHandler {
                 )
         );
     }
+
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ApiError> handleMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpServletRequest request) {
         log.warn("Method not supported {} {} -> 405", request.getMethod(), request.getRequestURI());
@@ -78,7 +92,6 @@ public class GlobalExceptionHandler {
         );
     }
 
-    // 3) Validaciones @Valid (DTOs) - devuelve fieldErrors (clave para UX en el front)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiError> handleValidation(MethodArgumentNotValidException ex, HttpServletRequest request) {
 
@@ -88,7 +101,7 @@ public class GlobalExceptionHandler {
                 .collect(Collectors.toMap(
                         FieldError::getField,
                         fe -> fe.getDefaultMessage() != null ? fe.getDefaultMessage() : "inválido",
-                        (a, b) -> a // si hay duplicados, nos quedamos con el primero
+                        (a, b) -> a
                 ));
 
         String msg = fieldErrors.entrySet().stream()
@@ -108,7 +121,6 @@ public class GlobalExceptionHandler {
         );
     }
 
-    // 4) Errores de request/params que vos tirás hoy (IllegalArgumentException)
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiError> handleIllegalArgument(IllegalArgumentException ex, HttpServletRequest request) {
         log.warn("Bad request {} {} -> 400: {}", request.getMethod(), request.getRequestURI(), ex.getMessage());
@@ -124,7 +136,6 @@ public class GlobalExceptionHandler {
         );
     }
 
-    // 5) Forbidden (Spring Security)
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiError> handleAccessDenied(AccessDeniedException ex, HttpServletRequest request) {
         log.warn("Access denied {} {} -> 403", request.getMethod(), request.getRequestURI());
@@ -140,12 +151,9 @@ public class GlobalExceptionHandler {
         );
     }
 
-    // 6) Fallback: errores inesperados (500)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGeneric(Exception ex, HttpServletRequest request) {
 
-        // ✅ Si por cualquier motivo Spring te manda acá una ApiException,
-        // la resolvemos como corresponde (404/400/etc) y NO como 500.
         if (ex instanceof ApiException apiEx) {
             HttpStatus status = apiEx.getStatus();
 
