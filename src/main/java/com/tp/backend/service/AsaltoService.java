@@ -3,6 +3,7 @@ package com.tp.backend.service;
 import com.tp.backend.dto.asalto.*;
 import com.tp.backend.dto.sucursal.SucursalResponse;
 import com.tp.backend.dto.personaDetenida.PersonaDetenidaResponse;
+import com.tp.backend.dto.banda.BandaResponse; // Importado para el mapeo
 import com.tp.backend.exception.BadRequestException;
 import com.tp.backend.exception.NotFoundException;
 import com.tp.backend.model.Asalto;
@@ -158,14 +159,25 @@ public class AsaltoService {
 
         if (a.getPersonas() != null) {
             List<PersonaDetenidaResponse> listaPersonaDTO = a.getPersonas().stream()
-                    .map(p -> new PersonaDetenidaResponse(
-                            p.getId(),
-                            p.getCodigo(),
-                            p.getNombre(),
-                            p.getApellido(),
-                            null,
-                            null
-                    ))
+                    .map(p -> {
+                        // Mapeamos la banda de la entidad a su DTO correspondiente
+                        BandaResponse bandaDTO = null;
+                        if (p.getBanda() != null) {
+                            bandaDTO = new BandaResponse();
+                            bandaDTO.setId(p.getBanda().getId());
+                            bandaDTO.setNumeroBanda(p.getBanda().getNumeroBanda());
+                            bandaDTO.setNumeroMiembros(p.getBanda().getNumeroMiembros());
+                        }
+
+                        return new PersonaDetenidaResponse(
+                                p.getId(),
+                                p.getCodigo(),
+                                p.getNombre(),
+                                p.getApellido(),
+                                bandaDTO, // Pasamos el DTO mapeado en lugar de null
+                                null
+                        );
+                    })
                     .toList();
             r.setPersonas(listaPersonaDTO);
         }
