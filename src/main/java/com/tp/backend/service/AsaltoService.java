@@ -36,26 +36,17 @@ public class AsaltoService {
     // ---------- CONSULTAS ----------
     @Transactional(readOnly = true)
     public List<AsaltoResponse> listarConFiltros(Long sucursalId, LocalDate fecha, LocalDate desde, LocalDate hasta) {
+        // Validamos la lógica de fechas, pero ya no exigimos sucursalId
         validarFiltros(fecha, desde, hasta);
-        List<Asalto> asaltos;
 
-        if (sucursalId == null && fecha == null && desde == null) {
-            asaltos = asaltoRepository.findAll();
-        } else if (sucursalId != null && fecha != null) {
-            asaltos = asaltoRepository.findBySucursal_IdAndFechaAsalto(sucursalId, fecha);
-        } else if (sucursalId != null && desde != null) {
-            asaltos = asaltoRepository.findBySucursal_IdAndFechaAsaltoBetween(sucursalId, desde, hasta);
-        } else if (sucursalId != null) {
-            asaltos = asaltoRepository.findBySucursal_Id(sucursalId);
-        } else {
-            throw new BadRequestException("Para filtrar por fecha/rango se requiere sucursalId.");
-        }
+        // Llamamos al método dinámico del repositorio (debes crearlo en el Repository)
+        List<Asalto> asaltos = asaltoRepository.filtrar(sucursalId, fecha, desde, hasta);
+
         return asaltos.stream().map(this::toResponse).toList();
     }
 
     @Transactional(readOnly = true)
     public List<AsaltoResponse> listarPorPersonaDetenida(Long personaDetenidaId) {
-        // CORRECCIÓN: Usar el método plural del repositorio
         return asaltoRepository.findByPersonas_Id(personaDetenidaId)
                 .stream()
                 .map(this::toResponse)
@@ -77,7 +68,6 @@ public class AsaltoService {
         Sucursal sucursal = sucursalRepository.findById(req.getSucursalId())
                 .orElseThrow(() -> new NotFoundException("Sucursal no encontrada: " + req.getSucursalId()));
 
-        // CORRECCIÓN: Usar getPersonaDetenidaIds() (plural) que viene del DTO
         List<PersonaDetenida> personas = personaDetenidaRepository.findAllById(req.getPersonaDetenidaIds());
         if (personas.isEmpty()) {
             throw new BadRequestException("Debe seleccionar al menos una persona válida.");
@@ -107,7 +97,7 @@ public class AsaltoService {
             throw new BadRequestException("Debe seleccionar al menos una persona válida.");
         }
 
-        a.setCodigo(req.getCodigo()); // Asegúrate de actualizar el código si es necesario
+        a.setCodigo(req.getCodigo());
         a.setFechaAsalto(req.getFechaAsalto());
         a.setSucursal(sucursal);
         a.setPersonas(personas);
@@ -128,19 +118,20 @@ public class AsaltoService {
         if (fecha != null && (desde != null || hasta != null)) {
             throw new BadRequestException("No se puede usar 'fecha' junto con 'desde/hasta'.");
         }
-        if ((desde == null) != (hasta == null)) {
+        // Validamos que el rango esté completo si se usa
+        if ((desde != null && hasta == null) || (desde == null && hasta != null)) {
             throw new BadRequestException("Si usás rango, enviá 'desde' y 'hasta'.");
         }
-        if (desde != null && hasta.isBefore(desde)) {
+        if (desde != null && hasta != null && hasta.isBefore(desde)) {
             throw new BadRequestException("'hasta' no puede ser anterior a 'desde'.");
         }
+        // Se eliminó la validación que obligaba a tener sucursalId
     }
 
     private void validarRequest(AsaltoRequest req) {
         if (req == null) throw new BadRequestException("Body requerido.");
         if (req.getFechaAsalto() == null) throw new BadRequestException("fechaAsalto es obligatoria.");
         if (req.getSucursalId() == null) throw new BadRequestException("sucursalId es obligatorio.");
-        // CORRECCIÓN: Validar el campo plural
         if (req.getPersonaDetenidaIds() == null || req.getPersonaDetenidaIds().isEmpty()) {
             throw new BadRequestException("Debe seleccionar al menos un detenido.");
         }
@@ -152,7 +143,6 @@ public class AsaltoService {
         r.setCodigo(a.getCodigo());
         r.setFechaAsalto(a.getFechaAsalto());
 
-        // 1. Mapeo de Sucursal
         if (a.getSucursal() != null) {
             Sucursal s = a.getSucursal();
             r.setSucursal(new SucursalResponse(
@@ -165,7 +155,6 @@ public class AsaltoService {
             ));
         }
 
-        // 2. Mapeo de Personas
         if (a.getPersonas() != null) {
             List<PersonaDetenidaResponse> listaPersonaDTO = a.getPersonas().stream()
                     .map(p -> new PersonaDetenidaResponse(
@@ -173,14 +162,12 @@ public class AsaltoService {
                             p.getCodigo(),
                             p.getNombre(),
                             p.getApellido(),
-                            null, // Banda (le pasamos null para no complicar el mapeo aquí)
-                            null  // Asaltos (le pasamos null para evitar el bucle infinito)
+                            null,
+                            null
                     ))
                     .toList();
-
             r.setPersonas(listaPersonaDTO);
         }
-
         return r;
     }
 }
