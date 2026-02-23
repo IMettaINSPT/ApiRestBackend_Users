@@ -72,6 +72,16 @@ public class JuezService {
     }
 
     private JuezResponse toResponse(Juez j) {
-        return new JuezResponse(j.getId(), j.getClaveJuzgado(), j.getNombre(), j.getApellido(),j.getAnosServicio());
+        // Creamos el objeto con el constructor
+        JuezResponse response = new JuezResponse(j.getId(), j.getClaveJuzgado(), j.getNombre(), j.getApellido(), j.getAnosServicio());
+
+        // Seteamos la cantidad de juicios contando los elementos de la lista de la entidad
+        if (j.getJuicios() != null) {
+            response.setCantidadJuicios(j.getJuicios().size());
+        } else {
+            response.setCantidadJuicios(0);
+        }
+
+        return response;
     }
 }
