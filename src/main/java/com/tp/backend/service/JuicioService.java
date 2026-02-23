@@ -20,7 +20,7 @@ public class JuicioService {
     private final JuicioRepository juicioRepo;
     private final JuezRepository juezRepo;
     private final PersonaDetenidaRepository personaRepo;
-    private final AsaltoRepository asaltoRepo; // Necesario para el Delito
+    private final AsaltoRepository asaltoRepo;
 
     public JuicioService(JuicioRepository juicioRepo,
                          JuezRepository juezRepo,
@@ -46,14 +46,13 @@ public class JuicioService {
 
     @Transactional
     public JuicioResponse crear(JuicioRequest req) {
-        Juez juez = juezRepo.findById(req.getJuezId())
-                .orElseThrow(() -> new NotFoundException("Juez no encontrado"));
-        PersonaDetenida persona = personaRepo.findById(req.getPersonaDetenidaId())
-                .orElseThrow(() -> new NotFoundException("Persona no encontrada"));
-        Asalto asalto = asaltoRepo.findById(req.getAsaltoId())
-                .orElseThrow(() -> new NotFoundException("Asalto/Delito no encontrado"));
+        Juez juez = juezRepo.findById(req.getJuezId()).orElseThrow();
+        PersonaDetenida persona = personaRepo.findById(req.getPersonaDetenidaId()).orElseThrow();
+        Asalto asalto = asaltoRepo.findById(req.getAsaltoId()).orElseThrow();
 
         Juicio j = new Juicio();
+
+        // CAMBIO: Se pasa directamente req.getSituacionPenal() porque ya es un Enum
         mapRequestToEntity(j, req.getExpediente(), req.getFechaJuicio(), req.getSituacionPenal(),
                 req.getFechaInicioCondena(), req.getTiempoCondenaMeses(), juez, persona, asalto);
 
@@ -62,13 +61,12 @@ public class JuicioService {
 
     @Transactional
     public JuicioResponse actualizar(Long id, JuicioUpdateRequest req) {
-        Juicio j = juicioRepo.findById(id)
-                .orElseThrow(() -> new NotFoundException("Juicio no encontrado"));
-
+        Juicio j = juicioRepo.findById(id).orElseThrow();
         Juez juez = juezRepo.findById(req.getJuezId()).orElseThrow();
         PersonaDetenida persona = personaRepo.findById(req.getPersonaDetenidaId()).orElseThrow();
         Asalto asalto = asaltoRepo.findById(req.getAsaltoId()).orElseThrow();
 
+        // CAMBIO: Se pasa directamente req.getSituacionPenal() porque ya es un Enum
         mapRequestToEntity(j, req.getExpediente(), req.getFechaJuicio(), req.getSituacionPenal(),
                 req.getFechaInicioCondena(), req.getTiempoCondenaMeses(), juez, persona, asalto);
 
@@ -84,7 +82,6 @@ public class JuicioService {
         j.setPersonaDetenida(p);
         j.setAsalto(a);
 
-        // Si es condenado guardamos las fechas, sino las limpiamos (null)
         if (situacion == ResultadoJuicio.CONDENADO) {
             j.setFechaInicioCondena(fInicio);
             j.setTiempoCondenaMeses(meses);
@@ -96,7 +93,7 @@ public class JuicioService {
 
     @Transactional
     public void eliminar(Long id) {
-        if (!juicioRepo.existsById(id)) throw new NotFoundException("No existe");
+        if (!juicioRepo.existsById(id)) throw new NotFoundException("No existe el juicio");
         juicioRepo.deleteById(id);
     }
 
@@ -106,22 +103,39 @@ public class JuicioService {
         res.setExpediente(j.getExpediente());
         res.setFechaJuicio(j.getFechaJuicio());
         res.setSituacionPenal(j.getSituacionPenal());
-
-        // --- Lógica de Detalle de Pena ---
         res.setDetallePena(generarDetallePena(j));
 
-        // --- Mapeo de Objetos Anidados ---
-        // Aquí asumo que tienes mappers o servicios para Juez, Asalto y Persona
-        // Si no, puedes instanciar el Response y setear los campos básicos:
-        res.setJuez(new JuezResponse(j.getJuez().getId(), j.getJuez().getClaveJuzgado(), j.getJuez().getApellido()));
-        res.setPersona(new PersonaResponse(j.getPersonaDetenida().getId(), j.getPersonaDetenida().getCodigo(), j.getPersonaDetenida().getApellido()));
-        res.setAsalto(new AsaltoResponse(j.getAsalto().getId(), j.getAsalto().getCodigo(), j.getAsalto().getFecha()));
+        res.setJuez(new JuezResponse(
+                j.getJuez().getId(),
+                j.getJuez().getClaveJuzgado(),
+                j.getJuez().getNombre(),
+                j.getJuez().getApellido(),
+                j.getJuez().getAnosServicio()
+        ));
+
+        res.setPersona(new PersonaDetenidaResponse(
+                j.getPersonaDetenida().getId(),
+                j.getPersonaDetenida().getCodigo(),
+                j.getPersonaDetenida().getNombre(),
+                j.getPersonaDetenida().getApellido(),
+                null,
+                null
+        ));
+
+        AsaltoResponse asaltoDto = new AsaltoResponse();
+        asaltoDto.setId(j.getAsalto().getId());
+        asaltoDto.setCodigo(j.getAsalto().getCodigo());
+        asaltoDto.setFechaAsalto(j.getAsalto().getFechaAsalto());
+        res.setAsalto(asaltoDto);
 
         return res;
     }
 
     private String generarDetallePena(Juicio j) {
-        if (j.getSituacionPenal() == ResultadoJuicio.CONDENADO && j.getFechaInicioCondena() != null && j.getTiempoCondenaMeses() != null) {
+        if (j.getSituacionPenal() == ResultadoJuicio.CONDENADO
+                && j.getFechaInicioCondena() != null
+                && j.getTiempoCondenaMeses() != null) {
+
             LocalDate fechaSalida = j.getFechaInicioCondena().plusMonths(j.getTiempoCondenaMeses());
             String fechaFmt = fechaSalida.format(DateTimeFormatter.ofPattern("MM/yyyy"));
 

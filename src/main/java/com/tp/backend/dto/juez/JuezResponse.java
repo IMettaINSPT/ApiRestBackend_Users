@@ -1,7 +1,7 @@
 package com.tp.backend.dto.juez;
 
 import java.util.List;
-import com.tp.backend.dto.Juicio.JuicioResponse;
+import com.tp.backend.dto.juicio.JuicioResponse;
 
 public class JuezResponse {
 
