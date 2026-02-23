@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-// QUITAMOS el "/api" si tu Frontend (ApiClient) apunta directamente a /juicios
-@RequestMapping("/juicios")
+// RESTAURADO: Ahora el Frontend podrá encontrar este recurso
+@RequestMapping("/api/juicios")
 public class JuicioController {
 
     private final JuicioService service;
@@ -26,34 +26,34 @@ public class JuicioController {
 
     @GetMapping
     public List<JuicioResponse> listar() {
-        log.info("GET /juicios");
+        log.info("GET /api/juicios");
         return service.listar();
     }
 
     @GetMapping("/{id}")
     public JuicioResponse obtener(@PathVariable Long id) {
-        log.info("GET /juicios/{}", id);
+        log.info("GET /api/juicios/{}", id);
         return service.obtener(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public JuicioResponse crear(@Valid @RequestBody JuicioRequest req) {
-        log.info("POST /juicios - Data: {}", req);
+        log.info("POST /api/juicios - Data: {}", req);
         return service.crear(req);
     }
 
     @PutMapping("/{id}")
     public JuicioResponse actualizar(@PathVariable Long id,
                                      @Valid @RequestBody JuicioUpdateRequest req) {
-        log.info("PUT /juicios/{} - Data: {}", id, req);
+        log.info("PUT /api/juicios/{} - Data: {}", id, req);
         return service.actualizar(id, req);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void eliminar(@PathVariable Long id) {
-        log.info("DELETE /juicios/{}", id);
+        log.info("DELETE /api/juicios/{}", id);
         service.eliminar(id);
     }
 }
