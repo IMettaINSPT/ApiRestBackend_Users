@@ -1,6 +1,5 @@
 package com.tp.backend.dto.juicio;
 
-import com.tp.backend.model.ResultadoJuicio;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -15,7 +14,7 @@ public class JuicioUpdateRequest {
     private LocalDate fechaJuicio;
 
     @NotNull(message = "La situación penal es obligatoria")
-    private ResultadoJuicio situacionPenal; // Usamos tu Enum ResultadoJuicio
+    private boolean condenado; // CAMBIO: boolean
 
     @NotNull(message = "El juez es obligatorio")
     private Long juezId;
@@ -26,21 +25,19 @@ public class JuicioUpdateRequest {
     @NotNull(message = "La persona es obligatoria")
     private Long personaDetenidaId;
 
-    // Campos de condena (pueden ser nulos si es Absuelto)
     private LocalDate fechaInicioCondena;
 
     @Min(value = 1, message = "El tiempo de condena debe ser al menos 1 mes")
     private Integer tiempoCondenaMeses;
 
-    // Getters y Setters
     public String getExpediente() { return expediente; }
     public void setExpediente(String expediente) { this.expediente = expediente; }
 
     public LocalDate getFechaJuicio() { return fechaJuicio; }
     public void setFechaJuicio(LocalDate fechaJuicio) { this.fechaJuicio = fechaJuicio; }
 
-    public ResultadoJuicio getSituacionPenal() { return situacionPenal; }
-    public void setSituacionPenal(ResultadoJuicio situacionPenal) { this.situacionPenal = situacionPenal; }
+    public boolean isCondenado() { return condenado; } // CAMBIO: isCondenado
+    public void setCondenado(boolean condenado) { this.condenado = condenado; }
 
     public Long getJuezId() { return juezId; }
     public void setJuezId(Long juezId) { this.juezId = juezId; }

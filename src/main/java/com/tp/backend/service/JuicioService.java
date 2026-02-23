@@ -52,8 +52,8 @@ public class JuicioService {
 
         Juicio j = new Juicio();
 
-        // CAMBIO: Se pasa directamente req.getSituacionPenal() porque ya es un Enum
-        mapRequestToEntity(j, req.getExpediente(), req.getFechaJuicio(), req.getSituacionPenal(),
+        // CAMBIO: Ahora usamos isCondenado() que devuelve boolean
+        mapRequestToEntity(j, req.getExpediente(), req.getFechaJuicio(), req.isCondenado(),
                 req.getFechaInicioCondena(), req.getTiempoCondenaMeses(), juez, persona, asalto);
 
         return toResponse(juicioRepo.save(j));
@@ -66,23 +66,24 @@ public class JuicioService {
         PersonaDetenida persona = personaRepo.findById(req.getPersonaDetenidaId()).orElseThrow();
         Asalto asalto = asaltoRepo.findById(req.getAsaltoId()).orElseThrow();
 
-        // CAMBIO: Se pasa directamente req.getSituacionPenal() porque ya es un Enum
-        mapRequestToEntity(j, req.getExpediente(), req.getFechaJuicio(), req.getSituacionPenal(),
+        // CAMBIO: Ahora usamos isCondenado() que devuelve boolean
+        mapRequestToEntity(j, req.getExpediente(), req.getFechaJuicio(), req.isCondenado(),
                 req.getFechaInicioCondena(), req.getTiempoCondenaMeses(), juez, persona, asalto);
 
         return toResponse(juicioRepo.save(j));
     }
 
-    private void mapRequestToEntity(Juicio j, String exp, LocalDate fecha, ResultadoJuicio situacion,
+    // CAMBIO: El parámetro ahora es 'boolean esCondenado'
+    private void mapRequestToEntity(Juicio j, String exp, LocalDate fecha, boolean esCondenado,
                                     LocalDate fInicio, Integer meses, Juez juez, PersonaDetenida p, Asalto a) {
         j.setExpediente(exp);
         j.setFechaJuicio(fecha);
-        j.setSituacionPenal(situacion);
+        j.setCondenado(esCondenado); // Usamos el setter de la entidad
         j.setJuez(juez);
         j.setPersonaDetenida(p);
         j.setAsalto(a);
 
-        if (situacion == ResultadoJuicio.CONDENADO) {
+        if (esCondenado) {
             j.setFechaInicioCondena(fInicio);
             j.setTiempoCondenaMeses(meses);
         } else {
@@ -102,7 +103,10 @@ public class JuicioService {
         res.setId(j.getId());
         res.setExpediente(j.getExpediente());
         res.setFechaJuicio(j.getFechaJuicio());
-        res.setSituacionPenal(j.getSituacionPenal());
+
+        // CAMBIO: Seteamos el boolean en el response (Asegúrate que JuicioResponse tenga el campo booleano)
+        res.setCondenado(j.isCondenado());
+
         res.setDetallePena(generarDetallePena(j));
 
         res.setJuez(new JuezResponse(
@@ -132,7 +136,8 @@ public class JuicioService {
     }
 
     private String generarDetallePena(Juicio j) {
-        if (j.getSituacionPenal() == ResultadoJuicio.CONDENADO
+        // CAMBIO: La condición ahora evalúa el boolean isCondenado()
+        if (j.isCondenado()
                 && j.getFechaInicioCondena() != null
                 && j.getTiempoCondenaMeses() != null) {
 

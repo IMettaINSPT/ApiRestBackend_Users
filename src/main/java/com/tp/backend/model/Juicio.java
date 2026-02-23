@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "juicios") // Se recomienda plural para tablas
+@Table(name = "juicios")
 public class Juicio {
 
     @Id
@@ -12,23 +12,21 @@ public class Juicio {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String expediente; // Agregado: para identificar el juicio
+    private String expediente;
 
     @Column(name = "fecha_juicio", nullable = false)
-    private LocalDate fechaJuicio; // Antes se llamaba 'fecha'
+    private LocalDate fechaJuicio;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "situacion_penal", nullable = false, length = 20)
-    private ResultadoJuicio situacionPenal; // Antes se llamaba 'resultado'
+    // --- CAMBIO: De Enum a boolean ---
+    @Column(name = "condenado", nullable = false)
+    private boolean condenado; // true = CONDENADO, false = ABSUELTO
 
-    // --- CAMPOS NUEVOS PARA LA CONDENA ---
     @Column(name = "fecha_inicio_condena")
     private LocalDate fechaInicioCondena;
 
     @Column(name = "tiempo_condena_meses")
     private Integer tiempoCondenaMeses;
 
-    // --- RELACIONES ---
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "juez_id", nullable = false)
     private Juez juez;
@@ -39,12 +37,10 @@ public class Juicio {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "asalto_id", nullable = false)
-    private Asalto asalto; // Agregado: para saber qué delito se juzga
+    private Asalto asalto;
 
-    // Constructor vacío
     public Juicio() {}
 
-    // Getters y Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -54,8 +50,9 @@ public class Juicio {
     public LocalDate getFechaJuicio() { return fechaJuicio; }
     public void setFechaJuicio(LocalDate fechaJuicio) { this.fechaJuicio = fechaJuicio; }
 
-    public ResultadoJuicio getSituacionPenal() { return situacionPenal; }
-    public void setSituacionPenal(ResultadoJuicio situacionPenal) { this.situacionPenal = situacionPenal; }
+    // --- Getter y Setter para el boolean ---
+    public boolean isCondenado() { return condenado; }
+    public void setCondenado(boolean condenado) { this.condenado = condenado; }
 
     public LocalDate getFechaInicioCondena() { return fechaInicioCondena; }
     public void setFechaInicioCondena(LocalDate fechaInicioCondena) { this.fechaInicioCondena = fechaInicioCondena; }

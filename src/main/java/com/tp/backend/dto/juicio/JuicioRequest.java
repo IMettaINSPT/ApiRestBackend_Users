@@ -1,6 +1,5 @@
 package com.tp.backend.dto.juicio;
 
-import com.tp.backend.model.ResultadoJuicio;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,8 +13,9 @@ public class JuicioRequest {
     @NotNull(message = "La fecha del juicio es obligatoria")
     private LocalDate fechaJuicio;
 
-    @NotNull(message = "La situación penal es obligatoria")
-    private ResultadoJuicio situacionPenal;
+    // CAMBIO: Se usa boolean para indicar si fue condenado (true) o no (false)
+    @NotNull(message = "Debe indicar si la persona fue condenada o no")
+    private boolean condenado;
 
     @NotNull(message = "El juez es obligatorio")
     private Long juezId;
@@ -26,24 +26,22 @@ public class JuicioRequest {
     @NotNull(message = "La persona es obligatoria")
     private Long personaDetenidaId;
 
-    // Estos campos son opcionales (dependen de situacionPenal)
     private LocalDate fechaInicioCondena;
 
     @Min(value = 1, message = "El tiempo de condena debe ser al menos 1 mes")
     private Integer tiempoCondenaMeses;
 
-    // Constructor vacío
     public JuicioRequest() {}
 
-    // Getters y Setters
     public String getExpediente() { return expediente; }
     public void setExpediente(String expediente) { this.expediente = expediente; }
 
     public LocalDate getFechaJuicio() { return fechaJuicio; }
     public void setFechaJuicio(LocalDate fechaJuicio) { this.fechaJuicio = fechaJuicio; }
 
-    public ResultadoJuicio getSituacionPenal() { return situacionPenal; }
-    public void setSituacionPenal(ResultadoJuicio situacionPenal) { this.situacionPenal = situacionPenal; }
+    // Getter y Setter para el boolean
+    public boolean isCondenado() { return condenado; }
+    public void setCondenado(boolean condenado) { this.condenado = condenado; }
 
     public Long getJuezId() { return juezId; }
     public void setJuezId(Long juezId) { this.juezId = juezId; }
