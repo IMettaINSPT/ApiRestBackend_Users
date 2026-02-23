@@ -1,6 +1,8 @@
 package com.tp.backend.controller;
 
-import com.tp.backend.dto.juicio.*;
+import com.tp.backend.dto.juicio.JuicioRequest;
+import com.tp.backend.dto.juicio.JuicioResponse;
+import com.tp.backend.dto.juicio.JuicioUpdateRequest;
 import com.tp.backend.service.JuicioService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -11,7 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/juicios")
+// QUITAMOS el "/api" si tu Frontend (ApiClient) apunta directamente a /juicios
+@RequestMapping("/juicios")
 public class JuicioController {
 
     private final JuicioService service;
@@ -23,34 +26,34 @@ public class JuicioController {
 
     @GetMapping
     public List<JuicioResponse> listar() {
-        log.info("Get /api/juicios/listar");
+        log.info("GET /juicios");
         return service.listar();
     }
 
     @GetMapping("/{id}")
     public JuicioResponse obtener(@PathVariable Long id) {
-        log.info("Get /api/juicios/obtener id{}",id);
+        log.info("GET /juicios/{}", id);
         return service.obtener(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public JuicioResponse crear(@Valid @RequestBody JuicioRequest req) {
-        log.info("Posts /api/juicios/crear");
+        log.info("POST /juicios - Data: {}", req);
         return service.crear(req);
     }
 
     @PutMapping("/{id}")
     public JuicioResponse actualizar(@PathVariable Long id,
                                      @Valid @RequestBody JuicioUpdateRequest req) {
-        log.info("put /api/juicios/actualizar id{}",id);
+        log.info("PUT /juicios/{} - Data: {}", id, req);
         return service.actualizar(id, req);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void eliminar(@PathVariable Long id) {
-        log.info("Delete /api/juicios/eliminar id{}",id);
+        log.info("DELETE /juicios/{}", id);
         service.eliminar(id);
     }
 }
