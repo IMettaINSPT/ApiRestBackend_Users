@@ -1,6 +1,7 @@
 package com.tp.backend.service;
 
 import com.tp.backend.dto.juez.*;
+import com.tp.backend.dto.juicio.JuicioResponse; // Asegúrate de importar esto
 import com.tp.backend.exception.BadRequestException;
 import com.tp.backend.exception.NotFoundException;
 import com.tp.backend.model.Juez;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class JuezService {
@@ -72,12 +74,28 @@ public class JuezService {
     }
 
     private JuezResponse toResponse(Juez j) {
-        // Creamos el objeto con el constructor
+        // 1. Creamos el objeto básico
         JuezResponse response = new JuezResponse(j.getId(), j.getClaveJuzgado(), j.getNombre(), j.getApellido(), j.getAnosServicio());
 
-        // Seteamos la cantidad de juicios contando los elementos de la lista de la entidad
         if (j.getJuicios() != null) {
+            // 2. Mantenemos tu contador que ya funcionaba
             response.setCantidadJuicios(j.getJuicios().size());
+
+            // 3. ¡CAMBIO CLAVE!: Mapeamos la lista de Juicio (entidad) a JuicioResponse (DTO)
+            // Esto es lo que faltaba para que el desplegable en el HTML tenga datos
+            List<JuicioResponse> listaJuiciosDto = j.getJuicios().stream()
+                    .map(juicio -> {
+                        JuicioResponse jr = new JuicioResponse();
+                        jr.setId(juicio.getId());
+                        jr.setExpediente(juicio.getExpediente());
+                        jr.setFechaJuicio(juicio.getFechaJuicio());
+                        jr.setCondenado(juicio.isCondenado());
+                        // Puedes agregar más campos si JuicioResponse los necesita
+                        return jr;
+                    })
+                    .collect(Collectors.toList());
+
+            response.setJuicios(listaJuiciosDto);
         } else {
             response.setCantidadJuicios(0);
         }
