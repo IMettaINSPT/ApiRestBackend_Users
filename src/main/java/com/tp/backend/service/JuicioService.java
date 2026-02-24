@@ -4,6 +4,7 @@ import com.tp.backend.dto.juicio.*;
 import com.tp.backend.dto.juez.JuezResponse;
 import com.tp.backend.dto.personaDetenida.PersonaDetenidaResponse;
 import com.tp.backend.dto.asalto.AsaltoResponse;
+import com.tp.backend.dto.banda.BandaResponse; // IMPORTANTE
 import com.tp.backend.exception.NotFoundException;
 import com.tp.backend.model.*;
 import com.tp.backend.repository.*;
@@ -51,8 +52,6 @@ public class JuicioService {
         Asalto asalto = asaltoRepo.findById(req.getAsaltoId()).orElseThrow();
 
         Juicio j = new Juicio();
-
-        // CAMBIO: Ahora usamos isCondenado() que devuelve boolean
         mapRequestToEntity(j, req.getExpediente(), req.getFechaJuicio(), req.isCondenado(),
                 req.getFechaInicioCondena(), req.getTiempoCondenaMeses(), juez, persona, asalto);
 
@@ -66,19 +65,17 @@ public class JuicioService {
         PersonaDetenida persona = personaRepo.findById(req.getPersonaDetenidaId()).orElseThrow();
         Asalto asalto = asaltoRepo.findById(req.getAsaltoId()).orElseThrow();
 
-        // CAMBIO: Ahora usamos isCondenado() que devuelve boolean
         mapRequestToEntity(j, req.getExpediente(), req.getFechaJuicio(), req.isCondenado(),
                 req.getFechaInicioCondena(), req.getTiempoCondenaMeses(), juez, persona, asalto);
 
         return toResponse(juicioRepo.save(j));
     }
 
-    // CAMBIO: El parámetro ahora es 'boolean esCondenado'
     private void mapRequestToEntity(Juicio j, String exp, LocalDate fecha, boolean esCondenado,
                                     LocalDate fInicio, Integer meses, Juez juez, PersonaDetenida p, Asalto a) {
         j.setExpediente(exp);
         j.setFechaJuicio(fecha);
-        j.setCondenado(esCondenado); // Usamos el setter de la entidad
+        j.setCondenado(esCondenado);
         j.setJuez(juez);
         j.setPersonaDetenida(p);
         j.setAsalto(a);
@@ -103,10 +100,7 @@ public class JuicioService {
         res.setId(j.getId());
         res.setExpediente(j.getExpediente());
         res.setFechaJuicio(j.getFechaJuicio());
-
-        // CAMBIO: Seteamos el boolean en el response (Asegúrate que JuicioResponse tenga el campo booleano)
         res.setCondenado(j.isCondenado());
-
         res.setDetallePena(generarDetallePena(j));
 
         res.setJuez(new JuezResponse(
@@ -117,12 +111,24 @@ public class JuicioService {
                 j.getJuez().getAnosServicio()
         ));
 
+        // --- CORRECCIÓN: Mapear la Banda dentro de la Persona ---
+        PersonaDetenida p = j.getPersonaDetenida();
+        BandaResponse bandaDto = null;
+
+        if (p.getBanda() != null) {
+            bandaDto = new BandaResponse(
+                    p.getBanda().getId(),
+                    p.getBanda().getNumeroBanda(),
+                    null // numeroMiembros no suele ser necesario para esta lista
+            );
+        }
+
         res.setPersona(new PersonaDetenidaResponse(
-                j.getPersonaDetenida().getId(),
-                j.getPersonaDetenida().getCodigo(),
-                j.getPersonaDetenida().getNombre(),
-                j.getPersonaDetenida().getApellido(),
-                null,
+                p.getId(),
+                p.getCodigo(),
+                p.getNombre(),
+                p.getApellido(),
+                bandaDto, // Ahora pasamos el objeto banda en lugar de null
                 null
         ));
 
@@ -136,7 +142,6 @@ public class JuicioService {
     }
 
     private String generarDetallePena(Juicio j) {
-        // CAMBIO: La condición ahora evalúa el boolean isCondenado()
         if (j.isCondenado()
                 && j.getFechaInicioCondena() != null
                 && j.getTiempoCondenaMeses() != null) {
