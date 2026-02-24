@@ -21,13 +21,13 @@ public interface AsaltoRepository extends JpaRepository<Asalto, Long> {
     // es ManyToMany, usamos "personas_Id" (nombre del atributo en la entidad + _Id)
     List<Asalto> findByPersonas_Id(Long personaDetenidaId);
 
-    // Agrego un JOIN FETCH para que al listar asaltos traiga las personas
-    // de una sola vez y no haga 500 consultas a la base (Problema N+1)
+    // JOIN FETCH para que al listar asaltos traiga las personas
+    // de una sola vez y no haga 500 consultas a la base
     @Query("SELECT DISTINCT a FROM Asalto a LEFT JOIN FETCH a.personas JOIN FETCH a.sucursal")
     List<Asalto> findAllWithPersonas();
 
     /**
-     * Nuevo método para el reporte dinámico.
+     * método para el reporte dinámico.
      * Permite filtrar por sucursal, fecha exacta o rango de fechas de forma opcional.
      */
     @Query("SELECT DISTINCT a FROM Asalto a " +

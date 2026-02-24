@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-// RESTAURADO: Ahora el Frontend podrá encontrar este recurso
+
 @RequestMapping("/api/juicios")
 @CrossOrigin(origins = "*") // Permite que el Frontend (8081) realice cambios (PUT, DELETE)
 public class JuicioController {

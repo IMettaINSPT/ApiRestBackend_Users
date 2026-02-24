@@ -8,7 +8,7 @@ public class UsuarioRequest {
 
     @NotBlank(message = "El código de usuario es obligatorio")
     @Size(min = 3, max = 20, message = "El código debe tener entre 3 y 20 caracteres")
-    private String codigo; // ✅ Agregado para consistencia con el sistema
+    private String codigo;
 
     @NotBlank(message = "El username es obligatorio")
     @Size(min = 3, max = 50, message = "El username debe tener entre 3 y 50 caracteres")
@@ -18,9 +18,9 @@ public class UsuarioRequest {
     @Size(min = 4, max = 100, message = "La password debe tener al menos 4 caracteres")
     private String password;
 
-    @NotBlank(message = "El rol es obligatorio") // ✅ Cambiado de 'tipo' a 'rol' para matchear con el Front
+    @NotBlank(message = "El rol es obligatorio")
     @Pattern(
-            regexp = "ADMIN|INVESTIGADOR|VIGILANTE|USER", // ✅ Agregamos USER si lo vas a usar
+            regexp = "ADMIN|INVESTIGADOR|VIGILANTE|USER",
             message = "Rol inválido. Valores permitidos: ADMIN, INVESTIGADOR, VIGILANTE, USER"
     )
     private String rol;

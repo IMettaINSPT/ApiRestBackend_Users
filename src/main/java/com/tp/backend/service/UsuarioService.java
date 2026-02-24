@@ -90,7 +90,7 @@ public class UsuarioService {
             uv.setPerfil(vig);
         }
 
-        // ✅ Seteo del nuevo campo código y datos básicos
+
         u.setCodigo(req.getCodigo());
         u.setUsername(req.getUsername());
         u.setPassword(passwordEncoder.encode(req.getPassword()));
@@ -104,17 +104,17 @@ public class UsuarioService {
         Usuario u = usuarioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Usuario no encontrado: " + id));
 
-        // Password opcional
+
         if (req.getPassword() != null && !req.getPassword().isBlank()) {
             u.setPassword(passwordEncoder.encode(req.getPassword()));
         }
 
-        // Enabled opcional
+
         if (req.getEnabled() != null) {
             u.setEnabled(req.getEnabled());
         }
 
-        // Nota: NO cambiamos el tipo/rol en update (tal como ya tenías)
+
         Usuario guardado = usuarioRepository.save(u);
         return toResponse(guardado);
     }
@@ -146,10 +146,10 @@ public class UsuarioService {
 
         if(u instanceof UsuarioVigilante uv && uv.getPerfil() != null ){
             vigilanteId = uv.getPerfil().getId();
-            vigilanteCodigo = uv.getPerfil().getCodigo(); // ✅ Obtenemos el código del perfil
+            vigilanteCodigo = uv.getPerfil().getCodigo(); //  Obtenemos el código del perfil
         }
 
-        // ✅ Constructor corregido con los 7 parámetros requeridos
+
         return new UsuarioResponse(
                 u.getId(),
                 u.getCodigo(),

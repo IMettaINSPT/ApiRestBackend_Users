@@ -4,7 +4,7 @@ import com.tp.backend.dto.juicio.*;
 import com.tp.backend.dto.juez.JuezResponse;
 import com.tp.backend.dto.personaDetenida.PersonaDetenidaResponse;
 import com.tp.backend.dto.asalto.AsaltoResponse;
-import com.tp.backend.dto.banda.BandaResponse; // IMPORTANTE
+import com.tp.backend.dto.banda.BandaResponse;
 import com.tp.backend.exception.NotFoundException;
 import com.tp.backend.model.*;
 import com.tp.backend.repository.*;
@@ -111,7 +111,7 @@ public class JuicioService {
                 j.getJuez().getAnosServicio()
         ));
 
-        // --- CORRECCIÓN: Mapear la Banda dentro de la Persona ---
+        // --- Mapear la Banda dentro de la Persona ---
         PersonaDetenida p = j.getPersonaDetenida();
         BandaResponse bandaDto = null;
 
@@ -119,7 +119,7 @@ public class JuicioService {
             bandaDto = new BandaResponse(
                     p.getBanda().getId(),
                     p.getBanda().getNumeroBanda(),
-                    null // numeroMiembros no suele ser necesario para esta lista
+                    null
             );
         }
 
@@ -128,7 +128,7 @@ public class JuicioService {
                 p.getCodigo(),
                 p.getNombre(),
                 p.getApellido(),
-                bandaDto, // Ahora pasamos el objeto banda en lugar de null
+                bandaDto,
                 null
         ));
 

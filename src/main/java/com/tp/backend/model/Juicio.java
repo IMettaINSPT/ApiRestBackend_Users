@@ -1,6 +1,6 @@
 package com.tp.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties; // Agregado
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
@@ -30,7 +30,7 @@ public class Juicio {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "juez_id", nullable = false)
-    @JsonIgnoreProperties("juicios") // Cambio: Evita recursión infinita para que la lista llegue al front
+    @JsonIgnoreProperties("juicios") //  Evita recursión infinita para que la lista llegue al front
     private Juez juez;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)

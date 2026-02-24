@@ -16,7 +16,7 @@ public class AsaltoResponse {
     private SucursalResponse sucursal;
 
     // Lista - RELACIÓN 1 a N: Un asalto es cometido por MUCHAS personas
-    // Cortamos la recursividad aquí
+    // Cortamos la recursividad acá
     @JsonIgnoreProperties("asaltos")
     private List<PersonaDetenidaResponse> personas;
 

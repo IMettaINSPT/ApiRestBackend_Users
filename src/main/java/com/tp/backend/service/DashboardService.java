@@ -45,7 +45,7 @@ public class DashboardService {
         res.setVigilantes(vigilanteRepository.count());
         res.setUsuarios(usuarioRepository.count());
 
-        // Usuarios por rol (sin query rara: usamos getRol() de tu herencia)
+        // Usuarios por rol
         var usuarios = usuarioRepository.findAll();
         Map<String, Long> usuariosPorRol = usuarios.stream()
                 .collect(Collectors.groupingBy(u -> u.getRol().name(), Collectors.counting()));

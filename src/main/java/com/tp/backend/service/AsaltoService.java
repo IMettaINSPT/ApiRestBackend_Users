@@ -40,7 +40,7 @@ public class AsaltoService {
         // Validamos la lógica de fechas, pero ya no exigimos sucursalId
         validarFiltros(fecha, desde, hasta);
 
-        // Llamamos al método dinámico del repositorio (debes crearlo en el Repository)
+        // Llamamos al método dinámico del repositorio
         List<Asalto> asaltos = asaltoRepository.filtrar(sucursalId, fecha, desde, hasta);
 
         return asaltos.stream().map(this::toResponse).toList();
@@ -126,8 +126,7 @@ public class AsaltoService {
             throw new BadRequestException("Rango de fechas inválido: la fecha 'desde' no puede ser posterior a la fecha 'hasta'.");
         }
 
-        // Nota: Ahora se permite enviar solo 'desde' (ej: desde hoy en adelante)
-        // o solo 'hasta' (ej: todo lo ocurrido hasta ayer) sin errores.
+
     }
 
     private void validarRequest(AsaltoRequest req) {
