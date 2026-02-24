@@ -8,7 +8,6 @@ import com.tp.backend.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -46,7 +45,8 @@ public class ContratoService {
         if (contratoRepo.existsByVigilanteIdAndSucursalIdAndFechaContrato(
                 req.getVigilanteId(),
                 req.getSucursalId(),
-                req.getFechaContrato())) {
+                req.getFechaContrato()
+               )) {
 
             throw new BadRequestException(
                     "Ya existe un contrato para ese vigilante, sucursal y fecha"
@@ -60,13 +60,19 @@ public class ContratoService {
         Vigilante v = vigilanteRepo.findById(req.getVigilanteId())
                 .orElseThrow(() -> new NotFoundException(
                         "Vigilante no encontrado: " + req.getVigilanteId()));
-        validarRango(req.getFechaContrato(), req.getFechaFin());
 
         Contrato c = new Contrato();
         c.setFechaContrato(req.getFechaContrato());
         c.setConArma(req.isConArma());
         c.setSucursal(s);
         c.setVigilante(v);
+        c.setFechaFin(req.getFechaFin());
+
+        // --- AGREGADO: Lógica de generación automática del número ---
+        // Genera un código tipo CON-827364
+        String numAutomatico = "CON-" + (int)(Math.random() * 1000000);
+        c.setNumContrato(numAutomatico);
+        // ------------------------------------------------------------
 
         return toResponse(contratoRepo.save(c));
     }
@@ -83,11 +89,11 @@ public class ContratoService {
         Vigilante v = vigilanteRepo.findById(req.getVigilanteId())
                 .orElseThrow(() -> new NotFoundException("Vigilante no encontrado: " + req.getVigilanteId()));
 
-        validarRango(req.getFechaContrato(), req.getFechaFin());
         c.setFechaContrato(req.getFechaContrato());
         c.setConArma(req.isConArma());
         c.setSucursal(s);
         c.setVigilante(v);
+        c.setFechaFin(req.getFechaFin());
 
         return toResponse(c);
     }
@@ -97,22 +103,24 @@ public class ContratoService {
         if (!contratoRepo.existsById(id)) {
             throw new NotFoundException("Contrato no encontrado: " + id);
         }
-
         contratoRepo.deleteById(id);
     }
 
     private ContratoResponse toResponse(Contrato c) {
         return new ContratoResponse(
                 c.getId(),
+                c.getNumContrato(), // AGREGADO: Pasamos el nuevo número al Response
                 c.getFechaContrato(),
                 c.isConArma(),
                 c.getSucursal().getId(),
                 c.getSucursal().getCodigo(),
                 c.getVigilante().getId(),
                 c.getVigilante().getCodigo(),
-                c.getFechaFin()
+                c.getFechaFin(),
+                c.getSucursal().getDomicilio()
         );
     }
+
     @Transactional(readOnly = true)
     public List<ContratoResponse> listarPorSucursal(Long sucursalId) {
         if (!sucursalRepo.existsById(sucursalId)) {
@@ -136,16 +144,4 @@ public class ContratoService {
                 .map(this::toResponse)
                 .toList();
     }
-
-    private void validarRango(LocalDate inicio, LocalDate fin) {
-        if (fin != null && fin.isBefore(inicio)) {
-            throw new BadRequestException("La fecha fin no puede ser anterior a la fecha inicio.");
-        }
-    }
-
-    /*private void validarSolapamiento(Long vigilanteId, LocalDate inicio, LocalDate fin, Long excludeId) {
-        if (contratoRepo.existsSolapadoVigilante(vigilanteId, inicio, fin, excludeId)) {
-            throw new BadRequestException("El vigilante ya tiene un contrato activo/solapado en ese período.");
-        }
-    }*/
 }

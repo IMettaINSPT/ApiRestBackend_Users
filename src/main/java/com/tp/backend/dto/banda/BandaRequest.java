@@ -17,15 +17,11 @@ public class BandaRequest {
     public Integer getNumeroBanda() {
         return numeroBanda;
     }
-
     public void setNumeroBanda(Integer numeroBanda) {
         this.numeroBanda = numeroBanda;
     }
 
-    public Integer getNumeroMiembros() {
-        return numeroMiembros;
-    }
-
+    public Integer getNumeroMiembros() {return numeroMiembros;}
     public void setNumeroMiembros(Integer numeroMiembros) {
         this.numeroMiembros = numeroMiembros;
     }

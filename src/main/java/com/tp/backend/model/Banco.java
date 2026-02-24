@@ -18,7 +18,8 @@ public class Banco {
     @Column(nullable=false, length=120)
     private String domicilioCentral;
 
-    @OneToMany(mappedBy = "banco", cascade = CascadeType.ALL, orphanRemoval = true)
+    // Se agrega fetch = FetchType.EAGER para que cargue las sucursales automáticamente
+    @OneToMany(mappedBy = "banco", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Sucursal> sucursales = new ArrayList<>();
 
     public Long getId() { return id; }

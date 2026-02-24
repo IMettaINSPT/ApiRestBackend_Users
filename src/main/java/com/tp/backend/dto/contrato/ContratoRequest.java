@@ -9,6 +9,9 @@ public class ContratoRequest {
     @NotNull
     private LocalDate fechaContrato;
 
+
+    private LocalDate fechaFin;
+
     private boolean conArma;
 
     @NotNull
@@ -17,10 +20,15 @@ public class ContratoRequest {
     @NotNull
     private Long vigilanteId;
 
-
-    private LocalDate fechaFin; // opcional
     public LocalDate getFechaContrato() { return fechaContrato; }
     public void setFechaContrato(LocalDate fechaContrato) { this.fechaContrato = fechaContrato; }
+
+    public LocalDate getFechaFin() {
+        return fechaFin;
+    }
+    public void setFechaFin(LocalDate fechaFin) {
+        this.fechaFin = fechaFin;
+    }
 
     public boolean isConArma() { return conArma; }
     public void setConArma(boolean conArma) { this.conArma = conArma; }
@@ -30,12 +38,4 @@ public class ContratoRequest {
 
     public Long getVigilanteId() { return vigilanteId; }
     public void setVigilanteId(Long vigilanteId) { this.vigilanteId = vigilanteId; }
-
-    public LocalDate getFechaFin() {
-        return fechaFin;
-    }
-
-    public void setFechaFin(LocalDate fechaFin) {
-        this.fechaFin = fechaFin;
-    }
 }

@@ -8,5 +8,4 @@ import java.util.Optional;
 public interface BancoRepository extends JpaRepository<Banco, Long> {
     Optional<Banco> findByCodigo(String codigo);
     boolean existsByCodigo(String codigo);
-
 }

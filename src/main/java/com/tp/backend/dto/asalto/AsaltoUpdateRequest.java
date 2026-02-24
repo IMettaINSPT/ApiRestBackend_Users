@@ -1,52 +1,36 @@
 package com.tp.backend.dto.asalto;
 
-import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 
 public class AsaltoUpdateRequest {
 
-    @NotNull
-    private LocalDate fecha;
+    @NotNull(message = "El código es obligatorio")
+    private String codigo;
 
-    @NotNull
+    @NotNull(message = "La fecha es obligatoria")
+    private LocalDate fechaAsalto; // Coincide con el Front
+
+    @NotNull(message = "La sucursal es obligatoria")
     private Long sucursalId;
 
-    @NotNull
-    private Long bandaId;
+    @NotEmpty(message = "Debe seleccionar al menos una persona")
+    private List<Long> personaDetenidaIds; // Coincide con el Front
 
-    @NotNull
-    private Long vigilanteId;
+    // Getters y Setters
+    public String getCodigo() { return codigo; }
+    public void setCodigo(String codigo) { this.codigo = codigo; }
 
-    @NotEmpty
-    private Set<Long> personasDetenidasIds;
-
-    @NotNull
-    @DecimalMin(value = "0.01", message = "El monto robado debe ser mayor a 0")
-    private BigDecimal montoRobado;
-
-
-    public LocalDate getFecha() { return fecha; }
-    public void setFecha(LocalDate fecha) { this.fecha = fecha; }
+    public LocalDate getFechaAsalto() { return fechaAsalto; }
+    public void setFechaAsalto(LocalDate fechaAsalto) { this.fechaAsalto = fechaAsalto; }
 
     public Long getSucursalId() { return sucursalId; }
     public void setSucursalId(Long sucursalId) { this.sucursalId = sucursalId; }
 
-    public Long getBandaId() { return bandaId; }
-    public void setBandaId(Long bandaId) { this.bandaId = bandaId; }
-
-    public Long getVigilanteId() { return vigilanteId; }
-    public void setVigilanteId(Long vigilanteId) { this.vigilanteId = vigilanteId; }
-
-    public BigDecimal getMontoRobado() { return montoRobado; }
-    public void setMontoRobado(BigDecimal montoRobado) { this.montoRobado = montoRobado; }
-
-    public Set<Long> getPersonasDetenidasIds() { return personasDetenidasIds; }
-    public void setPersonasDetenidasIds(Set<Long> personasDetenidasIds) {
-        this.personasDetenidasIds = personasDetenidasIds;
+    public List<Long> getPersonaDetenidaIds() { return personaDetenidaIds; }
+    public void setPersonaDetenidaIds(List<Long> personaDetenidaIds) {
+        this.personaDetenidaIds = personaDetenidaIds;
     }
 }
