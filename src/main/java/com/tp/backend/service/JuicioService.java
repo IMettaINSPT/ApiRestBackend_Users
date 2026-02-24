@@ -155,6 +155,6 @@ public class JuicioService {
                 return String.format("Debe cumplir %d meses (sale en %s)", j.getTiempoCondenaMeses(), fechaFmt);
             }
         }
-        return "N/A (Absuelto)";
+        return " No presenta ";
     }
 }
