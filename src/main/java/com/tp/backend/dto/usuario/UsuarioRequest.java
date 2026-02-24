@@ -6,6 +6,10 @@ import jakarta.validation.constraints.Size;
 
 public class UsuarioRequest {
 
+    @NotBlank(message = "El código de usuario es obligatorio")
+    @Size(min = 3, max = 20, message = "El código debe tener entre 3 y 20 caracteres")
+    private String codigo; // ✅ Agregado para consistencia con el sistema
+
     @NotBlank(message = "El username es obligatorio")
     @Size(min = 3, max = 50, message = "El username debe tener entre 3 y 50 caracteres")
     private String username;
@@ -14,40 +18,29 @@ public class UsuarioRequest {
     @Size(min = 4, max = 100, message = "La password debe tener al menos 4 caracteres")
     private String password;
 
-    @NotBlank(message = "El tipo de usuario es obligatorio")
+    @NotBlank(message = "El rol es obligatorio") // ✅ Cambiado de 'tipo' a 'rol' para matchear con el Front
     @Pattern(
-            regexp = "ADMIN|INVESTIGADOR|VIGILANTE",
-            message = "Tipo inválido. Valores permitidos: ADMIN, INVESTIGADOR, VIGILANTE"
+            regexp = "ADMIN|INVESTIGADOR|VIGILANTE|USER", // ✅ Agregamos USER si lo vas a usar
+            message = "Rol inválido. Valores permitidos: ADMIN, INVESTIGADOR, VIGILANTE, USER"
     )
-    private String tipo;
-
+    private String rol;
 
     private Long vigilanteId;
 
-    public Long getVigilanteId() {return vigilanteId;}
+    // --- Getters y Setters ---
 
-    public void setVigilanteId(Long vigilanteId) {this.vigilanteId = vigilanteId;}
-    public String getUsername() {
-        return username;
-    }
+    public String getCodigo() { return codigo; }
+    public void setCodigo(String codigo) { this.codigo = codigo; }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 
-    public String getPassword() {
-        return password;
-    }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    public String getRol() { return rol; }
+    public void setRol(String rol) { this.rol = rol; }
 
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
+    public Long getVigilanteId() { return vigilanteId; }
+    public void setVigilanteId(Long vigilanteId) { this.vigilanteId = vigilanteId; }
 }
