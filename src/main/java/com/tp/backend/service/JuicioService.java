@@ -47,19 +47,23 @@ public class JuicioService {
 
     @Transactional
     public JuicioResponse crear(JuicioRequest req) {
+        // VALIDACIÓN: Expediente único - Usamos etiqueta [EXPEDIENTE_DUPLICADO]
+        if (juicioRepo.existsByExpediente(req.getExpediente())) {
+            throw new IllegalArgumentException("[EXPEDIENTE_DUPLICADO] El número de expediente ya existe en el sistema.");
+        }
+
         Juez juez = juezRepo.findById(req.getJuezId()).orElseThrow();
         PersonaDetenida persona = personaRepo.findById(req.getPersonaDetenidaId()).orElseThrow();
         Asalto asalto = asaltoRepo.findById(req.getAsaltoId()).orElseThrow();
 
-        // VALIDACIÓN: Fecha Juicio >= Fecha Asalto
+        // VALIDACIÓN: Fechas - Usamos etiqueta [ERROR_FECHAS]
         if (req.getFechaJuicio().isBefore(asalto.getFechaAsalto())) {
-            throw new IllegalArgumentException("La fecha del juicio no puede ser anterior a la fecha del asalto (" + asalto.getFechaAsalto() + ")");
+            throw new IllegalArgumentException("[ERROR_FECHAS] La fecha del juicio no puede ser anterior a la fecha del asalto (" + asalto.getFechaAsalto() + ")");
         }
 
-        // VALIDACIÓN: Fecha Inicio Condena >= Fecha Juicio
         if (req.isCondenado() && req.getFechaInicioCondena() != null) {
             if (req.getFechaInicioCondena().isBefore(req.getFechaJuicio())) {
-                throw new IllegalArgumentException("La fecha de inicio de condena no puede ser anterior a la fecha del juicio (" + req.getFechaJuicio() + ")");
+                throw new IllegalArgumentException("[ERROR_FECHAS] La fecha de inicio de condena no puede ser anterior a la fecha del juicio (" + req.getFechaJuicio() + ")");
             }
         }
 
@@ -73,19 +77,24 @@ public class JuicioService {
     @Transactional
     public JuicioResponse actualizar(Long id, JuicioUpdateRequest req) {
         Juicio j = juicioRepo.findById(id).orElseThrow();
+
+        // VALIDACIÓN: Expediente único (si cambió) - Usamos etiqueta [EXPEDIENTE_DUPLICADO]
+        if (!j.getExpediente().equalsIgnoreCase(req.getExpediente()) &&
+                juicioRepo.existsByExpediente(req.getExpediente())) {
+            throw new IllegalArgumentException("[EXPEDIENTE_DUPLICADO] El número de expediente ya existe en el sistema.");
+        }
+
         Juez juez = juezRepo.findById(req.getJuezId()).orElseThrow();
         PersonaDetenida persona = personaRepo.findById(req.getPersonaDetenidaId()).orElseThrow();
         Asalto asalto = asaltoRepo.findById(req.getAsaltoId()).orElseThrow();
 
-        // VALIDACIÓN: Fecha Juicio >= Fecha Asalto
         if (req.getFechaJuicio().isBefore(asalto.getFechaAsalto())) {
-            throw new IllegalArgumentException("La fecha del juicio no puede ser anterior a la fecha del asalto (" + asalto.getFechaAsalto() + ")");
+            throw new IllegalArgumentException("[ERROR_FECHAS] La fecha del juicio no puede ser anterior a la fecha del asalto (" + asalto.getFechaAsalto() + ")");
         }
 
-        // VALIDACIÓN: Fecha Inicio Condena >= Fecha Juicio
         if (req.isCondenado() && req.getFechaInicioCondena() != null) {
             if (req.getFechaInicioCondena().isBefore(req.getFechaJuicio())) {
-                throw new IllegalArgumentException("La fecha de inicio de condena no puede ser anterior a la fecha del juicio (" + req.getFechaJuicio() + ")");
+                throw new IllegalArgumentException("[ERROR_FECHAS] La fecha de inicio de condena no puede ser anterior a la fecha del juicio (" + req.getFechaJuicio() + ")");
             }
         }
 
@@ -135,26 +144,13 @@ public class JuicioService {
                 j.getJuez().getAnosServicio()
         ));
 
-        // --- Mapear la Banda dentro de la Persona ---
         PersonaDetenida p = j.getPersonaDetenida();
         BandaResponse bandaDto = null;
-
         if (p.getBanda() != null) {
-            bandaDto = new BandaResponse(
-                    p.getBanda().getId(),
-                    p.getBanda().getNumeroBanda(),
-                    null
-            );
+            bandaDto = new BandaResponse(p.getBanda().getId(), p.getBanda().getNumeroBanda(), null);
         }
 
-        res.setPersona(new PersonaDetenidaResponse(
-                p.getId(),
-                p.getCodigo(),
-                p.getNombre(),
-                p.getApellido(),
-                bandaDto,
-                null
-        ));
+        res.setPersona(new PersonaDetenidaResponse(p.getId(), p.getCodigo(), p.getNombre(), p.getApellido(), bandaDto, null));
 
         AsaltoResponse asaltoDto = new AsaltoResponse();
         asaltoDto.setId(j.getAsalto().getId());
@@ -166,13 +162,9 @@ public class JuicioService {
     }
 
     private String generarDetallePena(Juicio j) {
-        if (j.isCondenado()
-                && j.getFechaInicioCondena() != null
-                && j.getTiempoCondenaMeses() != null) {
-
+        if (j.isCondenado() && j.getFechaInicioCondena() != null && j.getTiempoCondenaMeses() != null) {
             LocalDate fechaSalida = j.getFechaInicioCondena().plusMonths(j.getTiempoCondenaMeses());
             String fechaFmt = fechaSalida.format(DateTimeFormatter.ofPattern("MM/yyyy"));
-
             if (LocalDate.now().isAfter(fechaSalida)) {
                 return String.format("Cumplió %d meses (salió en %s)", j.getTiempoCondenaMeses(), fechaFmt);
             } else {
