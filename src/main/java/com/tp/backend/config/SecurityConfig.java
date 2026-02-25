@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Configuration
 public class SecurityConfig {
 
-    // 👉 Se lee desde application.properties
+    // Se lee desde application.properties
     @Value("${app.cors.allowed-origins}")
     private String allowedOriginPatterns;
 
