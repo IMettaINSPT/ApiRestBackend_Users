@@ -51,6 +51,18 @@ public class JuicioService {
         PersonaDetenida persona = personaRepo.findById(req.getPersonaDetenidaId()).orElseThrow();
         Asalto asalto = asaltoRepo.findById(req.getAsaltoId()).orElseThrow();
 
+        // VALIDACIÓN: Fecha Juicio >= Fecha Asalto
+        if (req.getFechaJuicio().isBefore(asalto.getFechaAsalto())) {
+            throw new IllegalArgumentException("La fecha del juicio no puede ser anterior a la fecha del asalto (" + asalto.getFechaAsalto() + ")");
+        }
+
+        // VALIDACIÓN: Fecha Inicio Condena >= Fecha Juicio
+        if (req.isCondenado() && req.getFechaInicioCondena() != null) {
+            if (req.getFechaInicioCondena().isBefore(req.getFechaJuicio())) {
+                throw new IllegalArgumentException("La fecha de inicio de condena no puede ser anterior a la fecha del juicio (" + req.getFechaJuicio() + ")");
+            }
+        }
+
         Juicio j = new Juicio();
         mapRequestToEntity(j, req.getExpediente(), req.getFechaJuicio(), req.isCondenado(),
                 req.getFechaInicioCondena(), req.getTiempoCondenaMeses(), juez, persona, asalto);
@@ -64,6 +76,18 @@ public class JuicioService {
         Juez juez = juezRepo.findById(req.getJuezId()).orElseThrow();
         PersonaDetenida persona = personaRepo.findById(req.getPersonaDetenidaId()).orElseThrow();
         Asalto asalto = asaltoRepo.findById(req.getAsaltoId()).orElseThrow();
+
+        // VALIDACIÓN: Fecha Juicio >= Fecha Asalto
+        if (req.getFechaJuicio().isBefore(asalto.getFechaAsalto())) {
+            throw new IllegalArgumentException("La fecha del juicio no puede ser anterior a la fecha del asalto (" + asalto.getFechaAsalto() + ")");
+        }
+
+        // VALIDACIÓN: Fecha Inicio Condena >= Fecha Juicio
+        if (req.isCondenado() && req.getFechaInicioCondena() != null) {
+            if (req.getFechaInicioCondena().isBefore(req.getFechaJuicio())) {
+                throw new IllegalArgumentException("La fecha de inicio de condena no puede ser anterior a la fecha del juicio (" + req.getFechaJuicio() + ")");
+            }
+        }
 
         mapRequestToEntity(j, req.getExpediente(), req.getFechaJuicio(), req.isCondenado(),
                 req.getFechaInicioCondena(), req.getTiempoCondenaMeses(), juez, persona, asalto);

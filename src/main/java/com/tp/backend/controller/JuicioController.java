@@ -8,14 +8,15 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
-
 @RequestMapping("/api/juicios")
-@CrossOrigin(origins = "*") // Permite que el Frontend (8081) realice cambios (PUT, DELETE)
+@CrossOrigin(origins = "*")
 public class JuicioController {
 
     private final JuicioService service;
@@ -23,6 +24,13 @@ public class JuicioController {
 
     public JuicioController(JuicioService service) {
         this.service = service;
+    }
+
+    // Captura específicamente los errores de fecha que lanzamos en el Service
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<?> handleValidationExceptions(IllegalArgumentException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", ex.getMessage()));
     }
 
     @GetMapping
