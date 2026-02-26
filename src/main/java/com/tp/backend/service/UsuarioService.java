@@ -144,11 +144,15 @@ public class UsuarioService {
         Long vigilanteId = null;
         String vigilanteCodigo = null;
 
-        if(u instanceof UsuarioVigilante uv && uv.getPerfil() != null ){
-            vigilanteId = uv.getPerfil().getId();
-            vigilanteCodigo = uv.getPerfil().getCodigo(); //  Obtenemos el código del perfil
+        // CAMBIO: Se realiza un acceso seguro al perfil para evitar LazyInitializationException
+        // y asegurar que si el usuario no es Vigilante (como un Admin o Investigador), los campos sean null.
+        if (u instanceof UsuarioVigilante uv) {
+            Vigilante p = uv.getPerfil();
+            if (p != null) {
+                vigilanteId = p.getId();
+                vigilanteCodigo = p.getCodigo();
+            }
         }
-
 
         return new UsuarioResponse(
                 u.getId(),
