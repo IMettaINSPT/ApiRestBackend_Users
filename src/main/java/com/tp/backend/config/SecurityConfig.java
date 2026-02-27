@@ -41,21 +41,19 @@ public class SecurityConfig {
                         .requestMatchers("/ping").permitAll()
                         .requestMatchers("/api/auth/login").permitAll()
 
-                        // VIGILANTE
-                        .requestMatchers(HttpMethod.GET, "/api/auth/me")
-                        .hasAnyRole("ADMIN", "INVESTIGADOR", "VIGILANTE")
+                        // PERFILES PROPIOS (Acceso compartido)
+                        .requestMatchers(HttpMethod.GET, "/api/auth/me").hasAnyRole("ADMIN", "INVESTIGADOR", "VIGILANTE")
+                        .requestMatchers(HttpMethod.GET, "/api/usuarios/me").hasAnyRole("ADMIN", "INVESTIGADOR", "VIGILANTE")
+                        .requestMatchers(HttpMethod.GET, "/api/vigilantes/me").hasRole("VIGILANTE")
 
-                        .requestMatchers(HttpMethod.GET, "/api/vigilantes/me")
-                        .hasRole("VIGILANTE")
+                        // --- REGLA CLAVE: INVESTIGADOR Y ADMIN PUEDEN CONSULTAR TODO ---
+                        // Esto incluye /api/usuarios, /api/contratos, /api/vigilantes, etc.
+                        .requestMatchers(HttpMethod.GET, "/api/**").hasAnyRole("ADMIN", "INVESTIGADOR")
 
-                        // ADMIN: administra todo
+                        // --- ADMIN: SOLO ADMIN PUEDE MODIFICAR (POST, PUT, DELETE) ---
                         .requestMatchers(HttpMethod.POST,   "/api/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT,    "/api/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/**").hasRole("ADMIN")
-
-                        // INVESTIGADOR y ADMIN: consultas GET
-                        .requestMatchers(HttpMethod.GET, "/api/**")
-                        .hasAnyRole("ADMIN", "INVESTIGADOR")
 
                         .anyRequest().authenticated()
                 )
