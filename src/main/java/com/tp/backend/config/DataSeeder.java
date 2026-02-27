@@ -39,6 +39,8 @@ public class DataSeeder implements CommandLineRunner {
             admin.setUsername(adminUsername);
             admin.setPassword(passwordEncoder.encode(adminPassword));
             admin.setEnabled(true);
+            // Se agrega el código para cumplir con la restricción nullable = false de la entidad
+            admin.setCodigo("ADM-001");
 
             usuarioRepository.save(admin);
 
