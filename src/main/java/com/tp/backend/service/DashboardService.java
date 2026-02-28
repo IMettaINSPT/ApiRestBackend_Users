@@ -1,13 +1,18 @@
 package com.tp.backend.service;
 
 import com.tp.backend.dto.dashboard.DashboardSummaryResponse;
-import com.tp.backend.model.Contrato;
+
+import com.tp.backend.contrato.domain.Contrato;
+import com.tp.backend.contrato.infrastructure.ContratoRepository;
+
 import com.tp.backend.repository.*;
 import org.springframework.stereotype.Service;
 
 import java.time.YearMonth;
 import java.util.*;
 import java.util.stream.Collectors;
+
+
 
 @Service
 public class DashboardService {

@@ -1,6 +1,6 @@
 package com.tp.backend.dto.vigilante;
 
-import com.tp.backend.dto.contrato.ContratoResponse;
+import com.tp.backend.contrato.dto.ContratoResponse;
 import java.util.List;
 
 public class VigilanteResponse {
