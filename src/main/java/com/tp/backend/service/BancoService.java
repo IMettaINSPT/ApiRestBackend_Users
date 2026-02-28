@@ -1,6 +1,7 @@
 package com.tp.backend.service;
 
 import com.tp.backend.dto.banco.*;
+import com.tp.backend.dto.sucursal.SucursalResponse;
 import com.tp.backend.model.Banco;
 import com.tp.backend.exception.*;
 import com.tp.backend.repository.BancoRepository;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BancoService {
@@ -24,7 +26,15 @@ public class BancoService {
     @Transactional(readOnly = true)
     public List<BancoResponse> listar() {
         return repo.findAll().stream()
-                .map(b -> new BancoResponse(b.getId(), b.getCodigo(), b.getDomicilioCentral()))
+                .map(b -> {
+                    BancoResponse res = new BancoResponse(b.getId(), b.getCodigo(), b.getDomicilioCentral());
+                    if (b.getSucursales() != null) {
+                        res.setSucursales(b.getSucursales().stream()
+                                .map(s -> new SucursalResponse(s.getId(), s.getCodigo(), s.getDomicilio(), s.getNroEmpleados(), b.getId(), b.getCodigo()))
+                                .collect(Collectors.toList()));
+                    }
+                    return res;
+                })
                 .toList();
     }
 
@@ -32,7 +42,14 @@ public class BancoService {
     public BancoResponse obtenerPorId(Long id) {
         Banco b = repo.findById(id)
                 .orElseThrow(() -> new NotFoundException("Banco no encontrado: " + id));
-        return new BancoResponse(b.getId(), b.getCodigo(), b.getDomicilioCentral());
+
+        BancoResponse res = new BancoResponse(b.getId(), b.getCodigo(), b.getDomicilioCentral());
+        if (b.getSucursales() != null) {
+            res.setSucursales(b.getSucursales().stream()
+                    .map(s -> new SucursalResponse(s.getId(), s.getCodigo(), s.getDomicilio(), s.getNroEmpleados(), b.getId(), b.getCodigo()))
+                    .collect(Collectors.toList()));
+        }
+        return res;
     }
 
     @Transactional

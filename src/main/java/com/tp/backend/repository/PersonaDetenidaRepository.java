@@ -10,9 +10,9 @@ import java.util.Optional;
 public interface PersonaDetenidaRepository extends JpaRepository<PersonaDetenida, Long> {
     boolean existsByCodigo(String codigo);
 
-    @EntityGraph(attributePaths = "banda")
+    @EntityGraph(attributePaths = {"banda","asaltos"})
     Optional<PersonaDetenida> findById(Long id);
 
-    @EntityGraph(attributePaths = "banda")
+    @EntityGraph(attributePaths = {"banda","asaltos"})
     List<PersonaDetenida> findAll();
 }

@@ -1,6 +1,7 @@
 package com.tp.backend.controller;
-
+//cambios new new
 import com.tp.backend.dto.asalto.*;
+import com.tp.backend.dto.personaDetenida.PersonaDetenidaResponse;
 import com.tp.backend.service.AsaltoService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/asaltos")
+@CrossOrigin(origins = "*")
 public class AsaltoController {
 
     private final AsaltoService service;
@@ -36,6 +38,14 @@ public class AsaltoController {
     public AsaltoResponse porId(@PathVariable Long id) {
         log.info("Get /api/asaltos/porId id{}",id);
         return service.buscarPorId(id);
+    }
+
+    // --- NUEVO ENDPOINT PARA FILTRADO DINÁMICO ---
+    @GetMapping("/{id}/personas")
+    public List<PersonaDetenidaResponse> listarPersonasPorAsalto(@PathVariable Long id) {
+        log.info("Get /api/asaltos/{}/personas", id);
+        // Aprovechamos el método buscarPorId que ya mapea las personas en el Response
+        return service.buscarPorId(id).getPersonas();
     }
 
     @PostMapping

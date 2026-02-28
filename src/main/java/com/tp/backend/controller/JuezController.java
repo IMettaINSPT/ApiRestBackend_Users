@@ -36,7 +36,7 @@ public class JuezController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public JuezResponse crear(@Valid @RequestBody JuezRequest req) {
-        log.info("Post /api/jueces/crear codigo{}", req.getCodigo());
+        log.info("Post /api/jueces/crear claveJuzgado{}", req.getClaveJuzgado());
         return service.crear(req);
     }
 

@@ -1,21 +1,53 @@
 package com.tp.backend.dto.juez;
 
+import java.util.List;
+import com.tp.backend.dto.juicio.JuicioResponse;
+
 public class JuezResponse {
 
     private Long id;
-    private String codigo;
+    private String claveJuzgado;
     private String nombre;
     private String apellido;
+    private Integer anosServicio;
+    private Integer cantidadJuicios;
+    private List<JuicioResponse> juicios;
 
-    public JuezResponse(Long id, String codigo, String nombre, String apellido) {
+    public JuezResponse() {}
+
+    public JuezResponse(Long id, String claveJuzgado, String nombre, String apellido, Integer anosServicio) {
         this.id = id;
-        this.codigo = codigo;
+        this.claveJuzgado = claveJuzgado;
         this.nombre = nombre;
         this.apellido = apellido;
+        this.anosServicio= anosServicio;
+        this.cantidadJuicios = 0; // Valor inicial por defecto
     }
 
     public Long getId() { return id; }
-    public String getCodigo() { return codigo; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getClaveJuzgado() { return claveJuzgado; }
+    public void setClaveJuzgado(String claveJuzgado) { this.claveJuzgado = claveJuzgado; }
+
     public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
+
     public String getApellido() { return apellido; }
+    public void setApellido(String apellido) { this.apellido = apellido; }
+
+    public Integer getAnosServicio() { return anosServicio; }
+    public void setAnosServicio(Integer anosServicio) { this.anosServicio = anosServicio; }
+
+    public Integer getCantidadJuicios() {return cantidadJuicios;}
+    public void setCantidadJuicios(Integer cantidadJuicios) {this.cantidadJuicios = cantidadJuicios;}
+
+    // Getter y Setter para la lista
+    public List<JuicioResponse> getJuicios() {
+        return juicios;
+    }
+    public void setJuicios(List<JuicioResponse> juicios) {
+        this.juicios = juicios;
+    }
+
 }

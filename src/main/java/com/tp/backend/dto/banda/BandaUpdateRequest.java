@@ -17,7 +17,6 @@ public class BandaUpdateRequest {
     public Integer getNumeroBanda() {
         return numeroBanda;
     }
-
     public void setNumeroBanda(Integer numeroBanda) {
         this.numeroBanda = numeroBanda;
     }
@@ -25,7 +24,6 @@ public class BandaUpdateRequest {
     public Integer getNumeroMiembros() {
         return numeroMiembros;
     }
-
     public void setNumeroMiembros(Integer numeroMiembros) {
         this.numeroMiembros = numeroMiembros;
     }

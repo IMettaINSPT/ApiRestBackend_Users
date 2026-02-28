@@ -1,6 +1,8 @@
 package com.tp.backend.service;
 
 import com.tp.backend.dto.juez.*;
+import com.tp.backend.dto.juicio.JuicioResponse;
+import com.tp.backend.dto.personaDetenida.PersonaDetenidaResponse;
 import com.tp.backend.exception.BadRequestException;
 import com.tp.backend.exception.NotFoundException;
 import com.tp.backend.model.Juez;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class JuezService {
@@ -33,14 +36,15 @@ public class JuezService {
 
     @Transactional
     public JuezResponse crear(JuezRequest req) {
-        if (repo.existsByCodigo(req.getCodigo())) {
-            throw new BadRequestException("Ya existe un juez con código: " + req.getCodigo());
+        if (repo.existsByClaveJuzgado(req.getClaveJuzgado())) {
+            throw new BadRequestException("Ya existe un juez con código: " + req.getClaveJuzgado());
         }
 
         Juez j = new Juez();
-        j.setCodigo(req.getCodigo());
+        j.setClaveJuzgado(req.getClaveJuzgado());
         j.setNombre(req.getNombre());
         j.setApellido(req.getApellido());
+        j.setAnosServicio(req.getAnosServicio());
 
         return toResponse(repo.save(j));
     }
@@ -50,13 +54,14 @@ public class JuezService {
         Juez j = repo.findById(id)
                 .orElseThrow(() -> new NotFoundException("Juez no encontrado: " + id));
 
-        if (!j.getCodigo().equals(req.getCodigo()) && repo.existsByCodigo(req.getCodigo())) {
-            throw new BadRequestException("Ya existe un juez con código: " + req.getCodigo());
+        if (!j.getClaveJuzgado().equals(req.getClaveJuzgado()) && repo.existsByClaveJuzgado(req.getClaveJuzgado())) {
+            throw new BadRequestException("Ya existe un juez con código: " + req.getClaveJuzgado());
         }
 
-        j.setCodigo(req.getCodigo());
+        j.setClaveJuzgado(req.getClaveJuzgado());
         j.setNombre(req.getNombre());
         j.setApellido(req.getApellido());
+        j.setAnosServicio(req.getAnosServicio());
 
         return toResponse(j);
     }
@@ -70,6 +75,44 @@ public class JuezService {
     }
 
     private JuezResponse toResponse(Juez j) {
-        return new JuezResponse(j.getId(), j.getCodigo(), j.getNombre(), j.getApellido());
+        JuezResponse response = new JuezResponse(j.getId(), j.getClaveJuzgado(), j.getNombre(), j.getApellido(), j.getAnosServicio());
+
+        if (j.getJuicios() != null) {
+            response.setCantidadJuicios(j.getJuicios().size());
+
+            List<JuicioResponse> listaJuiciosDto = j.getJuicios().stream()
+                    .map(juicio -> {
+                        JuicioResponse jr = new JuicioResponse();
+                        jr.setId(juicio.getId());
+                        jr.setExpediente(juicio.getExpediente());
+                        jr.setFechaJuicio(juicio.getFechaJuicio());
+                        jr.setCondenado(juicio.isCondenado());
+
+                        // --- CORRECCIÓN PARA RECORD CON 6 PARÁMETROS ---
+                        if (juicio.getPersonaDetenida() != null) {
+                            var p = juicio.getPersonaDetenida();
+
+                            // Pasamos los 6 argumentos requeridos por el record:
+                            // id, codigo, nombre, apellido, banda (null), asaltos (null)
+                            jr.setPersona(new PersonaDetenidaResponse(
+                                    p.getId(),
+                                    p.getCodigo(),
+                                    p.getNombre(),
+                                    p.getApellido(),
+                                    null, // banda: no es necesaria para la vista de jueces
+                                    null  // asaltos: no son necesarios para la vista de jueces
+                            ));
+                        }
+
+                        return jr;
+                    })
+                    .collect(Collectors.toList());
+
+            response.setJuicios(listaJuiciosDto);
+        } else {
+            response.setCantidadJuicios(0);
+        }
+
+        return response;
     }
 }

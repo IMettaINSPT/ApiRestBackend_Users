@@ -46,7 +46,8 @@ public class ContratoService {
         if (contratoRepo.existsByVigilanteIdAndSucursalIdAndFechaContrato(
                 req.getVigilanteId(),
                 req.getSucursalId(),
-                req.getFechaContrato())) {
+                req.getFechaContrato()
+               )) {
 
             throw new BadRequestException(
                     "Ya existe un contrato para ese vigilante, sucursal y fecha"
@@ -67,6 +68,13 @@ public class ContratoService {
         c.setConArma(req.isConArma());
         c.setSucursal(s);
         c.setVigilante(v);
+        c.setFechaFin(req.getFechaFin());
+
+        // --- AGREGADO: Lógica de generación automática del número ---
+        // Genera un código tipo CON-827364
+        String numAutomatico = "CON-" + (int)(Math.random() * 1000000);
+        c.setNumContrato(numAutomatico);
+        // ------------------------------------------------------------
 
         return toResponse(contratoRepo.save(c));
     }
@@ -88,6 +96,7 @@ public class ContratoService {
         c.setConArma(req.isConArma());
         c.setSucursal(s);
         c.setVigilante(v);
+        c.setFechaFin(req.getFechaFin());
 
         return toResponse(c);
     }
@@ -104,15 +113,22 @@ public class ContratoService {
     private ContratoResponse toResponse(Contrato c) {
         return new ContratoResponse(
                 c.getId(),
+                c.getNumContrato(), // AGREGADO: Pasamos el nuevo número al Response
                 c.getFechaContrato(),
                 c.isConArma(),
                 c.getSucursal().getId(),
                 c.getSucursal().getCodigo(),
                 c.getVigilante().getId(),
                 c.getVigilante().getCodigo(),
+<<<<<<< HEAD
                 c.getFechaFin()
+=======
+                c.getFechaFin(),
+                c.getSucursal().getDomicilio()
+>>>>>>> fixes_euge
         );
     }
+
     @Transactional(readOnly = true)
     public List<ContratoResponse> listarPorSucursal(Long sucursalId) {
         if (!sucursalRepo.existsById(sucursalId)) {
@@ -136,6 +152,7 @@ public class ContratoService {
                 .map(this::toResponse)
                 .toList();
     }
+<<<<<<< HEAD
 
     private void validarRango(LocalDate inicio, LocalDate fin) {
         if (fin != null && fin.isBefore(inicio)) {
@@ -149,3 +166,6 @@ public class ContratoService {
         }
     }*/
 }
+=======
+}
+>>>>>>> fixes_euge

@@ -1,13 +1,15 @@
 package com.tp.backend.dto.juez;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public class JuezRequest {
 
     @NotBlank
-    @Size(max = 30)
-    private String codigo;
+    @Size(max = 10)
+    private String claveJuzgado;
 
     @NotBlank
     @Size(max = 80)
@@ -17,12 +19,21 @@ public class JuezRequest {
     @Size(max = 80)
     private String apellido;
 
-    public String getCodigo() { return codigo; }
-    public void setCodigo(String codigo) { this.codigo = codigo; }
+    @NotNull(message = "Los años de servicio son obligatorios")
+    @Min(value = 1, message = "Los años de servicio mínimo es 1")
+    private Integer anosServicio;
+
+
+    public String getClaveJuzgado() { return claveJuzgado; }
+    public void setClaveJuzgado(String claveJuzgado) { this.claveJuzgado = claveJuzgado; }
 
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
 
     public String getApellido() { return apellido; }
     public void setApellido(String apellido) { this.apellido = apellido; }
+
+    public Integer getAnosServicio() { return anosServicio; }
+    public void setAnosServicio(Integer anosServicio) { this.anosServicio = anosServicio; }
+
 }

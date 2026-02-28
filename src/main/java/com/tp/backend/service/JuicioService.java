@@ -1,14 +1,18 @@
 package com.tp.backend.service;
 
 import com.tp.backend.dto.juicio.*;
+import com.tp.backend.dto.juez.JuezResponse;
+import com.tp.backend.dto.personaDetenida.PersonaDetenidaResponse;
+import com.tp.backend.dto.asalto.AsaltoResponse;
+import com.tp.backend.dto.banda.BandaResponse; // IMPORTANTE
 import com.tp.backend.exception.NotFoundException;
 import com.tp.backend.model.*;
-import com.tp.backend.repository.JuicioRepository;
-import com.tp.backend.repository.JuezRepository;
-import com.tp.backend.repository.PersonaDetenidaRepository;
+import com.tp.backend.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -17,13 +21,16 @@ public class JuicioService {
     private final JuicioRepository juicioRepo;
     private final JuezRepository juezRepo;
     private final PersonaDetenidaRepository personaRepo;
+    private final AsaltoRepository asaltoRepo;
 
     public JuicioService(JuicioRepository juicioRepo,
                          JuezRepository juezRepo,
-                         PersonaDetenidaRepository personaRepo) {
+                         PersonaDetenidaRepository personaRepo,
+                         AsaltoRepository asaltoRepo) {
         this.juicioRepo = juicioRepo;
         this.juezRepo = juezRepo;
         this.personaRepo = personaRepo;
+        this.asaltoRepo = asaltoRepo;
     }
 
     @Transactional(readOnly = true)
@@ -40,60 +47,114 @@ public class JuicioService {
 
     @Transactional
     public JuicioResponse crear(JuicioRequest req) {
-
-        Juez juez = juezRepo.findById(req.getJuezId())
-                .orElseThrow(() -> new NotFoundException("Juez no encontrado: " + req.getJuezId()));
-
-
-        PersonaDetenida persona = personaRepo.findById(req.getPersonaDetenidaId())
-                .orElseThrow(() -> new NotFoundException(
-                        "Persona detenida no encontrada: " + req.getPersonaDetenidaId()));
+        Juez juez = juezRepo.findById(req.getJuezId()).orElseThrow();
+        PersonaDetenida persona = personaRepo.findById(req.getPersonaDetenidaId()).orElseThrow();
+        Asalto asalto = asaltoRepo.findById(req.getAsaltoId()).orElseThrow();
 
         Juicio j = new Juicio();
-        j.setFecha(req.getFecha());
-        j.setResultado(req.getResultado());
-        j.setJuez(juez);
-        j.setPersonaDetenida(persona);
+        mapRequestToEntity(j, req.getExpediente(), req.getFechaJuicio(), req.isCondenado(),
+                req.getFechaInicioCondena(), req.getTiempoCondenaMeses(), juez, persona, asalto);
 
         return toResponse(juicioRepo.save(j));
     }
 
     @Transactional
     public JuicioResponse actualizar(Long id, JuicioUpdateRequest req) {
-        Juicio j = juicioRepo.findById(id)
-                .orElseThrow(() -> new NotFoundException("Juicio no encontrado: " + id));
+        Juicio j = juicioRepo.findById(id).orElseThrow();
+        Juez juez = juezRepo.findById(req.getJuezId()).orElseThrow();
+        PersonaDetenida persona = personaRepo.findById(req.getPersonaDetenidaId()).orElseThrow();
+        Asalto asalto = asaltoRepo.findById(req.getAsaltoId()).orElseThrow();
 
-        Juez juez = juezRepo.findById(req.getJuezId())
-                .orElseThrow(() -> new NotFoundException("Juez no encontrado: " + req.getJuezId()));
+        mapRequestToEntity(j, req.getExpediente(), req.getFechaJuicio(), req.isCondenado(),
+                req.getFechaInicioCondena(), req.getTiempoCondenaMeses(), juez, persona, asalto);
 
-        PersonaDetenida persona = personaRepo.findById(req.getPersonaDetenidaId())
-                .orElseThrow(() -> new NotFoundException(
-                        "Persona detenida no encontrada: " + req.getPersonaDetenidaId()));
+        return toResponse(juicioRepo.save(j));
+    }
 
-        j.setFecha(req.getFecha());
-        j.setResultado(req.getResultado());
+    private void mapRequestToEntity(Juicio j, String exp, LocalDate fecha, boolean esCondenado,
+                                    LocalDate fInicio, Integer meses, Juez juez, PersonaDetenida p, Asalto a) {
+        j.setExpediente(exp);
+        j.setFechaJuicio(fecha);
+        j.setCondenado(esCondenado);
         j.setJuez(juez);
-        j.setPersonaDetenida(persona);
+        j.setPersonaDetenida(p);
+        j.setAsalto(a);
 
-        return toResponse(j);
+        if (esCondenado) {
+            j.setFechaInicioCondena(fInicio);
+            j.setTiempoCondenaMeses(meses);
+        } else {
+            j.setFechaInicioCondena(null);
+            j.setTiempoCondenaMeses(null);
+        }
     }
 
     @Transactional
     public void eliminar(Long id) {
-        if (!juicioRepo.existsById(id)) {
-            throw new NotFoundException("Juicio no encontrado: " + id);
-        }
+        if (!juicioRepo.existsById(id)) throw new NotFoundException("No existe el juicio");
         juicioRepo.deleteById(id);
     }
 
     private JuicioResponse toResponse(Juicio j) {
-        return new JuicioResponse(
-                j.getId(),
-                j.getFecha(),
-                j.getResultado(),
+        JuicioResponse res = new JuicioResponse();
+        res.setId(j.getId());
+        res.setExpediente(j.getExpediente());
+        res.setFechaJuicio(j.getFechaJuicio());
+        res.setCondenado(j.isCondenado());
+        res.setDetallePena(generarDetallePena(j));
+
+        res.setJuez(new JuezResponse(
                 j.getJuez().getId(),
-                j.getJuez().getCodigo(),
-                j.getPersonaDetenida().getId()
-        );
+                j.getJuez().getClaveJuzgado(),
+                j.getJuez().getNombre(),
+                j.getJuez().getApellido(),
+                j.getJuez().getAnosServicio()
+        ));
+
+        // --- CORRECCIÓN: Mapear la Banda dentro de la Persona ---
+        PersonaDetenida p = j.getPersonaDetenida();
+        BandaResponse bandaDto = null;
+
+        if (p.getBanda() != null) {
+            bandaDto = new BandaResponse(
+                    p.getBanda().getId(),
+                    p.getBanda().getNumeroBanda(),
+                    null // numeroMiembros no suele ser necesario para esta lista
+            );
+        }
+
+        res.setPersona(new PersonaDetenidaResponse(
+                p.getId(),
+                p.getCodigo(),
+                p.getNombre(),
+                p.getApellido(),
+                bandaDto, // Ahora pasamos el objeto banda en lugar de null
+                null
+        ));
+
+        AsaltoResponse asaltoDto = new AsaltoResponse();
+        asaltoDto.setId(j.getAsalto().getId());
+        asaltoDto.setCodigo(j.getAsalto().getCodigo());
+        asaltoDto.setFechaAsalto(j.getAsalto().getFechaAsalto());
+        res.setAsalto(asaltoDto);
+
+        return res;
+    }
+
+    private String generarDetallePena(Juicio j) {
+        if (j.isCondenado()
+                && j.getFechaInicioCondena() != null
+                && j.getTiempoCondenaMeses() != null) {
+
+            LocalDate fechaSalida = j.getFechaInicioCondena().plusMonths(j.getTiempoCondenaMeses());
+            String fechaFmt = fechaSalida.format(DateTimeFormatter.ofPattern("MM/yyyy"));
+
+            if (LocalDate.now().isAfter(fechaSalida)) {
+                return String.format("Cumplió %d meses (salió en %s)", j.getTiempoCondenaMeses(), fechaFmt);
+            } else {
+                return String.format("Debe cumplir %d meses (sale en %s)", j.getTiempoCondenaMeses(), fechaFmt);
+            }
+        }
+        return " No presenta ";
     }
 }

@@ -1,6 +1,9 @@
 package com.tp.backend.service;
 
 import com.tp.backend.dto.asalto.*;
+import com.tp.backend.dto.sucursal.SucursalResponse;
+import com.tp.backend.dto.personaDetenida.PersonaDetenidaResponse;
+import com.tp.backend.dto.banda.BandaResponse; // Importado para el mapeo
 import com.tp.backend.exception.BadRequestException;
 import com.tp.backend.exception.NotFoundException;
 import com.tp.backend.model.Asalto;
@@ -14,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AsaltoService {
@@ -33,29 +37,18 @@ public class AsaltoService {
     // ---------- CONSULTAS ----------
     @Transactional(readOnly = true)
     public List<AsaltoResponse> listarConFiltros(Long sucursalId, LocalDate fecha, LocalDate desde, LocalDate hasta) {
-
+        // Validamos la lógica de fechas, pero ya no exigimos sucursalId
         validarFiltros(fecha, desde, hasta);
 
-        List<Asalto> asaltos;
-
-        if (sucursalId == null && fecha == null && desde == null) {
-            asaltos = asaltoRepository.findAll();
-        } else if (sucursalId != null && fecha != null) {
-            asaltos = asaltoRepository.findBySucursal_IdAndFechaAsalto(sucursalId, fecha);
-        } else if (sucursalId != null && desde != null) {
-            asaltos = asaltoRepository.findBySucursal_IdAndFechaAsaltoBetween(sucursalId, desde, hasta);
-        } else if (sucursalId != null) {
-            asaltos = asaltoRepository.findBySucursal_Id(sucursalId);
-        } else {
-            throw new BadRequestException("Para filtrar por fecha/rango se requiere sucursalId.");
-        }
+        // Llamamos al método dinámico del repositorio (debes crearlo en el Repository)
+        List<Asalto> asaltos = asaltoRepository.filtrar(sucursalId, fecha, desde, hasta);
 
         return asaltos.stream().map(this::toResponse).toList();
     }
 
     @Transactional(readOnly = true)
     public List<AsaltoResponse> listarPorPersonaDetenida(Long personaDetenidaId) {
-        return asaltoRepository.findByPersonaDetenida_Id(personaDetenidaId)
+        return asaltoRepository.findByPersonas_Id(personaDetenidaId)
                 .stream()
                 .map(this::toResponse)
                 .toList();
@@ -76,13 +69,16 @@ public class AsaltoService {
         Sucursal sucursal = sucursalRepository.findById(req.getSucursalId())
                 .orElseThrow(() -> new NotFoundException("Sucursal no encontrada: " + req.getSucursalId()));
 
-        PersonaDetenida persona = personaDetenidaRepository.findById(req.getPersonaDetenidaId())
-                .orElseThrow(() -> new NotFoundException("PersonaDetenida no encontrada: " + req.getPersonaDetenidaId()));
+        List<PersonaDetenida> personas = personaDetenidaRepository.findAllById(req.getPersonaDetenidaIds());
+        if (personas.isEmpty()) {
+            throw new BadRequestException("Debe seleccionar al menos una persona válida.");
+        }
 
         Asalto a = new Asalto();
+        a.setCodigo(req.getCodigo());
         a.setFechaAsalto(req.getFechaAsalto());
         a.setSucursal(sucursal);
-        a.setPersonaDetenida(persona);
+        a.setPersonas(personas);
 
         return toResponse(asaltoRepository.save(a));
     }
@@ -97,12 +93,15 @@ public class AsaltoService {
         Sucursal sucursal = sucursalRepository.findById(req.getSucursalId())
                 .orElseThrow(() -> new NotFoundException("Sucursal no encontrada: " + req.getSucursalId()));
 
-        PersonaDetenida persona = personaDetenidaRepository.findById(req.getPersonaDetenidaId())
-                .orElseThrow(() -> new NotFoundException("PersonaDetenida no encontrada: " + req.getPersonaDetenidaId()));
+        List<PersonaDetenida> personas = personaDetenidaRepository.findAllById(req.getPersonaDetenidaIds());
+        if (personas.isEmpty()) {
+            throw new BadRequestException("Debe seleccionar al menos una persona válida.");
+        }
 
+        a.setCodigo(req.getCodigo());
         a.setFechaAsalto(req.getFechaAsalto());
         a.setSucursal(sucursal);
-        a.setPersonaDetenida(persona);
+        a.setPersonas(personas);
 
         return toResponse(asaltoRepository.save(a));
     }
@@ -115,34 +114,80 @@ public class AsaltoService {
         asaltoRepository.deleteById(id);
     }
 
-    // ---------- helpers ----------
+    // ---------- HELPERS ----------
     private void validarFiltros(LocalDate fecha, LocalDate desde, LocalDate hasta) {
+        // Permitimos que se use fecha exacta O rango, pero no ambos mezclados
         if (fecha != null && (desde != null || hasta != null)) {
-            throw new BadRequestException("No se puede usar 'fecha' junto con 'desde/hasta'.");
+            throw new BadRequestException("No se puede usar 'fecha exacta' junto con un período 'desde/hasta'.");
         }
-        if ((desde == null) != (hasta == null)) {
-            throw new BadRequestException("Si usás rango, enviá 'desde' y 'hasta'.");
+
+        // Si se ingresan ambos límites del rango, validamos que sean lógicos
+        if (desde != null && hasta != null && hasta.isBefore(desde)) {
+            throw new BadRequestException("Rango de fechas inválido: la fecha 'desde' no puede ser posterior a la fecha 'hasta'.");
         }
-        if (desde != null && hasta.isBefore(desde)) {
-            throw new BadRequestException("'hasta' no puede ser anterior a 'desde'.");
-        }
+
+        // Nota: Ahora se permite enviar solo 'desde' (ej: desde hoy en adelante)
+        // o solo 'hasta' (ej: todo lo ocurrido hasta ayer) sin errores.
     }
 
     private void validarRequest(AsaltoRequest req) {
         if (req == null) throw new BadRequestException("Body requerido.");
         if (req.getFechaAsalto() == null) throw new BadRequestException("fechaAsalto es obligatoria.");
         if (req.getSucursalId() == null) throw new BadRequestException("sucursalId es obligatorio.");
-        if (req.getPersonaDetenidaId() == null) throw new BadRequestException("personaDetenidaId es obligatorio.");
+        if (req.getPersonaDetenidaIds() == null || req.getPersonaDetenidaIds().isEmpty()) {
+            throw new BadRequestException("Debe seleccionar al menos un detenido.");
+        }
     }
 
     private AsaltoResponse toResponse(Asalto a) {
         AsaltoResponse r = new AsaltoResponse();
         r.setId(a.getId());
+        r.setCodigo(a.getCodigo());
         r.setFechaAsalto(a.getFechaAsalto());
+<<<<<<< HEAD
         r.setSucursalId(a.getSucursal().getId());
         r.setPersonaDetenidaId(a.getPersonaDetenida().getId());
         r.setPersonacodigo(a.getPersonaDetenida().getCodigo());
         r.setPersonacodigo(a.getSucursal().getCodigo());
+=======
+
+        if (a.getSucursal() != null) {
+            Sucursal s = a.getSucursal();
+            r.setSucursal(new SucursalResponse(
+                    s.getId(),
+                    s.getCodigo(),
+                    s.getDomicilio(),
+                    s.getNroEmpleados(),
+                    s.getBanco() != null ? s.getBanco().getId() : null,
+                    s.getBanco() != null ? s.getBanco().getCodigo() : null
+            ));
+        }
+
+        if (a.getPersonas() != null) {
+            List<PersonaDetenidaResponse> listaPersonaDTO = a.getPersonas().stream()
+                    .map(p -> {
+                        // Mapeamos la banda de la entidad a su DTO correspondiente
+                        BandaResponse bandaDTO = null;
+                        if (p.getBanda() != null) {
+                            bandaDTO = new BandaResponse();
+                            bandaDTO.setId(p.getBanda().getId());
+                            bandaDTO.setNumeroBanda(p.getBanda().getNumeroBanda());
+                            bandaDTO.setNumeroMiembros(p.getBanda().getNumeroMiembros());
+                        }
+
+                        return new PersonaDetenidaResponse(
+                                p.getId(),
+                                p.getCodigo(),
+                                p.getNombre(),
+                                p.getApellido(),
+                                bandaDTO, // Pasamos el DTO mapeado en lugar de null
+                                null
+                        );
+                    })
+                    .toList();
+            r.setPersonas(listaPersonaDTO);
+        }
+>>>>>>> fixes_euge
         return r;
     }
 }

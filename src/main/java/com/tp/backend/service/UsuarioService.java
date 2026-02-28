@@ -9,6 +9,7 @@ import com.tp.backend.model.*;
 import com.tp.backend.repository.UsuarioRepository;
 import com.tp.backend.repository.UsuarioVigilanteRepository;
 import com.tp.backend.repository.VigilanteRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,7 +54,7 @@ public class UsuarioService {
 
     public UsuarioResponse crear(UsuarioRequest req) {
 
-        log.info("Creando usuario username={} tipo={}", req.getUsername(), req.getTipo());
+        log.info("Creando usuario username={} tipo={}", req.getUsername(), req.getRol());
 
         if (usuarioRepository.existsByUsername(req.getUsername())) {
             log.warn("Intento de crear usuario duplicado username={}", req.getUsername());
@@ -61,12 +62,11 @@ public class UsuarioService {
         }
 
         // Crear según tipo (ADMIN / INVESTIGADOR / VIGILANTE)
-        Usuario u = crearSegunTipo(req.getTipo());
+        Usuario u = crearSegunTipo(req.getRol());
 
         // Si NO es vigilante, no aceptamos vigilanteId (para evitar confusiones)
         if (!(u instanceof UsuarioVigilante) && req.getVigilanteId() != null) {
             log.warn("Intento de crear un usuario vigilante con otro Tipo");
-
             throw new BadRequestException("vigilanteId solo aplica cuando el tipo es VIGILANTE");
         }
 
@@ -76,16 +76,12 @@ public class UsuarioService {
             Long vigilanteId = req.getVigilanteId();
             if (vigilanteId == null) {
                 log.error("Intento de crear usuario vigilante sin perfil asociado");
-
                 throw new BadRequestException("Para VIGILANTE se requiere vigilanteId");
             }
 
-            // 🔥 NUEVO: evitar asociar el mismo vigilante a dos usuarios vigilantes
             if (usuarioVigilanteRepository.existsByPerfil_Id(vigilanteId)) {
                 log.error("El vigilante ya está asociado a otro usuario idVigilante{}", vigilanteId);
-
                 throw new BadRequestException("El vigilante ya está asociado a otro usuario");
-                // Si querés fino: ConflictException (409). Pero con tu manejo actual, BadRequest (400) funciona.
             }
 
             Vigilante vig = vigilanteRepository.findById(vigilanteId)
@@ -94,6 +90,8 @@ public class UsuarioService {
             uv.setPerfil(vig);
         }
 
+        // ✅ Seteo del nuevo campo código y datos básicos
+        u.setCodigo(req.getCodigo());
         u.setUsername(req.getUsername());
         u.setPassword(passwordEncoder.encode(req.getPassword()));
         u.setEnabled(true);
@@ -143,18 +141,33 @@ public class UsuarioService {
     }
 
     private UsuarioResponse toResponse(Usuario u) {
-    Long vigilanteId = null;
+        Long vigilanteId = null;
+        String vigilanteCodigo = null;
 
-    if(u instanceof  UsuarioVigilante uv && uv.getPerfil() != null ){
-        vigilanteId = uv.getPerfil().getId();
+        if(u instanceof UsuarioVigilante uv && uv.getPerfil() != null ){
+            vigilanteId = uv.getPerfil().getId();
+            vigilanteCodigo = uv.getPerfil().getCodigo(); // ✅ Obtenemos el código del perfil
+        }
 
-    }
+        // ✅ Constructor corregido con los 7 parámetros requeridos
         return new UsuarioResponse(
                 u.getId(),
+                u.getCodigo(),
                 u.getUsername(),
                 u.getRol(),
                 u.isEnabled(),
-                vigilanteId
+                vigilanteId,
+                vigilanteCodigo
         );
+    }
+
+    @Transactional(readOnly = true)
+    public UsuarioResponse obtenerPerfilAutenticado() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Usuario u = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("Usuario no encontrado: " + username));
+
+        return toResponse(u);
     }
 }
