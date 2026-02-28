@@ -1,5 +1,6 @@
 package com.tp.backend.dto.sucursal;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -15,7 +16,8 @@ public class SucursalRequest {
     @Size(max = 160)
     private String domicilio;
 
-    @Min(0)
+    @Min(value = 1, message = "La sucursal debe tener al menos 1 empleado")
+    @Max(value = 100, message = "La sucursal no puede tener más de 100 empleados")
     private int nroEmpleados;
 
     @NotNull

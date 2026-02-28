@@ -6,17 +6,17 @@ import jakarta.validation.constraints.Size;
 public class UsuarioUpdateRequest {
 
     @Size(min = 4, max = 100, message = "La password debe tener al menos 4 caracteres")
-    private String password; // opcional
+    private String password;
 
-    private Boolean enabled; // opcional
+    private Boolean enabled;
 
     @Pattern(
             regexp = "ADMIN|INVESTIGADOR|VIGILANTE|USER",
             message = "Rol inválido. Valores permitidos: ADMIN, INVESTIGADOR, VIGILANTE, USER"
     )
-    private String rol; // ✅ Agregado: para poder cambiar el rango del usuario
+    private String rol;
 
-    private Long vigilanteId; // ✅ Agregado: para poder reasignar o quitar el vigilante
+    private Long vigilanteId; // para poder reasignar o quitar el vigilante
 
     // ===== getters / setters =====
 

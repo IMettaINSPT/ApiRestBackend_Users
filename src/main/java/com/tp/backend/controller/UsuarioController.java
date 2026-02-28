@@ -5,6 +5,7 @@ import com.tp.backend.service.UsuarioService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
@@ -22,12 +23,14 @@ public class UsuarioController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'INVESTIGADOR')")
     public List<UsuarioResponse> listar() {
         log.info("Get /api/usuarios/listar");
         return service.listar();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'INVESTIGADOR')")
     public UsuarioResponse obtener(@PathVariable Long id) {
         log.info("Get /api/usuarios/obtener id{}",id);
         return service.obtenerPorId(id);

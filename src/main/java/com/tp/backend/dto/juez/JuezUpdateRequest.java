@@ -1,5 +1,6 @@
 package com.tp.backend.dto.juez;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -20,7 +21,8 @@ public class JuezUpdateRequest {
     private String apellido;
 
     @NotNull(message = "Los años de servicio son obligatorios")
-    @Min(value = 1, message = "Los años de servicio mínimo es 1")
+    @Min(value = 0, message = "Los años de servicio mínimos son 0")
+    @Max(value = 45, message = "Los años de servicio máximos son 45")
     private Integer anosServicio;
 
 
