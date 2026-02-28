@@ -1,5 +1,6 @@
 package com.tp.backend.dto.juicio;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -28,6 +29,7 @@ public class JuicioUpdateRequest {
     private LocalDate fechaInicioCondena;
 
     @Min(value = 1, message = "El tiempo de condena debe ser al menos 1 mes")
+    @Max(value = 600, message = "El tiempo de condena no puede superar los 600 meses")
     private Integer tiempoCondenaMeses;
 
     public String getExpediente() { return expediente; }

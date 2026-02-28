@@ -25,7 +25,7 @@ public class Juez {
     private Integer anosServicio;
 
     // Relación OneToMany: Un juez tiene muchos juicios.
-    // CAMBIO: Se cambió FetchType.LAZY a FetchType.EAGER para que los juicios viajen al Frontend
+    // FetchType.EAGER para que los juicios viajen al Frontend
     @OneToMany(mappedBy = "juez", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Juicio> juicios = new ArrayList<>();
 

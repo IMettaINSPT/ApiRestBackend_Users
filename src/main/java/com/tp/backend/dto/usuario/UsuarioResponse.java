@@ -5,14 +5,14 @@ import com.tp.backend.config.RolEnum;
 public class UsuarioResponse {
 
     private Long id;
-    private String codigo;          // ✅ Agregado: El identificador de negocio
+    private String codigo;
     private String username;
     private RolEnum rol;            // ADMIN | INVESTIGADOR | VIGILANTE
     private boolean enabled;
     private Long vigilanteId;
-    private String vigilanteCodigo; // ✅ Agregado: Para no mostrar solo un ID numérico en la tabla
+    private String vigilanteCodigo; // Para no mostrar solo un ID numérico en la tabla
 
-    // Constructor actualizado
+
     public UsuarioResponse(Long id, String codigo, String username, RolEnum rol, boolean enabled, Long vigilanteId, String vigilanteCodigo) {
         this.id = id;
         this.codigo = codigo;

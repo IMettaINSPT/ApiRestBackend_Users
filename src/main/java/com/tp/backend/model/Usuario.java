@@ -13,7 +13,7 @@ public abstract class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // ✅ Agregado: Código de negocio para consistencia con el resto de las entidades
+
     @Column(nullable = false, unique = true, length = 20)
     private String codigo;
 

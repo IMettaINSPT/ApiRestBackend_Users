@@ -10,7 +10,7 @@ public class JuicioResponse {
     private Long id;
     private String expediente;
     private LocalDate fechaJuicio;
-    private boolean condenado;      // CAMBIO: boolean en lugar de Enum
+    private boolean condenado;
     private String detallePena;
 
     private JuezResponse juez;

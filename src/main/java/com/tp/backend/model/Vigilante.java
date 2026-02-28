@@ -1,5 +1,7 @@
 package com.tp.backend.model;
 
+import com.tp.backend.contrato.domain.Contrato;
+
 import jakarta.persistence.*;
 
 import java.util.HashSet;

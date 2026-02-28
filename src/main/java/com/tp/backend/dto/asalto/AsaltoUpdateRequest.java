@@ -11,13 +11,13 @@ public class AsaltoUpdateRequest {
     private String codigo;
 
     @NotNull(message = "La fecha es obligatoria")
-    private LocalDate fechaAsalto; // Coincide con el Front
+    private LocalDate fechaAsalto;
 
     @NotNull(message = "La sucursal es obligatoria")
     private Long sucursalId;
 
     @NotEmpty(message = "Debe seleccionar al menos una persona")
-    private List<Long> personaDetenidaIds; // Coincide con el Front
+    private List<Long> personaDetenidaIds;
 
     // Getters y Setters
     public String getCodigo() { return codigo; }
