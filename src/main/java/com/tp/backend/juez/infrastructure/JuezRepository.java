@@ -1,6 +1,6 @@
-package com.tp.backend.repository;
+package com.tp.backend.juez.infrastructure;
 
-import com.tp.backend.model.Juez;
+import com.tp.backend.juez.domain.Juez;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface JuezRepository extends JpaRepository<Juez, Long> {

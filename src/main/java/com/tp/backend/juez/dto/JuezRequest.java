@@ -1,4 +1,4 @@
-package com.tp.backend.dto.juez;
+package com.tp.backend.juez.dto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public class JuezUpdateRequest {
+public class JuezRequest {
 
     @NotBlank
     @Size(max = 10)

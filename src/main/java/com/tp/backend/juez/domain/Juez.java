@@ -1,5 +1,6 @@
-package com.tp.backend.model;
+package com.tp.backend.juez.domain;
 
+import com.tp.backend.model.Juicio;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +8,6 @@ import java.util.List;
 @Entity
 @Table(name = "juez")
 public class Juez {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,30 +24,18 @@ public class Juez {
     @Column(nullable = false)
     private Integer anosServicio;
 
-    // Relación OneToMany: Un juez tiene muchos juicios.
-    // FetchType.EAGER para que los juicios viajen al Frontend
     @OneToMany(mappedBy = "juez", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Juicio> juicios = new ArrayList<>();
 
-    public Juez() {}
-
-    // Getters y Setters
+    // Getters y Setters respetando los nombres originales
     public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
     public String getClaveJuzgado() { return claveJuzgado; }
-    public void setClaveJuzgado(String claveJuzgado) { this.claveJuzgado = claveJuzgado; }
-
+    public void setClaveJuzgado(String c) { this.claveJuzgado = c; }
     public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
-
+    public void setNombre(String n) { this.nombre = n; }
     public String getApellido() { return apellido; }
-    public void setApellido(String apellido) { this.apellido = apellido; }
-
+    public void setApellido(String a) { this.apellido = a; }
     public Integer getAnosServicio() { return anosServicio; }
-    public void setAnosServicio(Integer anosServicio) { this.anosServicio = anosServicio; }
-
-    // El getter devuelve la lista de entidades Juicio
+    public void setAnosServicio(Integer as) { this.anosServicio = as; }
     public List<Juicio> getJuicios() { return juicios; }
-    public void setJuicios(List<Juicio> juicios) { this.juicios = juicios; }
 }

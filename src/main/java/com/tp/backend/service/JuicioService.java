@@ -1,13 +1,15 @@
 package com.tp.backend.service;
 
 import com.tp.backend.dto.juicio.*;
-import com.tp.backend.dto.juez.JuezResponse;
+import com.tp.backend.juez.dto.JuezResponse;
 import com.tp.backend.personaDetenida.dto.PersonaDetenidaResponse;
 import com.tp.backend.dto.asalto.AsaltoResponse;
 import com.tp.backend.banda.dto.BandaResponse;
 import com.tp.backend.exception.NotFoundException;
 import com.tp.backend.model.*;
 import com.tp.backend.repository.*;
+import com.tp.backend.juez.domain.Juez;
+import com.tp.backend.juez.infrastructure.JuezRepository;
 import com.tp.backend.personaDetenida.domain.PersonaDetenida;
 import com.tp.backend.personaDetenida.infrastructure.PersonaDetenidaRepository;
 import org.springframework.stereotype.Service;

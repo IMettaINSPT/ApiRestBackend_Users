@@ -1,4 +1,4 @@
-package com.tp.backend.dto.juez;
+package com.tp.backend.juez.dto;
 
 import java.util.List;
 import com.tp.backend.dto.juicio.JuicioResponse;
