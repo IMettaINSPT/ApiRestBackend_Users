@@ -1,7 +1,7 @@
 package com.tp.backend.dto.juicio;
 
-import com.tp.backend.dto.juez.JuezResponse;
-import com.tp.backend.dto.personaDetenida.PersonaDetenidaResponse;
+import com.tp.backend.juez.dto.JuezResponse;
+import com.tp.backend.personaDetenida.dto.PersonaDetenidaResponse;
 import com.tp.backend.dto.asalto.AsaltoResponse;
 import java.time.LocalDate;
 
