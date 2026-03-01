@@ -2,7 +2,7 @@ package com.tp.backend.service;
 
 import com.tp.backend.dto.juez.*;
 import com.tp.backend.dto.juicio.JuicioResponse;
-import com.tp.backend.dto.personaDetenida.PersonaDetenidaResponse;
+import com.tp.backend.personaDetenida.dto.PersonaDetenidaResponse;
 import com.tp.backend.exception.BadRequestException;
 import com.tp.backend.exception.NotFoundException;
 import com.tp.backend.model.Juez;

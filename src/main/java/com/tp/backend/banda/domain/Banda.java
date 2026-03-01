@@ -1,6 +1,6 @@
 package com.tp.backend.banda.domain;
 
-import com.tp.backend.model.PersonaDetenida;
+import com.tp.backend.personaDetenida.domain.PersonaDetenida;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;

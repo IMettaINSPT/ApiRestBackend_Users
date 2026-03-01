@@ -1,4 +1,4 @@
-package com.tp.backend.dto.personaDetenida;
+package com.tp.backend.personaDetenida.dto;
 
 import com.tp.backend.banda.dto.BandaResponse;
 import java.util.List;

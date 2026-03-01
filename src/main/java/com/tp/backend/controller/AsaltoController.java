@@ -1,7 +1,7 @@
 package com.tp.backend.controller;
 //cambios
 import com.tp.backend.dto.asalto.*;
-import com.tp.backend.dto.personaDetenida.PersonaDetenidaResponse;
+import com.tp.backend.personaDetenida.dto.PersonaDetenidaResponse;
 import com.tp.backend.service.AsaltoService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;

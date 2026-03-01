@@ -1,6 +1,6 @@
 package com.tp.backend.banda.dto;
 
-import com.tp.backend.dto.personaDetenida.PersonaDetenidaResponse;
+import com.tp.backend.personaDetenida.dto.PersonaDetenidaResponse;
 import java.util.List;
 
 public class BandaResponse {

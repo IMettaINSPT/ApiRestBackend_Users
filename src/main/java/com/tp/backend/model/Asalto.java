@@ -1,5 +1,6 @@
 package com.tp.backend.model;
 
+import com.tp.backend.personaDetenida.domain.PersonaDetenida;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;

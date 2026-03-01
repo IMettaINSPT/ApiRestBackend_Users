@@ -3,7 +3,7 @@ package com.tp.backend.banda.mapper;
 import com.tp.backend.banda.domain.Banda;
 import com.tp.backend.banda.dto.BandaResponse;
 import com.tp.backend.banda.dto.BandaRequest;
-import com.tp.backend.dto.personaDetenida.PersonaDetenidaResponse;
+import com.tp.backend.personaDetenida.dto.PersonaDetenidaResponse;
 import org.springframework.stereotype.Component;
 import java.util.List;
 

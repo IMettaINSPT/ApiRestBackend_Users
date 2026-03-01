@@ -1,9 +1,9 @@
-package com.tp.backend.dto.personaDetenida;
+package com.tp.backend.personaDetenida.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public class PersonaDetenidaUpdateRequest {
+public class PersonaDetenidaRequest {
 
     @NotBlank @Size(max=30)
     private String codigo;
@@ -14,7 +14,7 @@ public class PersonaDetenidaUpdateRequest {
     @NotBlank @Size(max=100)
     private String apellido;
 
-    private Long bandaId; // opcional (null = sin banda)
+    private Long bandaId; // opcional
 
     public String getcodigo() { return codigo; }
     public void setcodigo(String codigo) { this.codigo = codigo; }

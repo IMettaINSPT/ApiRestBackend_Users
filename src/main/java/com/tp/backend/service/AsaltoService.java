@@ -2,15 +2,15 @@ package com.tp.backend.service;
 
 import com.tp.backend.dto.asalto.*;
 import com.tp.backend.dto.sucursal.SucursalResponse;
-import com.tp.backend.dto.personaDetenida.PersonaDetenidaResponse;
+import com.tp.backend.personaDetenida.dto.PersonaDetenidaResponse;
 import com.tp.backend.banda.dto.BandaResponse; // Importado para el mapeo
 import com.tp.backend.exception.BadRequestException;
 import com.tp.backend.exception.NotFoundException;
 import com.tp.backend.model.Asalto;
-import com.tp.backend.model.PersonaDetenida;
+import com.tp.backend.personaDetenida.domain.PersonaDetenida;
 import com.tp.backend.model.Sucursal;
 import com.tp.backend.repository.AsaltoRepository;
-import com.tp.backend.repository.PersonaDetenidaRepository;
+import com.tp.backend.personaDetenida.infrastructure.PersonaDetenidaRepository;
 import com.tp.backend.repository.SucursalRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
