@@ -23,14 +23,16 @@ public class UsuarioController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'INVESTIGADOR')")
+    @PreAuthorize("hasAnyRole(T(com.tp.backend.config.RolEnum).ADMIN.name(), " +
+            "T(com.tp.backend.config.RolEnum).INVESTIGADOR.name())")
     public List<UsuarioResponse> listar() {
         log.info("Get /api/usuarios/listar");
         return service.listar();
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'INVESTIGADOR')")
+    @PreAuthorize("hasAnyRole(T(com.tp.backend.config.RolEnum).ADMIN.name(), " +
+            "T(com.tp.backend.config.RolEnum).INVESTIGADOR.name())")
     public UsuarioResponse obtener(@PathVariable Long id) {
         log.info("Get /api/usuarios/obtener id{}",id);
         return service.obtenerPorId(id);

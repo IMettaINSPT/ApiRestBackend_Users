@@ -5,6 +5,7 @@ import com.tp.backend.dto.usuario.UsuarioResponse;
 import com.tp.backend.dto.usuario.UsuarioUpdateRequest;
 import com.tp.backend.exception.BadRequestException;
 import com.tp.backend.exception.NotFoundException;
+import com.tp.backend.config.RolEnum;
 import com.tp.backend.model.*;
 import com.tp.backend.repository.UsuarioRepository;
 import com.tp.backend.repository.UsuarioVigilanteRepository;
@@ -127,16 +128,30 @@ public class UsuarioService {
     }
 
     private Usuario crearSegunTipo(String tipo) {
-        if (tipo == null) {
-            throw new BadRequestException("El campo 'tipo' es obligatorio (ADMIN/INVESTIGADOR/VIGILANTE)");
+        if (tipo == null || tipo.isBlank()) {
+            throw new BadRequestException(
+                    "El campo 'tipo' es obligatorio (" +
+                            String.join(", ",
+                                    RolEnum.ADMIN.name(),
+                                    RolEnum.INVESTIGADOR.name(),
+                                    RolEnum.VIGILANTE.name()
+                            ) + ")"
+            );
         }
 
-        return switch (tipo.toUpperCase()) {
-            case "ADMIN" -> new UsuarioAdmin();
-            case "INVESTIGADOR" -> new UsuarioInvestigador();
-            case "VIGILANTE" -> new UsuarioVigilante();
-            default -> throw new BadRequestException("Tipo de usuario inválido: " + tipo +
-                    ". Valores válidos: ADMIN, INVESTIGADOR, VIGILANTE");
+        final RolEnum rol;
+        try {
+            rol = RolEnum.valueOf(tipo.trim().toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            throw new BadRequestException("Tipo de usuario inválido: " + tipo +
+                    ". Valores válidos: " + RolEnum.ADMIN.name() + ", " +
+                    RolEnum.INVESTIGADOR.name() + ", " + RolEnum.VIGILANTE.name());
+        }
+
+        return switch (rol) {
+            case ADMIN -> new UsuarioAdmin();
+            case INVESTIGADOR -> new UsuarioInvestigador();
+            case VIGILANTE -> new UsuarioVigilante();
         };
     }
 
