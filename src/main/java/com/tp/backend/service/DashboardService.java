@@ -1,11 +1,13 @@
 package com.tp.backend.service;
 
+import com.tp.backend.banco.infrastructure.BancoRepository;
+import com.tp.backend.contrato.domain.Contrato;
 import com.tp.backend.dto.dashboard.DashboardSummaryResponse;
 
-import com.tp.backend.contrato.domain.Contrato;
 import com.tp.backend.contrato.infrastructure.ContratoRepository;
 
 import com.tp.backend.repository.*;
+import com.tp.backend.sucursal.infrastructure.SucursalRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.YearMonth;

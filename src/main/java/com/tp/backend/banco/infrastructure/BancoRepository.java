@@ -1,11 +1,8 @@
-package com.tp.backend.repository;
+package com.tp.backend.banco.infrastructure;
 
-import com.tp.backend.model.Banco;
+import com.tp.backend.banco.domain.Banco;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
-
 public interface BancoRepository extends JpaRepository<Banco, Long> {
-    Optional<Banco> findByCodigo(String codigo);
     boolean existsByCodigo(String codigo);
 }

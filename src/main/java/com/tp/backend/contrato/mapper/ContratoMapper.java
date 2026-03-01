@@ -3,6 +3,7 @@ package com.tp.backend.contrato.mapper;
 import com.tp.backend.contrato.domain.Contrato;
 import com.tp.backend.contrato.dto.*;
 import com.tp.backend.model.*;
+import com.tp.backend.sucursal.domain.Sucursal;
 import org.springframework.stereotype.Component;
 
 @Component

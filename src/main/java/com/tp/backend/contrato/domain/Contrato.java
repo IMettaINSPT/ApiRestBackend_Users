@@ -1,6 +1,6 @@
 package com.tp.backend.contrato.domain;
 
-import com.tp.backend.model.Sucursal;
+import com.tp.backend.sucursal.domain.Sucursal;
 import com.tp.backend.model.Vigilante;
 import jakarta.persistence.*;
 import java.time.LocalDate;

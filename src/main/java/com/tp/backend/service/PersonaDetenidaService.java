@@ -3,7 +3,7 @@ package com.tp.backend.service;
 import com.tp.backend.dto.banda.BandaResponse;
 import com.tp.backend.dto.personaDetenida.*;
 import com.tp.backend.dto.asalto.AsaltoResponse;
-import com.tp.backend.dto.sucursal.SucursalResponse;
+import com.tp.backend.sucursal.dto.SucursalResponse;
 import com.tp.backend.exception.BadRequestException;
 import com.tp.backend.exception.NotFoundException;
 import com.tp.backend.model.Banda;
@@ -97,7 +97,7 @@ public class PersonaDetenidaService {
                             s.getId(),
                             s.getCodigo(),
                             s.getDomicilio(),
-                            s.getNroEmpleados(),
+                            s.getNumEmpleados(),
                             s.getBanco() != null ? s.getBanco().getId() : null,
                             s.getBanco() != null ? s.getBanco().getCodigo() : null
                     ));
