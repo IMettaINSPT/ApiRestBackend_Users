@@ -1,5 +1,6 @@
 package com.tp.backend.contrato.domain;
 
-public interface ContratoValidator {
-    void validar(Object objeto);
+
+public interface ContratoValidator<T> {
+    void validar(T request);
 }

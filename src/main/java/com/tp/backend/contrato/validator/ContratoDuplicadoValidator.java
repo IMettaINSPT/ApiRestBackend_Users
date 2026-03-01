@@ -6,15 +6,15 @@ import com.tp.backend.exception.BadRequestException;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ContratoDuplicadoValidator implements ContratoValidator {
+public class ContratoDuplicadoValidator implements ContratoValidator<ContratoRequest> {
     private final ContratoPort port;
     public ContratoDuplicadoValidator(ContratoPort port) { this.port = port; }
 
     @Override
-    public void validar(Object obj) {
-        ContratoRequest req = (ContratoRequest) obj;
+    public void validar(ContratoRequest req) {
         if (port.existsByVigilanteIdAndSucursalIdAndFechaContrato(req.getVigilanteId(), req.getSucursalId(), req.getFechaContrato())) {
             throw new BadRequestException("Ya existe un contrato idéntico");
         }
     }
+
 }

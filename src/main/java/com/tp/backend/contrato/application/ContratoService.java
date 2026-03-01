@@ -14,19 +14,15 @@ import java.util.List;
 public class ContratoService implements ContratoUseCase {
     private final ContratoPort port;
     private final ContratoMapper mapper;
-    private final ContratoDuplicadoValidator duplicadoValidator;
-    private final ContratoFechaValidator fechaValidator;
+    private final List<ContratoValidator<ContratoRequest>> validators;
     private final SucursalRepository sucursalRepo;
     private final VigilanteRepository vigilanteRepo;
 
-    public ContratoService(ContratoPort port, ContratoMapper mapper,
-                           ContratoDuplicadoValidator duplicadoValidator,
-                           ContratoFechaValidator fechaValidator,
+    public ContratoService(ContratoPort port, ContratoMapper mapper, List<ContratoValidator<ContratoRequest>> validators,
                            SucursalRepository sucursalRepo, VigilanteRepository vigilanteRepo) {
         this.port = port;
         this.mapper = mapper;
-        this.duplicadoValidator = duplicadoValidator;
-        this.fechaValidator = fechaValidator;
+        this.validators = validators;
         this.sucursalRepo = sucursalRepo;
         this.vigilanteRepo = vigilanteRepo;
     }
@@ -44,8 +40,9 @@ public class ContratoService implements ContratoUseCase {
 
     @Override @Transactional
     public ContratoResponse crear(ContratoRequest req) {
-        fechaValidator.validar(req);
-        duplicadoValidator.validar(req);
+        for (ContratoValidator<ContratoRequest> v : validators) {
+            v.validar(req);
+        }
 
         var s = sucursalRepo.findById(req.getSucursalId()).orElseThrow(() -> new NotFoundException("Sucursal no encontrada"));
         var v = vigilanteRepo.findById(req.getVigilanteId()).orElseThrow(() -> new NotFoundException("Vigilante no encontrado"));
