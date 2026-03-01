@@ -81,4 +81,5 @@ public class ContratoService implements ContratoUseCase {
     public List<ContratoResponse> listarPorVigilante(Long id) {
         return port.findByVigilanteId(id).stream().map(mapper::toResponse).toList();
     }
+
 }
