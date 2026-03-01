@@ -4,7 +4,7 @@ import com.tp.backend.dto.juicio.*;
 import com.tp.backend.dto.juez.JuezResponse;
 import com.tp.backend.dto.personaDetenida.PersonaDetenidaResponse;
 import com.tp.backend.dto.asalto.AsaltoResponse;
-import com.tp.backend.dto.banda.BandaResponse;
+import com.tp.backend.banda.dto.BandaResponse;
 import com.tp.backend.exception.NotFoundException;
 import com.tp.backend.model.*;
 import com.tp.backend.repository.*;

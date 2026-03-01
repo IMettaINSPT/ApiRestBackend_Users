@@ -1,19 +1,21 @@
 package com.tp.backend.service;
 
-import com.tp.backend.dto.banda.BandaResponse;
+import com.tp.backend.banda.dto.BandaResponse;
 import com.tp.backend.dto.personaDetenida.*;
 import com.tp.backend.dto.asalto.AsaltoResponse;
 import com.tp.backend.dto.sucursal.SucursalResponse;
 import com.tp.backend.exception.BadRequestException;
 import com.tp.backend.exception.NotFoundException;
-import com.tp.backend.model.Banda;
+import com.tp.backend.banda.domain.Banda;
 import com.tp.backend.model.PersonaDetenida;
-import com.tp.backend.repository.BandaRepository;
+import com.tp.backend.banda.infrastructure.BandaRepository;
 import com.tp.backend.repository.PersonaDetenidaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+
 
 @Service
 public class PersonaDetenidaService {

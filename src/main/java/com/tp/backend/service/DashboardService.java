@@ -5,6 +5,10 @@ import com.tp.backend.dto.dashboard.DashboardSummaryResponse;
 import com.tp.backend.contrato.domain.Contrato;
 import com.tp.backend.contrato.infrastructure.ContratoRepository;
 
+import com.tp.backend.banda.domain.Banda;
+import com.tp.backend.banda.infrastructure.BandaRepository;
+
+
 import com.tp.backend.repository.*;
 import org.springframework.stereotype.Service;
 

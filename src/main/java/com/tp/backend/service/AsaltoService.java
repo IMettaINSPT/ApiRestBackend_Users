@@ -3,7 +3,7 @@ package com.tp.backend.service;
 import com.tp.backend.dto.asalto.*;
 import com.tp.backend.dto.sucursal.SucursalResponse;
 import com.tp.backend.dto.personaDetenida.PersonaDetenidaResponse;
-import com.tp.backend.dto.banda.BandaResponse; // Importado para el mapeo
+import com.tp.backend.banda.dto.BandaResponse; // Importado para el mapeo
 import com.tp.backend.exception.BadRequestException;
 import com.tp.backend.exception.NotFoundException;
 import com.tp.backend.model.Asalto;
@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class AsaltoService {

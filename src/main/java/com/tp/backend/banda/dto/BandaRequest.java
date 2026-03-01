@@ -1,4 +1,4 @@
-package com.tp.backend.dto.banda;
+package com.tp.backend.banda.dto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
