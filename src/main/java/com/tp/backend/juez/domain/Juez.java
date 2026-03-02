@@ -1,6 +1,6 @@
 package com.tp.backend.juez.domain;
 
-import com.tp.backend.model.Juicio;
+import com.tp.backend.juicio.domain.Juicio;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;

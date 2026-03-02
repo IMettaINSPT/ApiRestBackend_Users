@@ -1,4 +1,4 @@
-package com.tp.backend.dto.juicio;
+package com.tp.backend.juicio.dto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -6,17 +6,16 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 
-public class JuicioRequest {
+public class JuicioUpdateRequest {
 
-    @NotBlank(message = "El número de expediente es obligatorio")
+    @NotBlank(message = "El expediente es obligatorio")
     private String expediente;
 
-    @NotNull(message = "La fecha del juicio es obligatoria")
+    @NotNull(message = "La fecha es obligatoria")
     private LocalDate fechaJuicio;
 
-    // CAMBIO: Se usa boolean para indicar si fue condenado (true) o no (false)
-    @NotNull(message = "Debe indicar si la persona fue condenada o no")
-    private boolean condenado;
+    @NotNull(message = "La situación penal es obligatoria")
+    private boolean condenado; // CAMBIO: boolean
 
     @NotNull(message = "El juez es obligatorio")
     private Long juezId;
@@ -33,16 +32,13 @@ public class JuicioRequest {
     @Max(value = 600, message = "El tiempo de condena no puede superar los 600 meses")
     private Integer tiempoCondenaMeses;
 
-    public JuicioRequest() {}
-
     public String getExpediente() { return expediente; }
     public void setExpediente(String expediente) { this.expediente = expediente; }
 
     public LocalDate getFechaJuicio() { return fechaJuicio; }
     public void setFechaJuicio(LocalDate fechaJuicio) { this.fechaJuicio = fechaJuicio; }
 
-    // Getter y Setter para el boolean
-    public boolean isCondenado() { return condenado; }
+    public boolean isCondenado() { return condenado; } // CAMBIO: isCondenado
     public void setCondenado(boolean condenado) { this.condenado = condenado; }
 
     public Long getJuezId() { return juezId; }

@@ -2,7 +2,7 @@ package com.tp.backend.juez.mapper;
 
 import com.tp.backend.juez.domain.Juez;
 import com.tp.backend.juez.dto.*;
-import com.tp.backend.dto.juicio.JuicioResponse;
+import com.tp.backend.juicio.dto.JuicioResponse;
 import com.tp.backend.personaDetenida.dto.PersonaDetenidaResponse;
 import org.springframework.stereotype.Component;
 import java.util.List;
