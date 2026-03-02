@@ -1,5 +1,7 @@
 package com.tp.backend.model;
 
+import com.tp.backend.juez.domain.Juez;
+import com.tp.backend.personaDetenida.domain.PersonaDetenida;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDate;
