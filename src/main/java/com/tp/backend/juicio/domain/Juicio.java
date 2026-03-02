@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "juicios") // 1. Cambiamos a 'juicios' (plural) para recuperar tus 12 registros
+@Table(name = "juicio") // 1. Cambiamos a 'juicios' (plural) para recuperar tus 12 registros
 public class Juicio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

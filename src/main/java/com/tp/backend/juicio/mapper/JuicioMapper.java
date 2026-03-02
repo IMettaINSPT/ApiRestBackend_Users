@@ -72,6 +72,6 @@ public class JuicioMapper {
                     ? String.format("Cumplió %d meses (salió en %s)", j.getTiempoCondenaMeses(), fechaFmt)
                     : String.format("Condenado a %d meses (sale en %s)", j.getTiempoCondenaMeses(), fechaFmt);
         }
-        return j.isCondenado() ? "Condenado (sin fechas definidas)" : "Absuelto / En proceso";
+        return j.isCondenado() ? "Condenado (sin fechas definidas)" : "Absuelto";
     }
 }
