@@ -1,4 +1,4 @@
-package com.tp.backend.dto.banco;
+package com.tp.backend.banco.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

@@ -3,9 +3,10 @@ package com.tp.backend.personaDetenida.mapper;
 import com.tp.backend.personaDetenida.domain.PersonaDetenida;
 import com.tp.backend.personaDetenida.dto.*;
 import com.tp.backend.banda.dto.BandaResponse;
+import com.tp.backend.sucursal.dto.*;
+import com.tp.backend.sucursal.domain.Sucursal;
 import com.tp.backend.banda.domain.Banda;
 import com.tp.backend.dto.asalto.AsaltoResponse;
-import com.tp.backend.dto.sucursal.SucursalResponse;
 import org.springframework.stereotype.Component;
 import java.util.List;
 
@@ -22,8 +23,8 @@ public class PersonaDetenidaMapper {
                     res.setCodigo(a.getCodigo());
                     res.setFechaAsalto(a.getFechaAsalto());
                     if (a.getSucursal() != null) {
-                        var s = a.getSucursal();
-                        res.setSucursal(new SucursalResponse(s.getId(), s.getCodigo(), s.getDomicilio(), s.getNroEmpleados(),
+                        Sucursal s = a.getSucursal();
+                        res.setSucursal(new SucursalResponse(s.getId(), s.getCodigo(), s.getDomicilio(), s.getNumEmpleados(),
                                 s.getBanco() != null ? s.getBanco().getId() : null, s.getBanco() != null ? s.getBanco().getCodigo() : null));
                     }
                     return res;

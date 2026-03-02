@@ -1,17 +1,17 @@
 package com.tp.backend.service;
 
 import com.tp.backend.dto.asalto.*;
-import com.tp.backend.dto.sucursal.SucursalResponse;
 import com.tp.backend.personaDetenida.dto.PersonaDetenidaResponse;
 import com.tp.backend.banda.dto.BandaResponse; // Importado para el mapeo
 import com.tp.backend.exception.BadRequestException;
 import com.tp.backend.exception.NotFoundException;
 import com.tp.backend.model.Asalto;
 import com.tp.backend.personaDetenida.domain.PersonaDetenida;
-import com.tp.backend.model.Sucursal;
 import com.tp.backend.repository.AsaltoRepository;
 import com.tp.backend.personaDetenida.infrastructure.PersonaDetenidaRepository;
-import com.tp.backend.repository.SucursalRepository;
+import com.tp.backend.sucursal.domain.Sucursal;
+import com.tp.backend.sucursal.dto.SucursalResponse;
+import com.tp.backend.sucursal.infrastructure.SucursalRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -149,7 +149,7 @@ public class AsaltoService {
                     s.getId(),
                     s.getCodigo(),
                     s.getDomicilio(),
-                    s.getNroEmpleados(),
+                    s.getNumEmpleados(),
                     s.getBanco() != null ? s.getBanco().getId() : null,
                     s.getBanco() != null ? s.getBanco().getCodigo() : null
             ));
