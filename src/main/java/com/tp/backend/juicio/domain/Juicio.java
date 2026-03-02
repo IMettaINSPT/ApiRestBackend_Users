@@ -1,15 +1,14 @@
-package com.tp.backend.model;
+package com.tp.backend.juicio.domain;
 
 import com.tp.backend.juez.domain.Juez;
 import com.tp.backend.personaDetenida.domain.PersonaDetenida;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.tp.backend.model.Asalto;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "juicios")
+@Table(name = "juicios") // 1. Cambiamos a 'juicios' (plural) para recuperar tus 12 registros
 public class Juicio {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,12 +16,14 @@ public class Juicio {
     @Column(nullable = false, unique = true)
     private String expediente;
 
-    @Column(name = "fecha_juicio", nullable = false)
+    @Column(name = "fecha_juicio", nullable = false) // 2. En tu tabla vieja se llama 'fecha_juicio'
     private LocalDate fechaJuicio;
 
-    // --- CAMBIO: De Enum a boolean ---
-    @Column(name = "condenado", nullable = false)
-    private boolean condenado; // true = CONDENADO, false = ABSUELTO
+    private boolean condenado;
+
+    // 3. En tu tabla vieja los datos están en 'situacion_penal'
+    @Column(name = "situacion_penal")
+    private String resultado;
 
     @Column(name = "fecha_inicio_condena")
     private LocalDate fechaInicioCondena;
@@ -30,21 +31,19 @@ public class Juicio {
     @Column(name = "tiempo_condena_meses")
     private Integer tiempoCondenaMeses;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "juez_id", nullable = false)
-    @JsonIgnoreProperties("juicios") //  Evita recursión infinita para que la lista llegue al front
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "juez_id")
     private Juez juez;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "persona_detenida_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "persona_detenida_id")
     private PersonaDetenida personaDetenida;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "asalto_id", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "asalto_id")
     private Asalto asalto;
 
-    public Juicio() {}
-
+    // Getters y Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -54,9 +53,11 @@ public class Juicio {
     public LocalDate getFechaJuicio() { return fechaJuicio; }
     public void setFechaJuicio(LocalDate fechaJuicio) { this.fechaJuicio = fechaJuicio; }
 
-    // --- Getter y Setter para el boolean ---
     public boolean isCondenado() { return condenado; }
     public void setCondenado(boolean condenado) { this.condenado = condenado; }
+
+    public String getResultado() { return resultado; }
+    public void setResultado(String resultado) { this.resultado = resultado; }
 
     public LocalDate getFechaInicioCondena() { return fechaInicioCondena; }
     public void setFechaInicioCondena(LocalDate fechaInicioCondena) { this.fechaInicioCondena = fechaInicioCondena; }

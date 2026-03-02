@@ -14,6 +14,8 @@ import com.tp.backend.personaDetenida.infrastructure.PersonaDetenidaRepository;
 import com.tp.backend.juez.domain.Juez;
 import com.tp.backend.juez.infrastructure.JuezRepository;
 
+import com.tp.backend.juicio.domain.Juicio;
+import com.tp.backend.juicio.infrastructure.JuicioRepository;
 
 import com.tp.backend.repository.*;
 import org.springframework.stereotype.Service;

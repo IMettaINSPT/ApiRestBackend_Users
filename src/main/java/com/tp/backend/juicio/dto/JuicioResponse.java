@@ -1,4 +1,4 @@
-package com.tp.backend.dto.juicio;
+package com.tp.backend.juicio.dto;
 
 import com.tp.backend.juez.dto.JuezResponse;
 import com.tp.backend.personaDetenida.dto.PersonaDetenidaResponse;
@@ -13,25 +13,17 @@ public class JuicioResponse {
     private boolean condenado;
     private String detallePena;
 
+    // AGREGAR ESTOS DOS CAMPOS QUE FALTABAN:
+    private LocalDate fechaInicioCondena;
+    private Integer tiempoCondenaMeses;
+
     private JuezResponse juez;
     private AsaltoResponse asalto;
     private PersonaDetenidaResponse persona;
 
     public JuicioResponse() {}
 
-    public JuicioResponse(Long id, String expediente, LocalDate fechaJuicio,
-                          boolean condenado, String detallePena,
-                          JuezResponse juez, AsaltoResponse asalto, PersonaDetenidaResponse persona) {
-        this.id = id;
-        this.expediente = expediente;
-        this.fechaJuicio = fechaJuicio;
-        this.condenado = condenado;
-        this.detallePena = detallePena;
-        this.juez = juez;
-        this.asalto = asalto;
-        this.persona = persona;
-    }
-
+    // Getters y Setters para los campos existentes
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -41,11 +33,22 @@ public class JuicioResponse {
     public LocalDate getFechaJuicio() { return fechaJuicio; }
     public void setFechaJuicio(LocalDate fechaJuicio) { this.fechaJuicio = fechaJuicio; }
 
-    public boolean isCondenado() { return condenado; } // CAMBIO: isCondenado
+    public boolean isCondenado() { return condenado; }
     public void setCondenado(boolean condenado) { this.condenado = condenado; }
 
     public String getDetallePena() { return detallePena; }
     public void setDetallePena(String detallePena) { this.detallePena = detallePena; }
+
+    // NUEVOS SETTERS Y GETTERS QUE EL MAPPER NECESITA:
+    public LocalDate getFechaInicioCondena() { return fechaInicioCondena; }
+    public void setFechaInicioCondena(LocalDate fechaInicioCondena) {
+        this.fechaInicioCondena = fechaInicioCondena;
+    }
+
+    public Integer getTiempoCondenaMeses() { return tiempoCondenaMeses; }
+    public void setTiempoCondenaMeses(Integer tiempoCondenaMeses) {
+        this.tiempoCondenaMeses = tiempoCondenaMeses;
+    }
 
     public JuezResponse getJuez() { return juez; }
     public void setJuez(JuezResponse juez) { this.juez = juez; }
