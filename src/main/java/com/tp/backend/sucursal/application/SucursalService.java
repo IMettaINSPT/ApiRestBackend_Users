@@ -48,7 +48,7 @@ public class SucursalService implements SucursalUseCase {
 
         s.setCodigo(req.getCodigo());
         s.setDomicilio(req.getDomicilio());
-        s.setNumEmpleados(req.getNroEmpleados());
+        s.setNroEmpleados(req.getNroEmpleados());
         s.setBanco(banco);
 
         return mapper.toResponse(port.guardar(s));

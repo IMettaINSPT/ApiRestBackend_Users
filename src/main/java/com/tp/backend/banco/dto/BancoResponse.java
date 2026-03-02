@@ -14,10 +14,12 @@ public class BancoResponse {
     // Se agrega constructor vacío (necesario para frameworks de mapeo)
     public BancoResponse() {}
 
-    public BancoResponse(Long id, String codigo, String domicilioCentral) {
+
+    public BancoResponse(Long id, String codigo, String domicilioCentral, List<SucursalResponse> sucursales) {
         this.id = id;
         this.codigo = codigo;
         this.domicilioCentral = domicilioCentral;
+        this.sucursales = sucursales;
     }
 
     public Long getId() { return id;}
