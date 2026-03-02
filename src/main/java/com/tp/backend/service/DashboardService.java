@@ -2,6 +2,12 @@ package com.tp.backend.service;
 
 import com.tp.backend.dto.dashboard.DashboardSummaryResponse;
 
+import com.tp.backend.banco.domain.Banco;
+import com.tp.backend.banco.infrastructure.BancoRepository;
+
+import com.tp.backend.sucursal.domain.Sucursal;
+import com.tp.backend.sucursal.infrastructure.SucursalRepository;
+
 import com.tp.backend.contrato.domain.Contrato;
 import com.tp.backend.contrato.infrastructure.ContratoRepository;
 
