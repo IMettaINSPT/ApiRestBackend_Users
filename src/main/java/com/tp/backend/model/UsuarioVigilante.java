@@ -2,6 +2,7 @@ package com.tp.backend.model;
 
 import com.tp.backend.config.RolEnum;
 import jakarta.persistence.*;
+import com.tp.backend.vigilante.domain.Vigilante;
 
 @Entity
 @DiscriminatorValue("VIGILANTE")

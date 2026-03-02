@@ -2,7 +2,7 @@ package com.tp.backend.juicio.domain;
 
 import com.tp.backend.juez.domain.Juez;
 import com.tp.backend.personaDetenida.domain.PersonaDetenida;
-import com.tp.backend.model.Asalto;
+import com.tp.backend.asalto.domain.Asalto;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 

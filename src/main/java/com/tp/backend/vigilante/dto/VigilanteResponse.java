@@ -1,4 +1,4 @@
-package com.tp.backend.dto.vigilante;
+package com.tp.backend.vigilante.dto;
 
 import com.tp.backend.contrato.dto.ContratoResponse;
 import java.util.List;

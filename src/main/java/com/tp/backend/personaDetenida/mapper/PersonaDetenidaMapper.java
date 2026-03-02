@@ -6,7 +6,8 @@ import com.tp.backend.banda.dto.BandaResponse;
 import com.tp.backend.sucursal.dto.*;
 import com.tp.backend.sucursal.domain.Sucursal;
 import com.tp.backend.banda.domain.Banda;
-import com.tp.backend.dto.asalto.AsaltoResponse;
+import com.tp.backend.asalto.dto.AsaltoResponse;
+import com.tp.backend.dto.sucursal.SucursalResponse;
 import org.springframework.stereotype.Component;
 import java.util.List;
 

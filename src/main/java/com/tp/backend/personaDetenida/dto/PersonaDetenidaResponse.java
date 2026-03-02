@@ -2,7 +2,7 @@ package com.tp.backend.personaDetenida.dto;
 
 import com.tp.backend.banda.dto.BandaResponse;
 import java.util.List;
-import com.tp.backend.dto.asalto.AsaltoResponse;
+import com.tp.backend.asalto.dto.AsaltoResponse;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 public record PersonaDetenidaResponse(
