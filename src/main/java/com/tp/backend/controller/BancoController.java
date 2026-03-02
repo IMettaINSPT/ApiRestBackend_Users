@@ -1,6 +1,8 @@
 package com.tp.backend.controller;
 
-import com.tp.backend.dto.banco.*;
+import com.tp.backend.banco.dto.BancoRequest;
+import com.tp.backend.banco.dto.BancoResponse;
+import com.tp.backend.banco.dto.BancoUpdateRequest;
 import com.tp.backend.service.BancoService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

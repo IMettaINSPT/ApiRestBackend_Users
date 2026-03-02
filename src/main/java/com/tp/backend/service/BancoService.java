@@ -1,7 +1,9 @@
 package com.tp.backend.service;
 
-import com.tp.backend.dto.banco.*;
-import com.tp.backend.dto.sucursal.SucursalResponse;
+import com.tp.backend.banco.dto.BancoRequest;
+import com.tp.backend.banco.dto.BancoResponse;
+import com.tp.backend.banco.dto.BancoUpdateRequest;
+import com.tp.backend.sucursal.dto.SucursalResponse;
 import com.tp.backend.model.Banco;
 import com.tp.backend.exception.*;
 import com.tp.backend.repository.BancoRepository;

@@ -1,14 +1,17 @@
 package com.tp.backend.sucursal.dto;
 
 public class SucursalResponse {
+
     private Long id;
     private String codigo;
     private String domicilio;
     private int nroEmpleados;
+
     private Long bancoId;
     private String bancoCodigo;
 
-    public SucursalResponse(Long id, String codigo, String domicilio, int nroEmpleados, Long bancoId, String bancoCodigo) {
+    public SucursalResponse(Long id, String codigo, String domicilio, int nroEmpleados,
+                            Long bancoId, String bancoCodigo) {
         this.id = id;
         this.codigo = codigo;
         this.domicilio = domicilio;

@@ -5,7 +5,7 @@ import com.tp.backend.personaDetenida.dto.*;
 import com.tp.backend.banda.dto.BandaResponse;
 import com.tp.backend.banda.domain.Banda;
 import com.tp.backend.asalto.dto.AsaltoResponse;
-import com.tp.backend.dto.sucursal.SucursalResponse;
+import com.tp.backend.sucursal.dto.SucursalResponse;
 import org.springframework.stereotype.Component;
 import java.util.List;
 

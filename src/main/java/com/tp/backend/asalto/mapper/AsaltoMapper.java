@@ -2,7 +2,7 @@ package com.tp.backend.asalto.mapper;
 
 import com.tp.backend.asalto.domain.Asalto;
 import com.tp.backend.asalto.dto.*;
-import com.tp.backend.dto.sucursal.SucursalResponse;
+import com.tp.backend.sucursal.dto.SucursalResponse;
 import com.tp.backend.model.Sucursal;
 import com.tp.backend.personaDetenida.domain.PersonaDetenida;
 import com.tp.backend.personaDetenida.dto.PersonaDetenidaResponse;

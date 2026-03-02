@@ -1,11 +1,13 @@
 package com.tp.backend.service;
 
-import com.tp.backend.dto.sucursal.*;
 import com.tp.backend.model.Banco;
 import com.tp.backend.exception.*;
 import com.tp.backend.model.Sucursal;
 import com.tp.backend.repository.BancoRepository;
 import com.tp.backend.repository.SucursalRepository;
+import com.tp.backend.sucursal.dto.SucursalRequest;
+import com.tp.backend.sucursal.dto.SucursalResponse;
+import com.tp.backend.sucursal.dto.SucursalUpdateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

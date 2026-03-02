@@ -1,6 +1,6 @@
 package com.tp.backend.asalto.dto;
 
-import com.tp.backend.dto.sucursal.SucursalResponse;
+import com.tp.backend.sucursal.dto.SucursalResponse;
 
 import java.time.LocalDate;
 import java.util.List;

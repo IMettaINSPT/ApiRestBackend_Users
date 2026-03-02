@@ -1,9 +1,11 @@
 package com.tp.backend.controller;
 
 import com.tp.backend.asalto.dto.AsaltoResponse;
-import com.tp.backend.dto.sucursal.*;
 import com.tp.backend.asalto.application.AsaltoService;
 import com.tp.backend.service.SucursalService;
+import com.tp.backend.sucursal.dto.SucursalRequest;
+import com.tp.backend.sucursal.dto.SucursalResponse;
+import com.tp.backend.sucursal.dto.SucursalUpdateRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
