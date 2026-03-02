@@ -6,7 +6,7 @@ import com.tp.backend.juicio.dto.*;
 import com.tp.backend.exception.NotFoundException;
 import com.tp.backend.juez.infrastructure.JuezRepository;
 import com.tp.backend.personaDetenida.infrastructure.PersonaDetenidaRepository;
-import com.tp.backend.repository.AsaltoRepository;
+import com.tp.backend.asalto.infrastructure.AsaltoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.tp.backend.personaDetenida.domain;
 
 import com.tp.backend.banda.domain.Banda;
-import com.tp.backend.model.Asalto;
+import com.tp.backend.asalto.domain.Asalto;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;

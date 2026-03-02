@@ -1,4 +1,4 @@
-package com.tp.backend.dto.asalto;
+package com.tp.backend.asalto.dto;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;

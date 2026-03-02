@@ -2,7 +2,7 @@ package com.tp.backend.juicio.dto;
 
 import com.tp.backend.juez.dto.JuezResponse;
 import com.tp.backend.personaDetenida.dto.PersonaDetenidaResponse;
-import com.tp.backend.dto.asalto.AsaltoResponse;
+import com.tp.backend.asalto.dto.AsaltoResponse;
 import java.time.LocalDate;
 
 public class JuicioResponse {
