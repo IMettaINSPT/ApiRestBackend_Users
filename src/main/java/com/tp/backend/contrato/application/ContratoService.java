@@ -1,14 +1,19 @@
 package com.tp.backend.contrato.application;
 
-import com.tp.backend.contrato.domain.*;
+import com.tp.backend.contrato.domain.Contrato;
+import com.tp.backend.contrato.domain.ContratoPort;
+import com.tp.backend.contrato.domain.ContratoValidator;
+import com.tp.backend.contrato.dto.ContratoRequest;
+import com.tp.backend.contrato.dto.ContratoResponse;
+import com.tp.backend.contrato.dto.ContratoUpdateRequest;
 import com.tp.backend.contrato.mapper.ContratoMapper;
-import com.tp.backend.contrato.validator.*;
-import com.tp.backend.contrato.dto.*;
 import com.tp.backend.exception.NotFoundException;
-import com.tp.backend.repository.*;
+import com.tp.backend.sucursal.domain.Sucursal;
+import com.tp.backend.sucursal.infrastructure.SucursalRepository;
 import com.tp.backend.vigilante.infrastructure.VigilanteRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Service
@@ -45,7 +50,7 @@ public class ContratoService implements ContratoUseCase {
             v.validar(req);
         }
 
-        var s = sucursalRepo.findById(req.getSucursalId()).orElseThrow(() -> new NotFoundException("Sucursal no encontrada"));
+        Sucursal s = sucursalRepo.findById(req.getSucursalId()).orElseThrow(() -> new NotFoundException("Sucursal no encontrada"));
         var v = vigilanteRepo.findById(req.getVigilanteId()).orElseThrow(() -> new NotFoundException("Vigilante no encontrado"));
 
         Contrato c = mapper.toEntity(req, s, v);

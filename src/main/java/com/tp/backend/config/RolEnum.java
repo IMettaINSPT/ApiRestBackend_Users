@@ -1,18 +1,20 @@
 package com.tp.backend.config;
 
 public enum RolEnum {
-    ADMIN(1L, "ROLE_ADMIN"),
-    INVESTIGADOR(2L, "ROLE_INVESTIGADOR"),
-    VIGILANTE(3L, "ROLE_VIGILANTE");
+    ADMIN(1L),
+    INVESTIGADOR(2L),
+    VIGILANTE(3L);
 
     private final Long id;
-    private final String authority;
 
-    RolEnum(Long id, String authority) {
+    RolEnum(Long id) {
         this.id = id;
-        this.authority = authority;
     }
 
     public Long getId() { return id; }
-    public String getAuthority() { return authority; }
+
+    // Si necesitas el prefijo en algún lado, lo generas dinámicamente
+    public String getAuthority() {
+        return "ROLE_" + this.name();
+    }
 }

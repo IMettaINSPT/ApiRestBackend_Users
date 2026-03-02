@@ -2,8 +2,8 @@ package com.tp.backend.asalto.mapper;
 
 import com.tp.backend.asalto.domain.Asalto;
 import com.tp.backend.asalto.dto.*;
-import com.tp.backend.dto.sucursal.SucursalResponse;
-import com.tp.backend.model.Sucursal;
+import com.tp.backend.sucursal.dto.SucursalResponse;
+import com.tp.backend.sucursal.domain.Sucursal;
 import com.tp.backend.personaDetenida.domain.PersonaDetenida;
 import com.tp.backend.personaDetenida.dto.PersonaDetenidaResponse;
 import com.tp.backend.banda.dto.BandaResponse;
@@ -20,7 +20,7 @@ public class AsaltoMapper {
 
         if (a.getSucursal() != null) {
             Sucursal s = a.getSucursal();
-            r.setSucursal(new SucursalResponse(s.getId(), s.getCodigo(), s.getDomicilio(), s.getNroEmpleados(),
+            r.setSucursal(new SucursalResponse(s.getId(), s.getCodigo(), s.getDomicilio(), s.getNumEmpleados(),
                     s.getBanco() != null ? s.getBanco().getId() : null, s.getBanco() != null ? s.getBanco().getCodigo() : null));
         }
 

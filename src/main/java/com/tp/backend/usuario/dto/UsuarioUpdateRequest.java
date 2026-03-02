@@ -1,0 +1,54 @@
+package com.tp.backend.usuario.dto;
+
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
+public class UsuarioUpdateRequest {
+
+    @Size(min = 4, max = 100, message = "La password debe tener al menos 4 caracteres")
+    private String password;
+
+    private Boolean enabled;
+
+    @Pattern(
+            regexp = "ADMIN|INVESTIGADOR|VIGILANTE|USER",
+            message = "Rol inválido. Valores permitidos: ADMIN, INVESTIGADOR, VIGILANTE, USER"
+    )
+    private String rol;
+
+    private Long vigilanteId; // para poder reasignar o quitar el vigilante
+
+    // ===== getters / setters =====
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public String getRol() {
+        return rol;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
+    }
+
+    public Long getVigilanteId() {
+        return vigilanteId;
+    }
+
+    public void setVigilanteId(Long vigilanteId) {
+        this.vigilanteId = vigilanteId;
+    }
+}

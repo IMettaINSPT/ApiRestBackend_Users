@@ -1,0 +1,19 @@
+package com.tp.backend.usuario.dto.login;
+
+import java.time.Instant;
+
+public class LoginResponse {
+    public String tokenType = "Bearer";
+    public String accessToken;
+    public Instant expiresAt;
+    public String username;
+    public String rol;
+    public Long rolId;
+
+    public LoginResponse(String accessToken, Instant expiresAt, String username, String rol, Long rolId) {
+        this.accessToken = accessToken;
+        this.expiresAt = expiresAt;
+        this.username = username;
+        this.rol = rol;
+        this.rolId = rolId;    }
+}

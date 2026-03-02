@@ -1,7 +1,7 @@
 package com.tp.backend.config;
 
-import com.tp.backend.model.UsuarioAdmin;
-import com.tp.backend.repository.UsuarioRepository;
+import com.tp.backend.usuario.domain.UsuarioAdmin;
+import com.tp.backend.usuario.infrastructure.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
