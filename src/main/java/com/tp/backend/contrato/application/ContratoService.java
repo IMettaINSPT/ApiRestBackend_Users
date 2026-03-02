@@ -6,6 +6,7 @@ import com.tp.backend.contrato.validator.*;
 import com.tp.backend.contrato.dto.*;
 import com.tp.backend.exception.NotFoundException;
 import com.tp.backend.repository.*;
+import com.tp.backend.vigilante.infrastructure.VigilanteRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;

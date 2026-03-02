@@ -1,4 +1,4 @@
-package com.tp.backend.dto.vigilante;
+package com.tp.backend.vigilante.dto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
