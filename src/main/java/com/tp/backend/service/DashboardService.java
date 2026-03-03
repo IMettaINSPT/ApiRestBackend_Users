@@ -5,6 +5,9 @@ import com.tp.backend.dto.dashboard.DashboardSummaryResponse;
 import com.tp.backend.banco.domain.Banco;
 import com.tp.backend.banco.infrastructure.BancoRepository;
 
+import com.tp.backend.usuario.domain.Usuario;
+import com.tp.backend.usuario.infrastructure.UsuarioRepository;
+
 import com.tp.backend.sucursal.domain.Sucursal;
 import com.tp.backend.sucursal.infrastructure.SucursalRepository;
 
@@ -29,7 +32,7 @@ import com.tp.backend.asalto.infrastructure.AsaltoRepository;
 import com.tp.backend.vigilante.domain.Vigilante;
 import com.tp.backend.vigilante.infrastructure.VigilanteRepository;
 
-import com.tp.backend.repository.*;
+
 import org.springframework.stereotype.Service;
 
 import java.time.YearMonth;
