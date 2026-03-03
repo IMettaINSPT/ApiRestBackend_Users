@@ -33,10 +33,12 @@ public class SecurityConfig {
     public RoleHierarchy roleHierarchy() {
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
         // La cadena de poder (usa siempre el prefijo ROLE_ que es el estándar de Spring)
-        roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_INVESTIGADOR \n ROLE_INVESTIGADOR > ROLE_VIGILANTE");
+  //      roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_INVESTIGADOR \n ROLE_INVESTIGADOR > ROLE_VIGILANTE");
+    //    return roleHierarchy;
+   // }
+        roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_SUPERADMIN \n ROLE_SUPERADMIN > ROLE_INVESTIGADOR \n ROLE_INVESTIGADOR > ROLE_VIGILANTE");
         return roleHierarchy;
     }
-
 
     @Bean
     public MethodSecurityExpressionHandler methodSecurityExpressionHandler(RoleHierarchy roleHierarchy) {

@@ -3,7 +3,8 @@ package com.tp.backend.config;
 public enum RolEnum {
     ADMIN(1L, "ROLE_ADMIN"),
     INVESTIGADOR(2L, "ROLE_INVESTIGADOR"),
-    VIGILANTE(3L, "ROLE_VIGILANTE");
+    VIGILANTE(3L, "ROLE_VIGILANTE"),
+    SUPERADMIN(4L, "ROLE_SUPERADMIN");
 
     private final Long id;
     private final String authority;

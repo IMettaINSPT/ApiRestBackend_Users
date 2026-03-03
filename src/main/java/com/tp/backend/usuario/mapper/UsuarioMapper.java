@@ -1,10 +1,7 @@
 package com.tp.backend.usuario.mapper;
 
 import com.tp.backend.config.RolEnum;
-import com.tp.backend.usuario.domain.UsuarioAdmin;
-import com.tp.backend.usuario.domain.UsuarioInvestigador;
-import com.tp.backend.usuario.domain.UsuarioVigilante;
-import com.tp.backend.usuario.domain.Usuario;
+import com.tp.backend.usuario.domain.*;
 import com.tp.backend.usuario.dto.UsuarioRequest;
 import com.tp.backend.usuario.dto.UsuarioResponse;
 import org.springframework.stereotype.Component;
@@ -51,6 +48,7 @@ public class UsuarioMapper {
             case ADMIN -> new UsuarioAdmin();
             case INVESTIGADOR -> new UsuarioInvestigador();
             case VIGILANTE -> new UsuarioVigilante();
+            case SUPERADMIN -> new UsuarioSuperAdmin();
         };
 
         // 2. Setear campos comunes
