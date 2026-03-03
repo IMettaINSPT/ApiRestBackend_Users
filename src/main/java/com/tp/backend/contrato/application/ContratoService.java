@@ -8,9 +8,10 @@ import com.tp.backend.contrato.dto.ContratoResponse;
 import com.tp.backend.contrato.dto.ContratoUpdateRequest;
 import com.tp.backend.contrato.mapper.ContratoMapper;
 import com.tp.backend.exception.NotFoundException;
-import com.tp.backend.sucursal.domain.Sucursal;
-import com.tp.backend.sucursal.infrastructure.SucursalRepository;
+
 import com.tp.backend.vigilante.infrastructure.VigilanteRepository;
+import com.tp.backend.sucursal.infrastructure.SucursalRepository;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

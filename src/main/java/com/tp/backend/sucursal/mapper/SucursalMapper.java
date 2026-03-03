@@ -12,7 +12,7 @@ public class SucursalMapper {
                 s.getId(),
                 s.getCodigo(),
                 s.getDomicilio(),
-                s.getNumEmpleados(),
+                s.getNroEmpleados(),
                 s.getBanco().getId(),
                 s.getBanco().getCodigo()
         );
@@ -22,7 +22,7 @@ public class SucursalMapper {
         Sucursal s = new Sucursal();
         s.setCodigo(req.getCodigo());
         s.setDomicilio(req.getDomicilio());
-        s.setNumEmpleados(req.getNroEmpleados());
+        s.setNroEmpleados(req.getNroEmpleados());
         s.setBanco(banco);
         return s;
     }

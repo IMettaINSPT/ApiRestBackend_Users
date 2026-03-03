@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "juicio") // 1. Cambiamos a 'juicios' (plural) para recuperar tus 12 registros
+@Table(name = "juicio")
 public class Juicio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,7 +39,7 @@ public class Juicio {
     @JoinColumn(name = "persona_detenida_id")
     private PersonaDetenida personaDetenida;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "asalto_id")
     private Asalto asalto;
 

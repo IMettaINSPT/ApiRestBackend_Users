@@ -12,7 +12,7 @@ public class Sucursal {
 
     private String codigo;
     private String domicilio;
-    private int numEmpleados;
+    private int nroEmpleados;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Banco banco;
@@ -23,8 +23,8 @@ public class Sucursal {
     public void setCodigo(String codigo) { this.codigo = codigo; }
     public String getDomicilio() { return domicilio; }
     public void setDomicilio(String domicilio) { this.domicilio = domicilio; }
-    public int getNumEmpleados() { return numEmpleados; }
-    public void setNumEmpleados(int num) { this.numEmpleados = num; }
+    public int getNroEmpleados() { return nroEmpleados; }
+    public void setNroEmpleados(int num) { this.nroEmpleados = num; }
     public Banco getBanco() { return banco; }
     public void setBanco(Banco banco) { this.banco = banco; }
 }
