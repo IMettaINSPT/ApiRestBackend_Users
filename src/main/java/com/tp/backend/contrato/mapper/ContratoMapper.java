@@ -4,7 +4,7 @@ import com.tp.backend.contrato.domain.Contrato;
 import com.tp.backend.contrato.dto.*;
 import com.tp.backend.sucursal.domain.Sucursal;
 
-import com.tp.backend.model.*;
+
 import com.tp.backend.vigilante.domain.Vigilante;
 import org.springframework.stereotype.Component;
 
