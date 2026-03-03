@@ -1,16 +1,16 @@
-package com.tp.backend.controller;
+package com.tp.backend.dashboard.controller;
 
-import com.tp.backend.dto.dashboard.DashboardSummaryResponse;
-import com.tp.backend.service.DashboardService;
+import com.tp.backend.dashboard.application.DashboardUseCase;
+import com.tp.backend.dashboard.dto.DashboardSummaryResponse;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/dashboard")
 public class DashboardController {
 
-    private final DashboardService service;
+    private final DashboardUseCase service;
 
-    public DashboardController(DashboardService service) {
+    public DashboardController(DashboardUseCase service) {
         this.service = service;
     }
 

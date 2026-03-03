@@ -1,4 +1,4 @@
-package com.tp.backend.dto.dashboard;
+package com.tp.backend.dashboard.dto;
 
 import java.util.List;
 import java.util.Map;
