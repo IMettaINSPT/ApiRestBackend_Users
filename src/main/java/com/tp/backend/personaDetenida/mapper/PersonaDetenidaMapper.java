@@ -3,8 +3,6 @@ package com.tp.backend.personaDetenida.mapper;
 import com.tp.backend.personaDetenida.domain.PersonaDetenida;
 import com.tp.backend.personaDetenida.dto.*;
 import com.tp.backend.banda.dto.BandaResponse;
-import com.tp.backend.sucursal.dto.*;
-import com.tp.backend.sucursal.domain.Sucursal;
 import com.tp.backend.banda.domain.Banda;
 import com.tp.backend.asalto.dto.AsaltoResponse;
 import com.tp.backend.sucursal.dto.SucursalResponse;
@@ -24,8 +22,8 @@ public class PersonaDetenidaMapper {
                     res.setCodigo(a.getCodigo());
                     res.setFechaAsalto(a.getFechaAsalto());
                     if (a.getSucursal() != null) {
-                        Sucursal s = a.getSucursal();
-                        res.setSucursal(new SucursalResponse(s.getId(), s.getCodigo(), s.getDomicilio(), s.getNumEmpleados(),
+                        var s = a.getSucursal();
+                        res.setSucursal(new SucursalResponse(s.getId(), s.getCodigo(), s.getDomicilio(), s.getNroEmpleados(),
                                 s.getBanco() != null ? s.getBanco().getId() : null, s.getBanco() != null ? s.getBanco().getCodigo() : null));
                     }
                     return res;

@@ -1,8 +1,13 @@
 package com.tp.backend.sucursal.dto;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 public class SucursalRequest {
+
     @NotBlank
     @Size(max = 30)
     private String codigo;
@@ -19,11 +24,14 @@ public class SucursalRequest {
     private Long bancoId;
 
     public String getCodigo() { return codigo; }
-    public void setCodigo(String c) { this.codigo = c; }
+    public void setCodigo(String codigo) { this.codigo = codigo; }
+
     public String getDomicilio() { return domicilio; }
-    public void setDomicilio(String d) { this.domicilio = d; }
+    public void setDomicilio(String domicilio) { this.domicilio = domicilio; }
+
     public int getNroEmpleados() { return nroEmpleados; }
-    public void setNroEmpleados(int n) { this.nroEmpleados = n; }
+    public void setNroEmpleados(int nroEmpleados) { this.nroEmpleados = nroEmpleados; }
+
     public Long getBancoId() { return bancoId; }
-    public void setBancoId(Long b) { this.bancoId = b; }
+    public void setBancoId(Long bancoId) { this.bancoId = bancoId; }
 }

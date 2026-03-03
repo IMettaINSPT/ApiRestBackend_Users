@@ -9,6 +9,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 @Configuration
 public class SecurityConfig {
 
+    // Se lee desde application.properties
     @Value("${app.cors.allowed-origins}")
     private String allowedOriginPatterns;
 
@@ -27,30 +29,37 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
+                // ✅ Habilitar CORS (usa el bean de abajo)
                 .cors(cors -> {})
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // 1. Públicos
+
+                        // ✅ Preflight CORS
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
                         .requestMatchers("/ping").permitAll()
                         .requestMatchers("/api/auth/login").permitAll()
 
-                        // 2. Perfiles Específicos (IMPORTANTE: Antes que el comodín /api/**)
+                        // PERFILES PROPIOS (Acceso compartido)
+                        .requestMatchers(HttpMethod.GET, "/api/auth/me").hasAnyRole(RolEnum.ADMIN.name(), RolEnum.INVESTIGADOR.name(), RolEnum.VIGILANTE.name())
+
                         .requestMatchers(HttpMethod.GET, "/api/usuarios/me")
-                        .hasAnyRole("ADMIN", "INVESTIGADOR", "VIGILANTE")
+                        .hasAnyRole(RolEnum.ADMIN.name(), RolEnum.INVESTIGADOR.name(), RolEnum.VIGILANTE.name())
 
                         .requestMatchers(HttpMethod.GET, "/api/vigilantes/me")
-                        .hasRole("VIGILANTE")
+                        .hasRole(RolEnum.VIGILANTE.name())
 
-                        // 3. Consultas generales (Lectura)
+
+                        // --- REGLA CLAVE: INVESTIGADOR Y ADMIN PUEDEN CONSULTAR TODO ---
+                        // Esto incluye /api/usuarios, /api/contratos, /api/vigilantes, etc.
                         .requestMatchers(HttpMethod.GET, "/api/**")
-                        .hasAnyRole("ADMIN", "INVESTIGADOR")
+                        .hasAnyRole(RolEnum.ADMIN.name(), RolEnum.INVESTIGADOR.name())
 
-                        // 4. Modificaciones (Escritura) - Solo ADMIN
-                        .requestMatchers(HttpMethod.POST,   "/api/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT,    "/api/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/**").hasRole("ADMIN")
+                        // --- ADMIN: SOLO ADMIN PUEDE MODIFICAR (POST, PUT, DELETE) ---
+                        .requestMatchers(HttpMethod.POST,   "/api/**").hasRole(RolEnum.ADMIN.name())
+                        .requestMatchers(HttpMethod.PUT,    "/api/**").hasRole(RolEnum.ADMIN.name())
+                        .requestMatchers(HttpMethod.DELETE, "/api/**").hasRole(RolEnum.ADMIN.name())
 
                         .anyRequest().authenticated()
                 )
@@ -61,17 +70,28 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * CORS configuration usando allowedOriginPatterns
+     * (permite IPs dinámicas de LAN sin recompilar)
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+
         CorsConfiguration config = new CorsConfiguration();
+
+        // Parsear propiedad app.cors.allowed-origins
         List<String> patterns = Arrays.stream(allowedOriginPatterns.split(","))
                 .map(String::trim)
                 .collect(Collectors.toList());
 
         config.setAllowedOriginPatterns(patterns);
+
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization","Content-Type","Accept"));
+
+        // JWT Bearer → no cookies
         config.setAllowCredentials(false);
+
         config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -81,7 +101,7 @@ public class SecurityConfig {
 
     private JwtAuthenticationConverter jwtAuthConverter() {
         JwtGrantedAuthoritiesConverter gac = new JwtGrantedAuthoritiesConverter();
-        gac.setAuthoritiesClaimName("role"); // Asegúrate de que tu JWT envíe el claim "role"
+        gac.setAuthoritiesClaimName("role");
         gac.setAuthorityPrefix("ROLE_");
 
         JwtAuthenticationConverter conv = new JwtAuthenticationConverter();

@@ -21,7 +21,7 @@ public class AsaltoMapper {
 
         if (a.getSucursal() != null) {
             Sucursal s = a.getSucursal();
-            r.setSucursal(new SucursalResponse(s.getId(), s.getCodigo(), s.getDomicilio(), s.getNumEmpleados(),
+            r.setSucursal(new SucursalResponse(s.getId(), s.getCodigo(), s.getDomicilio(), s.getNroEmpleados(),
                     s.getBanco() != null ? s.getBanco().getId() : null, s.getBanco() != null ? s.getBanco().getCodigo() : null));
         }
 
