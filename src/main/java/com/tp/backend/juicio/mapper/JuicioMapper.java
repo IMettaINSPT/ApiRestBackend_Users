@@ -32,7 +32,7 @@ public class JuicioMapper {
 
         if (j.getPersonaDetenida() != null) {
             var p = j.getPersonaDetenida();
-            res.setPersona(new PersonaDetenidaResponse(p.getId(), p.getCodigo(), p.getNombre(), p.getApellido(), null, null));
+            res.setPersona(new PersonaDetenidaResponse(p.getId(), p.getCodigo(), p.getNombre(), p.getApellido(), null, p.isConTobillera(),null));
         }
 
         if (j.getAsalto() != null) {

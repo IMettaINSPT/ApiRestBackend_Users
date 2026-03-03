@@ -14,7 +14,7 @@ public class BandaMapper {
         if (b.getPersonasDetenidas() != null) {
             List<PersonaDetenidaResponse> integrantes = b.getPersonasDetenidas().stream()
                     .map(p -> new PersonaDetenidaResponse(
-                            p.getId(), p.getCodigo(), p.getNombre(), p.getApellido(), null, null
+                            p.getId(), p.getCodigo(), p.getNombre(), p.getApellido(), null, p.isConTobillera(), null
                     )).toList();
             res.setPersonasDetenidas(integrantes);
         }

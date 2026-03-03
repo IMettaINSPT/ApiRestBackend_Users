@@ -33,7 +33,7 @@ public class AsaltoMapper {
                     bandaDTO.setId(p.getBanda().getId());
                     bandaDTO.setNumeroBanda(p.getBanda().getNumeroBanda());
                 }
-                return new PersonaDetenidaResponse(p.getId(), p.getCodigo(), p.getNombre(), p.getApellido(), bandaDTO, null);
+                return new PersonaDetenidaResponse(p.getId(), p.getCodigo(), p.getNombre(), p.getApellido(), bandaDTO, p.isConTobillera(),null);
             }).toList());
         }
         return r;

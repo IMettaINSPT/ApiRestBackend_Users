@@ -29,7 +29,7 @@ public class PersonaDetenidaMapper {
                     return res;
                 }).toList();
 
-        return new PersonaDetenidaResponse(p.getId(), p.getCodigo(), p.getNombre(), p.getApellido(), bandaDto, asaltosDto);
+        return new PersonaDetenidaResponse(p.getId(), p.getCodigo(), p.getNombre(), p.getApellido(), bandaDto,p.isConTobillera(), asaltosDto);
     }
 
     public PersonaDetenida toEntity(PersonaDetenidaRequest req, Banda banda) {
@@ -38,6 +38,7 @@ public class PersonaDetenidaMapper {
         p.setNombre(req.getNombre());
         p.setApellido(req.getApellido());
         p.setBanda(banda);
+        p.setConTobillera(req.isConTobillera());
         return p;
     }
 }

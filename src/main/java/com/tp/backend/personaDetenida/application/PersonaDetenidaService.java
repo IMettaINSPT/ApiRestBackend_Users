@@ -55,6 +55,7 @@ public class PersonaDetenidaService implements PersonaDetenidaUseCase {
         p.setNombre(req.getNombre());
         p.setApellido(req.getApellido());
         p.setBanda(banda);
+        p.setConTobillera(req.isConTobillera());
         return mapper.toResponse(port.guardar(p));
     }
 

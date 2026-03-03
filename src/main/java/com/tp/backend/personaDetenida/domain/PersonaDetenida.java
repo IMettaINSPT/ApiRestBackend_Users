@@ -2,6 +2,7 @@ package com.tp.backend.personaDetenida.domain;
 
 import com.tp.backend.banda.domain.Banda;
 import com.tp.backend.asalto.domain.Asalto;
+import com.tp.backend.vigilante.domain.Vigilante;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,8 @@ public class PersonaDetenida {
 
     @Column(nullable = false, length = 80)
     private String nombre;
+
+    private boolean conTobillera;
 
     @Column(nullable = false, length = 100)
     private String apellido;
@@ -41,4 +44,12 @@ public class PersonaDetenida {
     public void setBanda(Banda b) { this.banda = b; }
     public List<Asalto> getAsaltos() { return asaltos; }
     public void setAsaltos(List<Asalto> a) { this.asaltos = a; }
+
+    public boolean isConTobillera() {
+        return conTobillera;
+    }
+
+    public void setConTobillera(boolean conTobillera) {
+        this.conTobillera = conTobillera;
+    }
 }

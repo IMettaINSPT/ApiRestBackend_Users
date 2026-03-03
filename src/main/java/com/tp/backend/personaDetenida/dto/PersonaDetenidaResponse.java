@@ -11,7 +11,7 @@ public record PersonaDetenidaResponse(
         String nombre,
         String apellido,
         BandaResponse banda,
-
+        Boolean conTobillera,
         // Cortamos la recursividad aquí
         @JsonIgnoreProperties("personas")
         List<AsaltoResponse> asaltos

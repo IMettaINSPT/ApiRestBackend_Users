@@ -10,6 +10,8 @@ public class PersonaDetenidaUpdateRequest {
 
     @NotBlank @Size(max=80)
     private String nombre;
+    private boolean conTobillera;
+
 
     @NotBlank @Size(max=100)
     private String apellido;
@@ -27,4 +29,11 @@ public class PersonaDetenidaUpdateRequest {
 
     public Long getBandaId() { return bandaId; }
     public void setBandaId(Long bandaId) { this.bandaId = bandaId; }
+
+    public boolean isConTobillera() {
+        return conTobillera;
+    }
+    public void setConTobillera(boolean conTobillera) {
+        this.conTobillera = conTobillera;
+    }
 }

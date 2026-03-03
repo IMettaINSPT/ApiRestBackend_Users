@@ -13,9 +13,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface AsaltoUseCase
-        extends IReadUseCase<AsaltoResponse>,
+        extends
         ICreateUseCase<AsaltoResponse, AsaltoRequest>,
-        IUpdateUseCase<AsaltoResponse, AsaltoUpdateRequest>,
+        IUpdateUseCase<AsaltoResponse, AsaltoRequest>,
         IDeleteUseCase
 {
     List<AsaltoResponse> listarConFiltros(Long sucursalId, LocalDate fecha, LocalDate desde, LocalDate hasta);

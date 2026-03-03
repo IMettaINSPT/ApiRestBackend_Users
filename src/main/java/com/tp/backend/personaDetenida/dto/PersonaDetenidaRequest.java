@@ -14,6 +14,8 @@ public class PersonaDetenidaRequest {
     @NotBlank @Size(max=100)
     private String apellido;
 
+    private boolean conTobillera;
+
     private Long bandaId; // opcional
 
     public String getcodigo() { return codigo; }
@@ -27,4 +29,12 @@ public class PersonaDetenidaRequest {
 
     public Long getBandaId() { return bandaId; }
     public void setBandaId(Long bandaId) { this.bandaId = bandaId; }
+
+    public boolean isConTobillera() {
+        return conTobillera;
+    }
+
+    public void setConTobillera(boolean conTobillera) {
+        this.conTobillera = conTobillera;
+    }
 }

@@ -22,7 +22,7 @@ public class JuezMapper {
                 jr.setCondenado(juicio.isCondenado());
                 if (juicio.getPersonaDetenida() != null) {
                     var p = juicio.getPersonaDetenida();
-                    jr.setPersona(new PersonaDetenidaResponse(p.getId(), p.getCodigo(), p.getNombre(), p.getApellido(), null, null));
+                    jr.setPersona(new PersonaDetenidaResponse(p.getId(), p.getCodigo(), p.getNombre(), p.getApellido(), null, p.isConTobillera()  ,null));
                 }
                 return jr;
             }).collect(Collectors.toList());
