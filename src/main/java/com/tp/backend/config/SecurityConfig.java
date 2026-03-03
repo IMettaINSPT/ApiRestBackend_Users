@@ -64,10 +64,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/login").permitAll()
 
                         // PERFILES PROPIOS (Acceso compartido)
-                        .requestMatchers(HttpMethod.GET, "/api/auth/me").hasAnyRole(RolEnum.ADMIN.name(), RolEnum.INVESTIGADOR.name(), RolEnum.VIGILANTE.name())
+                        .requestMatchers(HttpMethod.GET, "/api/auth/me").hasAnyRole(RolEnum.ADMIN.name(),RolEnum.SUPERADMIN.name(), RolEnum.INVESTIGADOR.name(), RolEnum.VIGILANTE.name())
 
                         .requestMatchers(HttpMethod.GET, "/api/usuarios/me")
-                        .hasAnyRole(RolEnum.ADMIN.name(), RolEnum.INVESTIGADOR.name(), RolEnum.VIGILANTE.name())
+                        .hasAnyRole(RolEnum.ADMIN.name(),RolEnum.SUPERADMIN.name(), RolEnum.INVESTIGADOR.name(), RolEnum.VIGILANTE.name())
 
                         .requestMatchers(HttpMethod.GET, "/api/vigilantes/me")
                         .hasRole(RolEnum.VIGILANTE.name())
@@ -76,12 +76,12 @@ public class SecurityConfig {
                         // --- REGLA CLAVE: INVESTIGADOR Y ADMIN PUEDEN CONSULTAR TODO ---
                         // Esto incluye /api/usuarios, /api/contratos, /api/vigilantes, etc.
                         .requestMatchers(HttpMethod.GET, "/api/**")
-                        .hasAnyRole(RolEnum.ADMIN.name(), RolEnum.INVESTIGADOR.name())
+                        .hasAnyRole(RolEnum.ADMIN.name(),RolEnum.SUPERADMIN.name(), RolEnum.INVESTIGADOR.name())
 
                         // --- ADMIN: SOLO ADMIN PUEDE MODIFICAR (POST, PUT, DELETE) ---
-                        .requestMatchers(HttpMethod.POST,   "/api/**").hasRole(RolEnum.ADMIN.name())
-                        .requestMatchers(HttpMethod.PUT,    "/api/**").hasRole(RolEnum.ADMIN.name())
-                        .requestMatchers(HttpMethod.DELETE, "/api/**").hasRole(RolEnum.ADMIN.name())
+                        .requestMatchers(HttpMethod.POST,   "/api/**").hasAnyRole(RolEnum.ADMIN.name(),RolEnum.SUPERADMIN.name())
+                        .requestMatchers(HttpMethod.PUT,    "/api/**").hasAnyRole(RolEnum.ADMIN.name(),RolEnum.SUPERADMIN.name())
+                        .requestMatchers(HttpMethod.DELETE, "/api/**").hasAnyRole(RolEnum.ADMIN.name(),RolEnum.SUPERADMIN.name())
 
                         .anyRequest().authenticated()
                 )

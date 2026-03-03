@@ -15,11 +15,11 @@ public class UsuarioController {
     public UsuarioController(UsuarioUseCase service) { this.service = service; }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN','SUPERADMIN', 'INVESTIGADOR')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPERADMIN','INVESTIGADOR')")
     public List<UsuarioResponse> listar() { return service.listar(); }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN','SUPERADMIN', 'INVESTIGADOR')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPERADMIN','INVESTIGADOR')")
     public UsuarioResponse obtener(@PathVariable Long id) { return service.obtener(id); }
 
     @PostMapping @ResponseStatus(HttpStatus.CREATED)
