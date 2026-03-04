@@ -33,9 +33,7 @@ public class SecurityConfig {
     public RoleHierarchy roleHierarchy() {
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
         // La cadena de poder (usa siempre el prefijo ROLE_ que es el estándar de Spring)
-  //      roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_INVESTIGADOR \n ROLE_INVESTIGADOR > ROLE_VIGILANTE");
-    //    return roleHierarchy;
-   // }
+
         roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_SUPERADMIN \n ROLE_SUPERADMIN > ROLE_INVESTIGADOR \n ROLE_INVESTIGADOR > ROLE_VIGILANTE");
         return roleHierarchy;
     }
@@ -66,17 +64,14 @@ public class SecurityConfig {
                         // PERFILES PROPIOS (Acceso compartido)
                         .requestMatchers(HttpMethod.GET, "/api/auth/me").hasAnyRole(RolEnum.ADMIN.name(),RolEnum.SUPERADMIN.name(), RolEnum.INVESTIGADOR.name(), RolEnum.VIGILANTE.name())
 
-                        .requestMatchers(HttpMethod.GET, "/api/usuarios/me")
-                        .hasAnyRole(RolEnum.ADMIN.name(),RolEnum.SUPERADMIN.name(), RolEnum.INVESTIGADOR.name(), RolEnum.VIGILANTE.name())
+                        .requestMatchers(HttpMethod.GET, "/api/usuarios/me").hasAnyRole(RolEnum.ADMIN.name(),RolEnum.SUPERADMIN.name(), RolEnum.INVESTIGADOR.name(), RolEnum.VIGILANTE.name())
 
-                        .requestMatchers(HttpMethod.GET, "/api/vigilantes/me")
-                        .hasRole(RolEnum.VIGILANTE.name())
+                        .requestMatchers(HttpMethod.GET, "/api/vigilantes/me").hasRole(RolEnum.VIGILANTE.name())
 
 
                         // --- REGLA CLAVE: INVESTIGADOR Y ADMIN PUEDEN CONSULTAR TODO ---
                         // Esto incluye /api/usuarios, /api/contratos, /api/vigilantes, etc.
-                        .requestMatchers(HttpMethod.GET, "/api/**")
-                        .hasAnyRole(RolEnum.ADMIN.name(),RolEnum.SUPERADMIN.name(), RolEnum.INVESTIGADOR.name())
+                        .requestMatchers(HttpMethod.GET, "/api/**").hasAnyRole(RolEnum.ADMIN.name(),RolEnum.SUPERADMIN.name(), RolEnum.INVESTIGADOR.name())
 
                         // --- ADMIN: SOLO ADMIN PUEDE MODIFICAR (POST, PUT, DELETE) ---
                         .requestMatchers(HttpMethod.POST,   "/api/**").hasAnyRole(RolEnum.ADMIN.name(),RolEnum.SUPERADMIN.name())

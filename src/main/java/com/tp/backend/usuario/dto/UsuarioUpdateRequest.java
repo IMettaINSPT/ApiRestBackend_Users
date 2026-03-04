@@ -11,8 +11,8 @@ public class UsuarioUpdateRequest {
     private Boolean enabled;
 
     @Pattern(
-            regexp = "ADMIN|INVESTIGADOR|VIGILANTE|USER",
-            message = "Rol inválido. Valores permitidos: ADMIN, INVESTIGADOR, VIGILANTE, USER"
+            regexp = "ADMIN|SUPERADMIN|INVESTIGADOR|VIGILANTE|USER",
+            message = "Rol inválido. Valores permitidos: ADMIN, SUPERADMIN, INVESTIGADOR, VIGILANTE, USER"
     )
     private String rol;
 

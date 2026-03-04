@@ -20,8 +20,8 @@ public class UsuarioRequest {
 
     @NotBlank(message = "El rol es obligatorio")
     @Pattern(
-            regexp = "ADMIN|INVESTIGADOR|VIGILANTE|USER",
-            message = "Rol inválido. Valores permitidos: ADMIN, INVESTIGADOR, VIGILANTE, USER"
+            regexp = "ADMIN|SUPERADMIN|INVESTIGADOR|VIGILANTE|USER",
+            message = "Rol inválido. Valores permitidos: ADMIN, SUPERADMIN, INVESTIGADOR, VIGILANTE, USER"
     )
     private String rol;
 

@@ -23,14 +23,17 @@ public class UsuarioController {
     public UsuarioResponse obtener(@PathVariable Long id) { return service.obtener(id); }
 
     @PostMapping @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyRole('ADMIN','SUPERADMIN')")
     public UsuarioResponse crear(@Valid @RequestBody UsuarioRequest req) { return service.crear(req); }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPERADMIN')")
     public UsuarioResponse actualizar(@PathVariable Long id, @Valid @RequestBody UsuarioUpdateRequest req) {
         return service.actualizar(id, req);
     }
 
     @DeleteMapping("/{id}") @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasAnyRole('ADMIN','SUPERADMIN')")
     public void eliminar(@PathVariable Long id) { service.eliminar(id); }
 
     @GetMapping("/me")

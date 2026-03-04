@@ -46,9 +46,9 @@ public class UsuarioMapper {
 
         Usuario usuario = switch (rol) {
             case ADMIN -> new UsuarioAdmin();
+            case SUPERADMIN -> new UsuarioSuperAdmin();
             case INVESTIGADOR -> new UsuarioInvestigador();
             case VIGILANTE -> new UsuarioVigilante();
-            case SUPERADMIN -> new UsuarioSuperAdmin();
         };
 
         // 2. Setear campos comunes
